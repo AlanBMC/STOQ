@@ -1,0 +1,7 @@
+.color-1 { color: rgb(191, 151, 128); transition: color 0.3s; }
+.color-1:hover { color: rgb(151, 121, 102); }  /* Escurece ao passar o mouse */
+
+.color-2 { color: rgb(223, 203, 192); }
+.color-3 { color: rgb(255, 255, 255); }
+.color-4 { color: rgb(128, 128, 128); }
+.color-5 { color: rgb(0, 0, 0); }
