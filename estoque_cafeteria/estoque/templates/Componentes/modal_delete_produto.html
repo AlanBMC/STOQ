@@ -1,0 +1,66 @@
+
+
+
+<!-- Modal (inicialmente oculto) -->
+<div id="productModaldelete" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
+        <button id="closeModalBtndeleteProdut" class="absolute top-3 right-3 text-color-4 text-xl">&times;</button>
+        
+        <h2 class="text-2xl font-semibold mb-4 color-1">
+            Tem certeza que deseja deletar o produto?
+        </h2>
+        
+        <form method="post">
+            {% csrf_token %}
+    
+            <div class="flex space-x-4">
+                <!-- Botão de Salvar -->
+                <button type="submit"
+                    class="w-1/2 bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition-all">
+                    <i class="fas fa-check-circle mr-2"></i> Salvar
+                </button>
+    
+                <!-- Botão de Cancelar -->
+                <button id="closeModalBtndeleteProdut"
+                    class="w-1/2 bg-gray-300 text-gray-800 p-3 rounded-lg hover:bg-gray-400 transition-all">
+                    <i class="fas fa-times-circle mr-2"></i> Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+    
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const openModalBtn = document.getElementById('openModalBtndeleteProdut');
+    const closeModalBtn = document.getElementById('closeModalBtndeleteProdut');
+    const modal = document.getElementById('productModaldelete');
+
+    // Verifica se os elementos existem
+    if (openModalBtn && closeModalBtn && modal) {
+        // Abre o modal
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        // Fecha o modal ao clicar no botão de fechar
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+
+        // Fecha o modal ao clicar fora do conteúdo
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        });
+    } else {
+        console.error('Elementos do modal não encontrados.');
+    }
+});
+
+</script>
