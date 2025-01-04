@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.login, name='login'),
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('produtoview/', views.produtoview, name='produtoview'),
     path('estoqueview/', views.estoqueview, name='estoqueview'),
     path('offline/', views.offline, name='offline')  # Nova rota offline
 
