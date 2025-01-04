@@ -1,0 +1,68 @@
+<
+<div class="mt-10 ml-6">
+    <button id="openModalBtn" class="bg-color-1 text-color-3  px-6 py-3 rounded-lg shadow-md hover:bg-opacity-90 transition-all">
+        <i class="fas fa-plus mr-2"></i> Add movimentação
+    </button>
+</div>
+
+<!-- Modal (inicialmente oculto) -->
+<div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
+        <button id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</button>
+        
+        <h2 class="text-2xl font-semibold mb-4 color-1">Adicionar Movimentação</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                <input type="text" id="nome" name="nome" required
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+            </div>
+
+            <div class="mb-4">
+                <label for="preco" class="block text-color-4 text-sm font-semibold mb-2">Preço</label>
+                <input type="number" id="preco" name="preco" required step="0.01"
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+            </div>
+
+            <div class="mb-4">
+                <label for="descricao" class="block text-color-4 text-sm font-semibold mb-2">Descrição</label>
+                <textarea id="descricao" name="descricao" rows="4"
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1"></textarea>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
+                <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('productModal');
+
+    // Abre o modal
+    openModalBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    });
+
+    // Fecha o modal ao clicar no botão de fechar
+    closeModalBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    });
+
+    // Fecha o modal ao clicar fora do conteúdo
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    });
+</script>

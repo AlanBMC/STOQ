@@ -3,8 +3,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('login/', views.login, name='login'),
+    path('', views.login, name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('estoqueview/', views.estoqueview, name='estoqueview')
+    path('estoqueview/', views.estoqueview, name='estoqueview'),
+    path('offline/', views.offline, name='offline')  # Nova rota offline
+
 ]
  

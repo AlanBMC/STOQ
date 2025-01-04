@@ -9,3 +9,6 @@ def dashboard(request):
 
 def estoqueview(request):
     return render(request, 'estoque.html')
+
+def offline(request):
+    return render(request, 'offline.html')

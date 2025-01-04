@@ -1,0 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Offline</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+</head>
+<body>
+    <h1>Você está offline</h1>
+    <p>Esta página não está disponível no momento. Verifique sua conexão.</p>
+    <a href="{% url 'offline' %}">Ir para o Login</a>
+</body>
+</html>
