@@ -1,0 +1,68 @@
+
+
+
+<!-- Modal (inicialmente oculto) -->
+<div id="productModalEdit" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
+        <button id="closeModalBtnEditProdut" class="absolute top-3 right-3 text-color-4 text-xl">&times;</button>
+        
+        <h2 class="text-2xl font-semibold mb-4 color-1">Editar Produto</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                <input type="text" id="nome" name="nome" required
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+            </div>
+
+            <div class="mb-4">
+                <label for="preco" class="block text-color-4 text-sm font-semibold mb-2">Preço</label>
+                <input type="number" id="preco" name="preco" required step="0.01"
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+            </div>
+
+            
+
+            <button type="submit"
+                class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
+                <i class="fas fa-plus-circle mr-2"></i> Salvar Alteração
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const openModalBtn = document.getElementById('openModalBtnEditProdut');
+    const closeModalBtn = document.getElementById('closeModalBtnEditProdut');
+    const modal = document.getElementById('productModalEdit');
+
+    // Verifica se os elementos existem
+    if (openModalBtn && closeModalBtn && modal) {
+        // Abre o modal
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        // Fecha o modal ao clicar no botão de fechar
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+
+        // Fecha o modal ao clicar fora do conteúdo
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        });
+    } else {
+        console.error('Elementos do modal não encontrados.');
+    }
+});
+
+</script>

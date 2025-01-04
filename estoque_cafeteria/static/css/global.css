@@ -1,0 +1,57 @@
+:root {
+    --color-1: rgb(191, 151, 128);
+    --color-2: rgb(223, 203, 192);
+    --color-3: rgb(20, 13, 13);
+    --color-4: rgb(128, 128, 128);
+    --color-5: rgb(0, 0, 0);
+
+    --bg-color-1: var(--color-1);
+    --bg-color-2: var(--color-2);
+    --bg-color-3: rgb(255, 255, 255);
+    --bg-color-4: var(--color-4);
+    --bg-color-5: var(--color-5);
+
+    --font-primary: 'Poppins', sans-serif;
+    --font-secondary: 'Lora', serif;
+    --text-color: rgb(58, 53, 53);
+    --placeholder-color: rgba(58, 53, 53, 0.7);
+    --hover-color: rgba(31, 27, 27, 0.9);
+}
+
+/* Aplicação de cores */
+.color-1 { color: var(--color-1); }
+.color-2 { color: var(--color-2); }
+.color-3 { color: var(--color-3); }
+.color-4 { color: var(--color-4); }
+.color-5 { color: var(--color-5); }
+
+.bg-color-1 { background-color: var(--bg-color-1); }
+.bg-color-2 { background-color: var(--bg-color-2); }
+.bg-color-3 { background-color: var(--bg-color-3); }
+.bg-color-4 { background-color: var(--bg-color-4); }
+.bg-color-5 { background-color: var(--bg-color-5); }
+
+/* Fontes e estilos gerais */
+body {
+    font-family: var(--font-primary);
+}
+
+p, span, button, input, select, textarea {
+    color: var(--text-color);  /* Preto */
+    font-family: var(--font-secondary);
+}
+
+::placeholder {
+    color: var(--placeholder-color);  /* Placeholder com leve transparência */
+    font-family: var(--font-secondary);
+}
+
+button:hover {
+    color: var(--hover-color);  /* Alteração sutil ao passar o mouse */
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--text-color);  /* Borda preta ao focar */
+    box-shadow: 0 0 3px var(--placeholder-color);
+}
