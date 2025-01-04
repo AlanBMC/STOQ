@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<style>
+    h2{
+        color: rgb(126, 126, 126)
+    }
+    body.modal-open {
+    overflow: hidden;
+}
+</style>
+<div class=" bg-gray-100 flex flex-col items-center p-6">
+    <h1 class="text-3xl font-semibold mb-8">Configurações</h1>
+
+    <!-- Botão de Listagem de Usuários -->
+    <div class="w-full max-w-4xl mb-6">
+        <button id="listUsersBtn" class="w-full bg-color-1 text-white py-3 rounded-lg shadow-md hover:bg-color-2 transition-all">
+            <i class="fas fa-users mr-2"></i> Listar Usuários
+        </button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
+        <!-- Editar Nome -->
+        <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
+            <i class="fas fa-user-edit text-5xl text-blue-400 mb-4"></i>
+            <h2 class="text-xl font-semibold mb-2">Editar Nome</h2>
+            <button id="editNameBtn" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
+                Editar
+            </button>
+        </div>
+    
+        <!-- Editar Senha -->
+        <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
+            <i class="fas fa-key text-5xl text-yellow-400 mb-4"></i>
+            <h2 class="text-xl font-semibold mb-2">Alterar Senha</h2>
+            <button id="alteraSenhaBtn" class="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all">
+                Alterar
+            </button>
+        </div>
+    
+        <!-- Criar Usuário -->
+        <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
+            <i class="fas fa-user-plus text-5xl text-green-400 mb-4"></i>
+            <h2 class="text-xl  font-semibold mb-2">Criar Usuário</h2>
+            <button id="createUserBtn" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all">
+                Criar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <!-- Modal - Criar Usuário -->
+    <div id="createUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Criar Usuário</h2>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Nome</label>
+                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Função</label>
+                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500">
+                </div>
+                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-all">
+                    Salvar
+                </button>
+            </form>
+            <button id="closeCreateUserModal" class="mt-4 text-sm text-gray-500 hover:underline">
+                Cancelar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modal - Listar Usuários -->
+    <div id="listUsersModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+            <h2 class="text-2xl font-semibold mb-4">Usuários</h2>
+            <div class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
+                <div class="flex justify-between items-center p-4">
+                    <div>
+                        <p class="text-lg font-medium">João Silva</p>
+                        <span class="text-sm text-gray-500">Administrador</span>
+                    </div>
+                    <button class="text-red-500 hover:text-red-600">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <button id="closeListUsersModal" class="mt-6 text-sm text-gray-500 hover:underline">
+                Fechar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modal - Editar Nome -->
+    <div id="editNameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Editar Nome</h2>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Novo Nome</label>
+                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-all">
+                    Salvar
+                </button>
+            </form>
+            <button id="closeEditNameModal" class="mt-4 text-sm text-gray-500 hover:underline">
+                Cancelar
+            </button>
+        </div>
+    </div>
+<!-- Modal - Editar Senha -->
+    <div id="alteraSenhaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Editar senha</h2>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Novo Nome</label>
+                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Novo Nome</label>
+                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-all">
+                    Salvar
+                </button>
+            </form>
+            <button id="closealteraSenha" class="mt-4 text-sm text-gray-500 hover:underline">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+    <!-- Seção de Cards -->
+    
+    <script>
+        const openModal = (btnId, modalId, closeId) => {
+            const btn = document.getElementById(btnId);
+            const modal = document.getElementById(modalId);
+            const closeBtn = document.getElementById(closeId);
+    
+            btn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+    
+            closeBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+    
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        };
+    
+        // Aplicar para cada modal
+        openModal('createUserBtn', 'createUserModal', 'closeCreateUserModal');
+        openModal('listUsersBtn', 'listUsersModal', 'closeListUsersModal');
+        openModal('editNameBtn', 'editNameModal', 'closeEditNameModal');
+        openModal('alteraSenhaBtn', 'alteraSenhaModal', 'closealteraSenha');
+    </script>
+
+{% endblock %}

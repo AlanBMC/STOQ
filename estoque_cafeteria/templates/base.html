@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{% static 'css/global.css'%}">
 </head>
 <body class="color-2 flex min-h-screen">
+
     <div class="w-full bg-color-3 py-3 px-6 shadow-md flex justify-between items-center fixed top-0 left-0 z-50">
         <h1 class="text-2xl font-semibold color-1">{% block header %}Dashboard{% endblock %}</h1>
 
@@ -32,14 +33,17 @@
 
 <!-- Main Content -->
 <div class="flex-1  p-6 mt-16">
+    {%include 'componentes/alerta_global.html' %}
+
     {% block content %}
+
     {% endblock %}
 </div>
 
 
 <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-color-1 rounded-lg shadow-xl w-11/12 max-w-md">
     <div class="flex justify-around py-4">
-        <a href="#" class="text-color-3 flex flex-col items-center">
+        <a href="{% url 'configuracaoview' %}" class="text-color-3 flex flex-col items-center">
             <i class="fas fa-home text-xl"></i>
             <p>Home</p>
         </a>

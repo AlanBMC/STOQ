@@ -1,0 +1,32 @@
+<div id="alert" class="fixed inset-0 flex items-center justify-center">
+    <div class="flex items-center bg-green-400 text-black text-sm font-medium px-4 py-3 rounded-lg shadow-md" role="alert">
+      <svg class="w-5 h-5 mr-3 text-black" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 5.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l7-7a1 1 0 000-1.414z" clip-rule="evenodd"></path>
+      </svg>
+      <span>lorem ipsum dolor sit amet</span>
+      <button id="close-btn" class="ml-auto">
+        <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 8.586L5.707 4.293a1 1 0 10-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 101.414 1.414L10 11.414l4.293 4.293a1 1 0 001.414-1.414L11.414 10l4.293-4.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <script>
+    // Temporizador para ocultar o alerta após 5 segundos (5000 ms)
+    setTimeout(() => {
+      const alert = document.getElementById('alert');
+      if (alert) {
+        alert.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => alert.remove(), 500);  // Remove o elemento após a transição
+      }
+    }, 1500);
+  
+    // Função para fechar o alerta manualmente
+    document.getElementById('close-btn').addEventListener('click', () => {
+      const alert = document.getElementById('alert');
+      alert.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+      setTimeout(() => alert.remove(), 500);
+    });
+  </script>
+  
