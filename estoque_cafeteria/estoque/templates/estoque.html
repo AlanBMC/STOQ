@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto mt-12">
+    <!-- Barra de Filtros e Pesquisa -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-semibold color-1">Movimentação de Estoque</h1>
+        
+        <div class="flex space-x-4">
+            <input type="text" placeholder="Buscar Produto..." 
+                class="border p-2 rounded-lg focus:ring-color-1 focus:outline-none">
+            <select class="border p-2 rounded-lg">
+                <option value="">Categoria</option>
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+            </select>
+            <button id="openModalBtn" 
+                class="bg-color-1 text-color-3 px-6 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-all">
+                <i class="fas fa-plus mr-2"></i> Nova Movimentação
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabela de Movimentação -->
+    <div class="bg-color-3 p-6 rounded-lg shadow-lg">
+        <table class="w-full text-left table-auto">
+            <thead class="bg-color-1 text-color-3">
+                <tr>
+                    <th class="py-2 px-4">Produto</th>
+                    <th class="py-2 px-4">Tipo</th>
+                    <th class="py-2 px-4">Quantidade</th>
+                    <th class="py-2 px-4">Data</th>
+                    <th class="py-2 px-4">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="hover:bg-color-2">
+                    <td class="py-3 px-4">Café Premium</td>
+                    <td class="py-3 px-4 text-green-500">Entrada</td>
+                    <td class="py-3 px-4">20 un</td>
+                    <td class="py-3 px-4">03/01/2025</td>
+                    <td class="py-3 px-4 flex space-x-3">
+                        <button class="text-blue-500"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <tr class="hover:bg-color-2">
+                    <td class="py-3 px-4">Bolo de Cenoura</td>
+                    <td class="py-3 px-4 text-red-500">Saída</td>
+                    <td class="py-3 px-4">10 un</td>
+                    <td class="py-3 px-4">03/01/2025</td>
+                    <td class="py-3 px-4 flex space-x-3">
+                        <button class="text-blue-500"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para Nova Movimentação -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+        <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
+            <button id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</button>
+            
+            <h2 class="text-2xl font-semibold mb-4 color-1">Nova Movimentação</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <label for="produto" class="block text-color-4 text-sm font-semibold mb-2">Produto</label>
+                    <input type="text" id="produto" name="produto" required
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+
+                <div class="mb-4">
+                    <label for="tipo" class="block text-color-4 text-sm font-semibold mb-2">Tipo</label>
+                    <select id="tipo" name="tipo"
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
+                    <input type="number" id="quantidade" name="quantidade" required
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
+                    <i class="fas fa-check-circle mr-2"></i> Adicionar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('productModal');
+
+    // Abre o modal
+    openModalBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    });
+
+    // Fecha o modal ao clicar no botão de fechar
+    closeModalBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+</script>
+{% endblock %}

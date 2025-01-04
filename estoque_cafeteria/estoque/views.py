@@ -6,3 +6,6 @@ def login(request):
 
 def dashboard(request):
     return render(request, 'dashboard.html')
+
+def estoqueview(request):
+    return render(request, 'estoque.html')
