@@ -1,7 +1,16 @@
-.color-1 { color: rgb(191, 151, 128); transition: color 0.3s; }
-.color-1:hover { color: rgb(151, 121, 102); }  /* Escurece ao passar o mouse */
-
+.color-1 { color: rgb(191, 151, 128); }
 .color-2 { color: rgb(223, 203, 192); }
-.color-3 { color: rgb(255, 255, 255); }
+.color-3 { color: rgb(20, 13, 13); }
 .color-4 { color: rgb(128, 128, 128); }
 .color-5 { color: rgb(0, 0, 0); }
+.bg-color-1 { background-color: rgb(191, 151, 128); }
+.bg-color-2 { background-color: rgb(223, 203, 192); }
+.bg-color-3 { background-color: rgb(255, 255, 255); }
+.bg-color-4 { background-color: rgb(128, 128, 128); }
+.bg-color-5 { background-color: rgb(0, 0, 0); }
+p  {
+    color: rgb(58, 53, 53);  /* Preto */
+}
+button {
+    color: rgba(31, 27, 27, 0.63);  /* Preto */
+}

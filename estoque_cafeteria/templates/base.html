@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" href="{% static 'images/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/global.css'%}">
+</head>
+<body class="color-2 flex min-h-screen">
+    <div class="w-full bg-color-3 py-3 px-6 shadow-md flex justify-between items-center fixed top-0 left-0 z-50">
+        <h1 class="text-2xl font-semibold color-1">{% block header %}Dashboard{% endblock %}</h1>
+        <button class="text-color-1 relative">
+            <i class="fas fa-bell text-2xl"></i>
+            <span class="absolute top-0 right-0 bg-red-500 h-4 w-4 rounded-full flex items-center justify-center text-xs text-white">3</span>
+        </button>
+    </div>
+<!-- Main Content -->
+<div class="flex-1  p-6 mt-16">
+    {% block content %}
+    {% endblock %}
+</div>
+
+
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-color-1 rounded-lg shadow-xl w-11/12 max-w-md">
+    <div class="flex justify-around py-4">
+        <a href="#" class="text-color-3 flex flex-col items-center">
+            <i class="fas fa-home text-xl"></i>
+            <p>Home</p>
+        </a>
+        
+        <a href="{% url 'dashboard' %}" class="text-color-3 flex flex-col items-center">
+            <i class="fas fa-user text-xl"></i>
+            <p> Produto</p>
+        </a>
+        <a href="#" class="text-color-3 flex flex-col items-center">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <p>Estoque</p>
+        </a>
+    </div>
+</div>
+
+
+
+</body>
+</html>
