@@ -15,6 +15,13 @@ urlpatterns = [
     path('editar_nome_user/', views.editar_nome_user, name='editar_nome_user'),
     path('delete_usuario/<int:user_id>/', views.delete_usuario, name='delete_usuario'),
 
+    #ROTA CATEGORIA
+    path('categorias/', views.listar_categorias, name='listar_categorias'),
+    path('categorias/nova/', views.criar_categoria, name='criar_categoria'),
+    path('categorias/editar/<int:pk>/', views.editar_categoria, name='editar_categoria'),
+    path('categorias/excluir/<int:pk>/', views.excluir_categoria, name='excluir_categoria'),
+
+    
     path('offline/', views.offline, name='offline'),
 
 ]
