@@ -7,7 +7,7 @@ import json
 from .models import Loja,Categoria,Fornecedor, Produto
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
-
+from datetime import date, timedelta
 def login(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -30,10 +30,14 @@ def login(request):
 
 @login_required(login_url='/')
 def produtoview(request):
-    return render(request, 'produtoview.html')
+    categorias =  listar_categorias(request)
+    fornecedores = listar_fornecedores(request)
+    hoje = date.today()
+    return render(request, 'produtoview.html', {'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def estoqueview(request):
+  
     return render(request, 'estoque.html')
 
 def offline(request):
@@ -146,7 +150,7 @@ def listar_usuarios_da_loja_atual(request):
 @login_required(login_url='/')
 def criar_categoria(request):
     if request.method == 'POST':
-        nome = request.POST.get('nome')
+        nome = request.POST.get('nomeCategoria')
         
         # Verifica se a categoria já existe para a loja do usuário logado
         if Categoria.objects.filter(nome=nome, loja=request.user.loja).exists():
@@ -265,8 +269,8 @@ def criar_produto(request):
         tipo_quantidade = request.POST.get('tipo_quantidade')
         codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
-        fornecedor_id = request.POST.get('fornecedor')
-        categoria_id = request.POST.get('categoria')
+        fornecedor_id = request.POST.get('Fornecedor')
+        categoria_id = request.POST.get('Categoria')
 
         # Verifica se o produto já existe na mesma loja
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
