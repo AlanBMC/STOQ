@@ -134,11 +134,6 @@ def delete_usuario(request, user_id):
         messages.error(request, 'Voce não tem permissão para excluir usuários')
     return redirect('configuracaoview')
 
-
-def cria_produto(request):
-    if request.method == 'POST':
-        pass
-
 @login_required(login_url='/')
 def listar_usuarios_da_loja_atual(request):
     '''
@@ -191,9 +186,9 @@ def excluir_categoria(request, pk):
     if request.method == 'POST':
         categoria.delete()
         messages.success(request, 'Categoria excluída com sucesso.')
-        return redirect('listar_categorias')
+        return redirect('produtoview')
 
-    return render(request, 'categorias/confirmar_exclusao.html', {'categoria': categoria})
+    return redirect('produtoview')
 
 @login_required(login_url='/')
 def listar_categorias(request):
