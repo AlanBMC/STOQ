@@ -288,3 +288,37 @@ def criar_produto(request):
         return redirect('produtoview')
 
     return redirect('produtoview')
+
+
+@login_required
+def editar_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk, loja=request.user.loja)
+    
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        quantidade = request.POST.get('quantidade')
+        tipo_quantidade = request.POST.get('tipo_quantidade')
+        codigo_de_barras = request.POST.get('codigo_de_barras')
+        validade = request.POST.get('validade')
+        fornecedor_id = request.POST.get('fornecedor')
+        categoria_id = request.POST.get('categoria')
+
+        # Evita duplicidade ao editar (exclui o próprio produto da verificação)
+        if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=pk).exists():
+            messages.error(request, 'Já existe um produto com esse nome.')
+            return redirect('produtoview')
+
+        # Atualização do produto
+        produto.nome = nome
+        produto.quantidade = quantidade
+        produto.tipo_quantidade = tipo_quantidade
+        produto.codigo_de_barras = codigo_de_barras
+        produto.validade = validade
+        produto.fornecedor_id = fornecedor_id
+        produto.categoria_id = categoria_id
+        produto.save()
+
+        messages.success(request, 'Produto atualizado com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
