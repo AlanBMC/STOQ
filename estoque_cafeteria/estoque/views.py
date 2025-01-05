@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja,Categoria
+from .models import Loja,Categoria,Fornecedor
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 
@@ -194,3 +194,26 @@ def excluir_categoria(request, pk):
 def listar_categorias(request):
     categorias = Categoria.objects.filter(loja=request.user.loja)
     return categorias
+
+@login_required
+def listar_fornecedores(request):
+    fornecedores = Fornecedor.objects.filter(loja=request.user.loja)
+    return fornecedores
+
+@login_required
+def criar_fornecedor(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        contato = request.POST.get('contato')
+        
+        # Verifica duplicidade para a loja do usuário logado
+        if Fornecedor.objects.filter(nome=nome, loja=request.user.loja).exists():
+            messages.error(request, 'Fornecedor com esse nome já existe.')
+            return redirect('produtoview')
+        
+        # Criação do novo fornecedor
+        Fornecedor.objects.create(nome=nome, contato=contato, loja=request.user.loja)
+        messages.success(request, 'Fornecedor criado com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
