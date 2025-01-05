@@ -240,3 +240,12 @@ def editar_fornecedor(request, pk):
 
     return redirect('produtoview')
 
+def excluir_fornecedor(request, pk):
+    fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
+    
+    if request.method == 'POST':
+        fornecedor.delete()
+        messages.success(request, 'Fornecedor excluído com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
