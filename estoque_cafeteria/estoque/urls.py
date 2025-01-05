@@ -12,7 +12,7 @@ urlpatterns = [
     # ROTA USER 
     path('cria_usuario/', views.cria_usuario, name='cria_usuario'),
     path('muda_senha/', views.muda_senha, name='muda_senha'),
-
+    path('editar_nome_user/', views.editar_nome_user, name='editar_nome_user'),
 
     path('offline/', views.offline, name='offline'),
 
