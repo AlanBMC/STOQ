@@ -21,7 +21,12 @@ urlpatterns = [
     path('categorias/editar/<int:pk>/', views.editar_categoria, name='editar_categoria'),
     path('categorias/excluir/<int:pk>/', views.excluir_categoria, name='excluir_categoria'),
 
-    
+    #ROTA FORNECEDOR
+    path('fornecedores/', views.listar_fornecedores, name='listar_fornecedores'),
+    path('fornecedores/novo/', views.criar_fornecedor, name='criar_fornecedor'),
+    path('fornecedores/editar/<int:pk>/', views.editar_fornecedor, name='editar_fornecedor'),
+    path('fornecedores/excluir/<int:pk>/', views.excluir_fornecedor, name='excluir_fornecedor'),
+
     path('offline/', views.offline, name='offline'),
 
 ]

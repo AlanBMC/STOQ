@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja,Categoria,Fornecedor
+from .models import Loja,Categoria,Fornecedor, Produto
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 
@@ -240,6 +240,7 @@ def editar_fornecedor(request, pk):
 
     return redirect('produtoview')
 
+@login_required
 def excluir_fornecedor(request, pk):
     fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
     
@@ -249,3 +250,8 @@ def excluir_fornecedor(request, pk):
         return redirect('produtoview')
 
     return redirect('produtoview')
+
+@login_required
+def listar_produtos(request):
+    produtos = Produto.objects.filter(loja=request.user.loja)
+    return render(request, 'produtos/listar.html', {'produtos': produtos})
