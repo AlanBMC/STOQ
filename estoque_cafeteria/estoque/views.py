@@ -182,3 +182,15 @@ def editar_categoria(request, pk):
         messages.success(request, 'Categoria atualizada com sucesso.')
         return redirect('listar_categorias')
     return redirect('produtoview')
+
+
+@login_required(login_url='/')
+def excluir_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk, loja=request.user.loja)
+
+    if request.method == 'POST':
+        categoria.delete()
+        messages.success(request, 'Categoria excluída com sucesso.')
+        return redirect('listar_categorias')
+
+    return render(request, 'categorias/confirmar_exclusao.html', {'categoria': categoria})
