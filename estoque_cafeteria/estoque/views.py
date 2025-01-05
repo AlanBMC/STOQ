@@ -163,3 +163,22 @@ def criar_categoria(request):
         messages.success(request, 'Categoria criada com sucesso.')
         return redirect('produtoview')
     return redirect('produtoview')
+
+
+@login_required(login_url='/')
+def editar_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk, loja=request.user.loja)
+    
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        
+        # Evita duplicação ao editar (exclui a própria categoria da verificação)
+        if Categoria.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=pk).exists():
+            messages.error(request, 'Já existe uma categoria com esse nome.')
+            return redirect('listar_categorias')
+
+        categoria.nome = nome
+        categoria.save()
+        messages.success(request, 'Categoria atualizada com sucesso.')
+        return redirect('listar_categorias')
+    return redirect('produtoview')
