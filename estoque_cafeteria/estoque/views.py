@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
 from .models import Loja
-from django.contrib.auth import logout,authenticate
+from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 
 def login(request):
@@ -38,6 +38,8 @@ def estoqueview(request):
 
 def offline(request):
     return render(request, 'offline.html')
+
+
 @login_required(login_url='/')
 def configuracaoview(request):
     return render(request, 'configuracao.html')
@@ -47,6 +49,8 @@ def configuracaoview(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
 @login_required(login_url='/')
 def cria_usuario(request):
     '''
@@ -67,3 +71,22 @@ def cria_usuario(request):
                 messages.error(request, f'Usuario com o nome {nome} Ja existe')
                 return  redirect('configuracaoview')
 
+
+def muda_senha(request):
+    '''
+    Recebe senha antiga e senha nova
+    atualiza senha
+    '''
+    if request.method == 'POST':
+        senha_antiga = request.POST.get('senha_antiga')
+        senha_nova = request.POST.get('senha_nova')
+        user = request.user
+        if not user.check_password(senha_antiga):
+            messages.error(request, f'Senha antiga invalida')
+            return redirect('configuracaoview')
+        user.set_password(senha_nova)
+        user.save()
+        update_session_auth_hash(request,user)
+        messages.sucess(request, f'Senha alterada com sucesso')
+        return redirect('configuracaoview')
+    

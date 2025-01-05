@@ -118,12 +118,16 @@
             <h2 class="text-2xl font-semibold mb-4">Editar senha</h2>
             <form>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium">Novo Nome</label>
-                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium">Senha antiga</label>
+                    <input type="password" name="senha_antiga" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium">Novo Nome</label>
-                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium">Nova Senha</label>
+                    <input type="password" name="senha_nova" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Confirmar Senha</label>
+                    <input type="password" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"required>
                 </div>
                 <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-all">
                     Salvar
