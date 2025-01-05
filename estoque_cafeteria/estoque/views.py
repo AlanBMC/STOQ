@@ -49,10 +49,11 @@ def offline(request):
 
 @login_required(login_url='/')
 def configuracaoview(request):
+    
     usuarios =listar_usuarios_da_loja_atual(request)
     is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
-    return render(request, 'configuracao.html', {'usuarios': usuarios, 'is_proprietario': is_proprietario
-})
+    
+    return render(request, 'configuracao.html', {'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
@@ -326,6 +327,10 @@ def editar_produto(request):
             messages.error(request, 'Produto com este código de barras já existe.')
             return redirect('estoqueview')
 
+        if 'notificacoes' in request.session:
+            del request.session['notificacoes']
+            del request.session['total_notificacoes']
+        func_notifica_vencimento(request)
         # Atualização do produto
         produto.nome = nome
         produto.quantidade = quantidade
@@ -357,4 +362,49 @@ def excluir_produto(request,id_produto):
     return redirect('estoqueview')
 
 
+def func_notifica_vencimento(request):
+    all_produtos = listar_produtos(request)
+    hoje = date.today()
+
+    alerta_60 = []
+    alerta_30 = []
+    alerta_14 = []
+    notificacoes = request.session.get('notificacoes')
+    for produto in all_produtos:
+        if produto.validade:
+            diferenca = produto.validade - hoje
+
+            if timedelta(days=0) <= diferenca <= timedelta(days=14):
+                alerta_14.append(produto)
+            elif timedelta(days=15) <= diferenca <= timedelta(days=30):
+                alerta_30.append(produto)
+            elif timedelta(days=31) <= diferenca <= timedelta(days=60):
+                alerta_60.append(produto)
+
+    notificacoes = []
+    for produto in alerta_14:
+        notificacoes.append({
+            'tipo': 'urgente',
+            'icone': 'fas fa-exclamation-circle text-red-500',
+            'mensagem': f'O produto {produto.nome} está a menos de 14 dias de vencer.',
+            'tempo': 'Agora mesmo'
+        })
+    for produto in alerta_30:
+        notificacoes.append({
+            'tipo': 'moderado',
+            'icone': 'fas fa-info-circle text-blue-500',
+            'mensagem': f'O produto {produto.nome} vence em menos de 30 dias.',
+            'tempo': 'Hoje'
+        })
+    for produto in alerta_60:
+        notificacoes.append({
+            'tipo': 'baixo',
+            'icone': 'fas fa-check-circle text-green-500',
+            'mensagem': f'O produto {produto.nome} vence em menos de 60 dias.',
+            'tempo': 'Esta semana'
+        })
+    request.session['notificacoes'] = notificacoes
+    request.session['total_notificacoes'] = len(notificacoes)
+
+    
 
