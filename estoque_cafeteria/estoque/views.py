@@ -194,3 +194,8 @@ def excluir_categoria(request, pk):
         return redirect('listar_categorias')
 
     return render(request, 'categorias/confirmar_exclusao.html', {'categoria': categoria})
+
+@login_required(login_url='/')
+def listar_categorias(request):
+    categorias = Categoria.objects.filter(loja=request.user.loja)
+    return categorias
