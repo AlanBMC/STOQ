@@ -42,9 +42,10 @@ def offline(request):
 
 @login_required(login_url='/')
 def configuracaoview(request):
-    todos  = User.objects.all()
-    print(todos)
-    return render(request, 'configuracao.html')
+    usuarios =listar_usuarios_da_loja_atual(request)
+    is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
+    return render(request, 'configuracao.html', {'usuarios': usuarios, 'is_proprietario': is_proprietario
+})
 
 
 @login_required(login_url='/')
@@ -113,12 +114,36 @@ def editar_nome_user(request):
             user.save()
             messages.success(request, 'Nome alterado com sucesso')
             return redirect('configuracaoview')
-        
-@login_required(login_url='/login/')
-def listar_usuarios(request):
+
+@login_required(login_url='/')
+def delete_usuario(request, user_id):
+    '''
+    Deleta usuario, recebe id do usuario a ser deletado
+    '''
+    if request.user.groups.filter(name='Proprietario').exists():
+        try:
+            user = User.objects.get(id=user_id)
+            if user != request.user:
+                user.delete()
+                messages.success(request, 'Usuário excluido com sucesso')
+            else:
+                messages.error(request, 'Você não pode excluir a si mesmo')
+        except User.DoesNotExist:
+            messages.error(request, 'Usuario nao encontrado')
+    else:
+        messages.error(request, 'Voce não tem permissão para excluir usuários')
+    return redirect('configuracaoview')
+
+
+def cria_produto(request):
+    if request.method == 'POST':
+        pass
+
+@login_required(login_url='/')
+def listar_usuarios_da_loja_atual(request):
     '''
     Lista usuarios da loja 1
     '''
     loja_do_usuario = request.user.loja  # Loja do usuário logado
     usuarios = User.objects.filter(loja=loja_do_usuario)  # Filtra usuários da mesma loja
-    print(usuarios)
+    return usuarios
