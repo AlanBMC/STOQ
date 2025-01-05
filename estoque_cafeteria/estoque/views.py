@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja
+from .models import Loja,Categoria
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 
@@ -147,3 +147,19 @@ def listar_usuarios_da_loja_atual(request):
     loja_do_usuario = request.user.loja  # Loja do usuário logado
     usuarios = User.objects.filter(loja=loja_do_usuario)  # Filtra usuários da mesma loja
     return usuarios
+
+@login_required(login_url='/')
+def criar_categoria(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        
+        # Verifica se a categoria já existe para a loja do usuário logado
+        if Categoria.objects.filter(nome=nome, loja=request.user.loja).exists():
+            messages.error(request, 'Categoria com esse nome já existe.')
+            return redirect('produtoview')
+        
+        # Criação da nova categoria
+        Categoria.objects.create(nome=nome, loja=request.user.loja)
+        messages.success(request, 'Categoria criada com sucesso.')
+        return redirect('produtoview')
+    return redirect('produtoview')
