@@ -254,4 +254,37 @@ def excluir_fornecedor(request, pk):
 @login_required
 def listar_produtos(request):
     produtos = Produto.objects.filter(loja=request.user.loja)
-    return render(request, 'produtos/listar.html', {'produtos': produtos})
+    return produtos
+
+
+@login_required
+def criar_produto(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        quantidade = request.POST.get('quantidade')
+        tipo_quantidade = request.POST.get('tipo_quantidade')
+        codigo_de_barras = request.POST.get('codigo_de_barras')
+        validade = request.POST.get('validade')
+        fornecedor_id = request.POST.get('fornecedor')
+        categoria_id = request.POST.get('categoria')
+
+        # Verifica se o produto já existe na mesma loja
+        if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
+            messages.error(request, 'Produto com esse nome já existe.')
+            return redirect('produtoview')
+
+        # Criação do novo produto
+        Produto.objects.create(
+            nome=nome,
+            quantidade=quantidade,
+            tipo_quantidade=tipo_quantidade,
+            codigo_de_barras=codigo_de_barras,
+            validade=validade,
+            fornecedor_id=fornecedor_id,
+            categoria_id=categoria_id,
+            loja=request.user.loja
+        )
+        messages.success(request, 'Produto criado com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
