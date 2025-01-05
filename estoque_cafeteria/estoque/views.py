@@ -37,8 +37,11 @@ def produtoview(request):
 
 @login_required(login_url='/')
 def estoqueview(request):
-  
-    return render(request, 'estoque.html')
+    produtos =  listar_produtos(request)
+    categorias =  listar_categorias(request)
+    fornecedores = listar_fornecedores(request)
+    hoje = date.today()
+    return render(request, 'estoque.html', {'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -276,7 +279,9 @@ def criar_produto(request):
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
             messages.error(request, 'Produto com esse nome já existe.')
             return redirect('produtoview')
-
+        elif Produto.objects.filter(codigo_de_barras=codigo_de_barras, loja=request.user.loja).exists():
+            messages.error(request, 'Produto com este codigo de barras ja existe.')
+            return redirect('produtoview')
         # Criação do novo produto
         Produto.objects.create(
             nome=nome,
@@ -294,47 +299,62 @@ def criar_produto(request):
     return redirect('produtoview')
 
 
-@login_required
-def editar_produto(request, pk):
-    produto = get_object_or_404(Produto, pk=pk, loja=request.user.loja)
-    
+
+def editar_produto(request):
     if request.method == 'POST':
+        produto_id = request.POST.get('produto_id')
+        
+        if not produto_id:
+            messages.error(request, 'Produto não encontrado.')
+            return redirect('estoqueview')
+
+        produto = get_object_or_404(Produto, id=produto_id, loja=request.user.loja)
+        
         nome = request.POST.get('nome')
         quantidade = request.POST.get('quantidade')
         tipo_quantidade = request.POST.get('tipo_quantidade')
         codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
-        fornecedor_id = request.POST.get('fornecedor')
-        categoria_id = request.POST.get('categoria')
-
+        fornecedor_id = request.POST.get('Fornecedor')
+        categoria_id = request.POST.get('Categoria')
+        print(categoria_id, fornecedor_id)
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
-        if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=pk).exists():
+        if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
-            return redirect('produtoview')
+            return redirect('estoqueview')
+        elif Produto.objects.filter(codigo_de_barras=codigo_de_barras, loja=request.user.loja).exclude(pk=produto_id).exists():
+            messages.error(request, 'Produto com este código de barras já existe.')
+            return redirect('estoqueview')
 
         # Atualização do produto
         produto.nome = nome
         produto.quantidade = quantidade
         produto.tipo_quantidade = tipo_quantidade
         produto.codigo_de_barras = codigo_de_barras
-        produto.validade = validade
+        if validade:
+            produto.validade = validade
+
         produto.fornecedor_id = fornecedor_id
         produto.categoria_id = categoria_id
         produto.save()
 
         messages.success(request, 'Produto atualizado com sucesso.')
-        return redirect('produtoview')
+        return redirect('estoqueview')
 
-    return redirect('produtoview')
+    return redirect('estoqueview')
 
 
 @login_required
-def excluir_produto(request, pk):
-    produto = get_object_or_404(Produto, pk=pk, loja=request.user.loja)
-    
+def excluir_produto(request,id_produto):    
     if request.method == 'POST':
+        pk = id_produto
+        produto = get_object_or_404(Produto, pk=pk, loja=request.user.loja)
+
         produto.delete()
         messages.success(request, 'Produto excluído com sucesso.')
-        return redirect('produtoview')
+        return redirect('estoqueview')
 
-    return redirect('produtoview')
+    return redirect('estoqueview')
+
+
+
