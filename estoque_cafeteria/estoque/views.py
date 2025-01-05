@@ -322,3 +322,15 @@ def editar_produto(request, pk):
         return redirect('produtoview')
 
     return redirect('produtoview')
+
+
+@login_required
+def excluir_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk, loja=request.user.loja)
+    
+    if request.method == 'POST':
+        produto.delete()
+        messages.success(request, 'Produto excluído com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
