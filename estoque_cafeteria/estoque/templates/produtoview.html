@@ -4,14 +4,15 @@
     <button id="openModalBtn" class="bg-color-1 text-color-3  px-6 py-3 rounded-lg shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Produto
     </button>
+    
 </div>
 
 <!-- Modal (inicialmente oculto) -->
 <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
-        <button id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</button>
+        <a id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</a>
         
-        <h2 class="text-2xl font-semibold mb-4 color-1">Criar Produto</h2>
+        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Criar Produto</h2>
         
         <form method="post">
             {% csrf_token %}
@@ -22,21 +23,141 @@
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
 
+            
+
+
+           
+            <div class="flex space-x-4">
+                <!-- Campo de Quantidade -->
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
+                    <input type="number" id="quantidade" name="quantidade" required step="0.01"
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+            
+                <!-- Campo de Tipo de Quantidade -->
+                <div class="w-1/2">
+                    <label for="tipo_quantidade" class="block text-color-4 text-sm font-semibold mb-2">Tipo de Quantidade</label>
+                    <select id="tipo_quantidade" name="tipo_quantidade" required
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+
+                        <option value="UN">Unidade</option>
+                        <option value="L">Litro</option>
+                        <option value="KG">Quilograma</option>
+                        <option value="G">Grama</option>
+                        <option value="PCT">Pacote</option>
+                    </select>
+                </div>
+            </div>
+            
+
+            <div class="flex space-x-4" style="margin: 5px;">
+                <!-- Campo de Quantidade -->
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
+                    <input type="number" id="quantidade" name="quantidade" required step="0.01"
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+            
+                <!-- Campo de Tipo de Quantidade -->
+                <div class="w-1/2">
+                    <label for="Status produto" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
+                    <select id="status" name="status" required
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+
+                        <option value="em_estoque">Em estoque</option>
+                        <option value="em_uso">Em uso</option>
+                        
+                    </select>
+                </div>
+            </div>
             <div class="mb-4">
-                <label for="preco" class="block text-color-4 text-sm font-semibold mb-2">Preço</label>
-                <input type="number" id="preco" name="preco" required step="0.01"
+                <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
+                <input type="date" id="validade" name="validade" required
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
+            
 
-            <div class="mb-4">
-                <label for="descricao" class="block text-color-4 text-sm font-semibold mb-2">Descrição</label>
-                <textarea id="descricao" name="descricao" rows="4"
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1"></textarea>
+
+            <div class="flex space-x-4" style="margin: 5px;">
+    
+                <!-- Fornecedor -->
+                <div class="w-1/2">
+                    <label for="Fornecedor" class="block text-color-4 text-sm font-semibold mb-2">Fornecedor</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="Fornecedor" name="Fornecedor" required
+                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                            <option value="">Selecione um fornecedor</option>
+                            <option value="Fornecedor1">Fornecedor 1</option>
+                            <option value="Fornecedor2">Fornecedor 2</option>
+                        </select>
+                        <button type="button" onclick="abrirModalFornecedor()" 
+                                class="p-3 border rounded-lg bg-green-500 text-white hover:bg-green-600">
+                            +
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Categoria -->
+                <div class="w-1/2">
+                    <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="Categoria" name="Categoria" required
+                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                            <option value="">Selecione uma categoria</option>
+                            <option value="categoria1">Categoria 1</option>
+                            <option value="categoria2">Categoria 2</option>
+                        </select>
+                        <button type="button" onclick="abrirModalCategoria()" 
+                                class="p-3 border rounded-lg bg-blue-500 text-white hover:bg-blue-600">
+                            +
+                        </button>
+                    </div>
+                </div>
             </div>
-
             <button type="submit"
                 class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
                 <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal Fornecedor -->
+<div id="modalFornecedor" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-1/3">
+        <h2 class="text-lg font-semibold mb-4">Adicionar Fornecedor</h2>
+        <form id="formFornecedor">
+            <div class="mb-4">
+                <label class="block text-sm font-medium">Nome do Fornecedor</label>
+                <input type="text" name="nomeFornecedor" required
+                       class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium">Telefone</label>
+                <input type="text" name="telefoneFornecedor" required
+                       class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
+                Salvar
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Categoria -->
+<div id="modalCategoria" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-1/3">
+        <h2 class="text-lg font-semibold mb-4">Adicionar Categoria</h2>
+        <form id="formCategoria">
+            <div class="mb-4">
+                <label class="block text-sm font-medium">Nome da Categoria</label>
+                <input type="text" name="nomeCategoria" required
+                       class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+                Salvar
             </button>
         </form>
     </div>

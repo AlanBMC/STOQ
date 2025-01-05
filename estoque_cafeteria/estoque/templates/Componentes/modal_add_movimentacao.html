@@ -4,27 +4,27 @@
 <!-- Modal (inicialmente oculto) -->
 <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
-        <button id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</button>
+        <a id="closeModalBtn" class="absolute  top-3 right-3 text-color-4 text-xl" style="cursor: pointer;">&times;</a>
         
-        <h2 class="text-2xl font-semibold mb-4 color-1">Adicionar Movimentação</h2>
+        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Adicionar Movimentação</h2>
         
         <form method="post">
             {% csrf_token %}
             
             <div class="mb-4">
-                <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                <label for="nome" class="block color-5 text-sm font-semibold mb-2">Nome do Produto</label>
                 <input type="text" id="nome" name="nome" required
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
 
             <div class="mb-4">
-                <label for="preco" class="block text-color-4 text-sm font-semibold mb-2">Preço</label>
+                <label for="preco" class="block color-5 text-sm font-semibold mb-2">Preço</label>
                 <input type="number" id="preco" name="preco" required step="0.01"
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
 
             <div class="mb-4">
-                <label for="descricao" class="block text-color-4 text-sm font-semibold mb-2">Descrição</label>
+                <label for="descricao" class="block color-5 text-sm font-semibold mb-2">Descrição</label>
                 <textarea id="descricao" name="descricao" rows="4"
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1"></textarea>
             </div>

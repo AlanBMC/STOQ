@@ -18,13 +18,14 @@
 <body class="color-2 flex min-h-screen">
 
     <div class="w-full bg-color-3 py-3 px-6 shadow-md flex justify-between items-center fixed top-0 left-0 z-50">
-        <h1 class="text-2xl font-semibold color-1">{% block header %}Dashboard{% endblock %}</h1>
+        <h1 class="text-2xl font-semibold color-3">{% block header %}Dashboard{% endblock %}</h1>
 
         <div class="relative">
-            <button class="text-color-1 relative" id="notificationBtn">
+            <a class="no-border text-color-1 relative" id="notificationBtn">
                 <i class="fas fa-bell text-2xl"></i>
                 <span class="absolute top-0 right-0 bg-red-500 h-4 w-4 rounded-full flex items-center justify-center text-xs text-white">3</span>
-            </button>
+            </a>
+            
                 <a href="{% url 'logout_view'%}" class="ml-10" >
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </a>

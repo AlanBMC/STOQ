@@ -50,7 +50,7 @@ class Produto(models.Model):
     fornecedor = models.ForeignKey(Fornecedor, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
-
+    
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

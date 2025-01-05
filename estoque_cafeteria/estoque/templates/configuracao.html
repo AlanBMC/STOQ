@@ -1,11 +1,9 @@
 {% extends 'base.html' %}
-
+{%load static %}
 
 {% block content %}
 <style>
-    h2{
-        color: rgb(126, 126, 126)
-    }
+  
     body.modal-open {
     overflow: hidden;
 }
@@ -15,35 +13,34 @@
 
     <!-- Botão de Listagem de Usuários -->
     <div class="w-full max-w-4xl mb-6">
-        <button id="listUsersBtn" class="w-full bg-color-1 text-white py-3 rounded-lg shadow-md hover:bg-color-2 transition-all">
+        <button id="listUsersBtn" class="w-full bg-color-1  py-3 rounded-lg shadow-md hover:bg-color-2 transition-all">
             <i class="fas fa-users mr-2"></i> Listar Usuários
         </button>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
         <!-- Editar Nome -->
         <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
-            <i class="fas fa-user-edit text-5xl text-blue-400 mb-4"></i>
+            <img src="{% static 'images/icon_editarnome.svg' %}" alt="Editar nome" class="icon-default mb-5 p-2">            
             <h2 class="text-xl font-semibold mb-2">Editar Nome</h2>
-            <button id="editNameBtn" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
+            <button id="editNameBtn" class="mt-4    px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
                 Editar
             </button>
         </div>
     
         <!-- Editar Senha -->
         <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
-            <i class="fas fa-key text-5xl text-yellow-400 mb-4"></i>
+            <img src="{% static 'images/icon_muda_senha.svg' %}" alt="Alterar senha" style="width: 90px;" class="icon-default mb-5 p-2">
             <h2 class="text-xl font-semibold mb-2">Alterar Senha</h2>
-            <button id="alteraSenhaBtn" class="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all">
+            <button id="alteraSenhaBtn" class="mt-4  px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all">
                 Alterar
             </button>
         </div>
     
         <!-- Criar Usuário -->
         <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
-            <i class="fas fa-user-plus text-5xl text-green-400 mb-4"></i>
-      
+            <img src="{% static 'images/icon_criaUser.svg' %}" alt="Criar Usuário" class="icon-default mb-5 p-2">      
             <h2 class="text-xl  font-semibold mb-2">Criar Usuário</h2>
-            <button id="createUserBtn" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all">
+            <button id="createUserBtn" class="mt-4  px-4 py-2 rounded-lg hover:bg-green-600 transition-all">
                 Criar
             </button>
         </div>
@@ -63,13 +60,13 @@
                     <label class="block text-sm font-medium">Senha padrão</label>
                 </div>
                 
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-all">
+                <button type="submit" class="w-full   py-2 rounded-lg hover:bg-green-600 transition-all">
                     Salvar
                 </button>
             </form>
-            <button id="closeCreateUserModal" class="mt-4 text-sm text-gray-500 hover:underline">
+            <a id="closeCreateUserModal" class="mt-4 bg-color text-sm hover:underline">
                 Cancelar
-            </button>
+            </a>
         </div>
     </div>
     
@@ -117,13 +114,13 @@
                     <label class="block text-sm font-medium">Novo Nome</label>
                     <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" required>
                 </div>
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-all">
+                <button type="submit" class="w-full   py-2 rounded-lg hover:bg-blue-600 transition-all">
                     Salvar
                 </button>
             </form>
-            <button id="closeEditNameModal" class="mt-4 text-sm text-gray-500 hover:underline">
+            <a id="closeEditNameModal" class="mt-4 text-sm text-gray-500 hover:underline">
                 Cancelar
-            </button>
+            </a>
         </div>
     </div>
 <!-- Modal - Editar Senha -->
@@ -143,13 +140,13 @@
                     <label class="block text-sm font-medium">Confirmar Senha</label>
                     <input type="password" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"required>
                 </div>
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-all">
+                <button type="submit" class="w-full   py-2 rounded-lg hover:bg-blue-600 transition-all">
                     Salvar
                 </button>
             </form>
-            <button id="closealteraSenha" class="mt-4 text-sm text-gray-500 hover:underline">
+            <a id="closealteraSenha" class="mt-4 text-sm text-gray-500 hover:underline">
                 Cancelar
-            </button>
+            </a>
         </div>
     </div>
 </div>
