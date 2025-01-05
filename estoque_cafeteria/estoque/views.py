@@ -217,3 +217,26 @@ def criar_fornecedor(request):
         return redirect('produtoview')
 
     return redirect('produtoview')
+
+
+@login_required
+def editar_fornecedor(request, pk):
+    fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
+    
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        contato = request.POST.get('contato')
+        
+        # Evita duplicação ao editar (exclui o próprio fornecedor da verificação)
+        if Fornecedor.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=pk).exists():
+            messages.error(request, 'Já existe um fornecedor com esse nome.')
+            return redirect('produtoview')
+
+        fornecedor.nome = nome
+        fornecedor.contato = contato
+        fornecedor.save()
+        messages.success(request, 'Fornecedor atualizado com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
+
