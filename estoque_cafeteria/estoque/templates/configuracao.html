@@ -41,6 +41,7 @@
         <!-- Criar Usuário -->
         <div class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
             <i class="fas fa-user-plus text-5xl text-green-400 mb-4"></i>
+      
             <h2 class="text-xl  font-semibold mb-2">Criar Usuário</h2>
             <button id="createUserBtn" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all">
                 Criar
@@ -53,15 +54,15 @@
     <div id="createUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
             <h2 class="text-2xl font-semibold mb-4">Criar Usuário</h2>
-            <form>
+            <form action="{%url 'cria_usuario'%}" method="POST"> {% csrf_token %}
                 <div class="mb-4">
                     <label class="block text-sm font-medium">Nome</label>
-                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500" required>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium">Função</label>
-                    <input type="text" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <label class="block text-sm font-medium">Senha padrão</label>
                 </div>
+                
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-all">
                     Salvar
                 </button>

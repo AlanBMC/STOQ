@@ -25,9 +25,11 @@
                 <i class="fas fa-bell text-2xl"></i>
                 <span class="absolute top-0 right-0 bg-red-500 h-4 w-4 rounded-full flex items-center justify-center text-xs text-white">3</span>
             </button>
-    
-           {%include 'componentes/drop.html' %}
-        </div>
+                <a href="{% url 'logout_view'%}" class="ml-10" >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+                {%include 'componentes/drop.html' %}
+            </div>
     </div>
 
 
@@ -45,7 +47,7 @@
     <div class="flex justify-around py-4">
         <a href="{% url 'configuracaoview' %}" class="text-color-3 flex flex-col items-center">
             <i class="fas fa-home text-xl"></i>
-            <p>Home</p>
+            <p>Configurações</p>
         </a>
         
         <a href="{% url 'produtoview' %}" class="text-color-3 flex flex-col items-center">

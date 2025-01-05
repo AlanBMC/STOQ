@@ -4,10 +4,17 @@ from . import views
 
 urlpatterns = [
     path('', views.login, name='login'),
+    path('logout/', views.logout_view, name='logout_view'),
     path('produtoview/', views.produtoview, name='produtoview'),
     path('estoqueview/', views.estoqueview, name='estoqueview'),
     path('configuracaoview/', views.configuracaoview, name='configuracaoview'),
-    path('offline/', views.offline, name='offline')  
+
+    # ROTA USER 
+    path('cria_usuario/', views.cria_usuario, name='cria_usuario'),
+
+
+
+    path('offline/', views.offline, name='offline'),
 
 ]
  
