@@ -2,8 +2,8 @@
 
 <div id="alert" class="fixed inset-0 flex items-center justify-center">
   {% for message in messages %}
-  <div class="flex items-center {%if message.tags == sucess %} bg-green-400 {%else %} bg-red-500 {%endif%} text-black text-sm font-medium px-4 py-3 rounded-lg shadow-md" role="alert">
-    <i class="{%if message.tags == sucess %} fa-solid fa-circle-check {%else %} fa-solid fa-triangle-exclamation {%endif%} fa-solid fa-bomb"></i>
+  <div class="flex items-center {%if message.tags == 'success' %} bg-green-400 {%else %} bg-red-500 {%endif%} text-black text-sm font-medium px-4 py-3 rounded-lg shadow-md" role="alert">
+    <i class="{%if message.tags == 'success' %} fa-solid fa-circle-check {%else %} fa-solid fa-triangle-exclamation {%endif%} fa-solid fa-bomb"></i>
    
     <span>{{ message }}</span>
       {% endfor %}

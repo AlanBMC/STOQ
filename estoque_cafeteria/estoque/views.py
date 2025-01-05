@@ -42,6 +42,7 @@ def offline(request):
 
 @login_required(login_url='/')
 def configuracaoview(request):
+    print(request.user.username)
     return render(request, 'configuracao.html')
 
 
@@ -71,7 +72,7 @@ def cria_usuario(request):
                 messages.error(request, f'Usuario com o nome {nome} Ja existe')
                 return  redirect('configuracaoview')
 
-
+@login_required(login_url='/')
 def muda_senha(request):
     '''
     Recebe senha antiga e senha nova
@@ -87,6 +88,6 @@ def muda_senha(request):
         user.set_password(senha_nova)
         user.save()
         update_session_auth_hash(request,user)
-        messages.sucess(request, f'Senha alterada com sucesso')
+        messages.success(request, f'Senha alterada com sucesso')
         return redirect('configuracaoview')
     
