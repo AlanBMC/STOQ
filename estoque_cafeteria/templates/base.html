@@ -44,26 +44,54 @@
     {% endblock %}
 </div>
 
+<style>
+  .active {
+        background-color: rgba(164, 188, 67, 1);  /* Cor de fundo verde */
+        border-radius: 12px;
+        transform: scale(1.05);  /* Aumenta ligeiramente o botão ativo */
+        transition: all 0.4s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Efeito de elevação */
+        padding: 5px;
+    }
+
+    .active i {
+        font-size: 1.3rem;  /* Aumenta o tamanho do ícone */
+        transition: font-size 0.8s ease-in-out;
+    }
+
+    
+    .nav-item:active {
+    transform: scale(0.95);
+}
+    .nav-item:hover {
+        transform: scale(1.08);  /* Leve aumento ao passar o mouse */
+    }
+</style>
 
 <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-color-1 rounded-lg shadow-xl w-11/12 max-w-md">
     <div class="flex justify-around py-4">
-        <a href="{% url 'configuracaoview' %}" class="text-color-3 flex flex-col items-center">
+        <!-- Configurações -->
+        <a href="{% url 'configuracaoview' %}" 
+           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'configuracaoview' %} active {% endif %}">
             <i class="fas fa-home text-xl"></i>
             <p>Configurações</p>
         </a>
         
-        <a href="{% url 'produtoview' %}" class="text-color-3 flex flex-col items-center">
+        <!-- Produto -->
+        <a href="{% url 'produtoview' %}" 
+           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'produtoview' %} active {% endif %}">
             <i class="fas fa-user text-xl"></i>
-            <p> Produto</p>
+            <p>Produto</p>
         </a>
-        <a href="{% url 'estoqueview' %}" class="text-color-3 flex flex-col items-center">
+
+        <!-- Estoque -->
+        <a href="{% url 'estoqueview' %}" 
+           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'estoqueview' %} active {% endif %}">
             <i class="fas fa-shopping-cart text-xl"></i>
             <p>Estoque</p>
         </a>
     </div>
 </div>
-
-
 
 <script>
     if ('serviceWorker' in navigator) {

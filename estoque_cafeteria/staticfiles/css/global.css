@@ -1,36 +1,160 @@
-.color-1 { color: rgb(191, 151, 128); transition: color 0.3s; }
-.color-1:hover { color: rgb(151, 121, 102); }
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;800&display=swap');
 
-.color-2 { color: rgb(223, 203, 192); }
-.color-3 { color: rgb(255, 255, 255); }
-.color-4 { color: rgb(128, 128, 128); }
-.color-5 { color: rgb(0, 0, 0); }
-.bg-color-1 { background-color: rgb(191, 151, 128); }
-.bg-color-2 { background-color: rgb(223, 203, 192); }
-.bg-color-3 { background-color: rgb(255, 255, 255); }
-.bg-color-4 { background-color: rgb(128, 128, 128); }
-.bg-color-5 { background-color: rgb(0, 0, 0); }
+:root {
+    --color-1: rgb(255, 255, 255);         /* Fundo branco */
+    --color-2: rgba(245, 245, 245, 1);     /* Cinza claro */
+    --color-3: rgb(0, 0, 0);               /* Preto */
+    --color-4: rgb(128, 128, 128);         /* Cinza médio */
+    --color-5: rgb(0, 0, 0);               /* Preto */
 
-.sidebar {
-    width: 12rem;
-}
-.sidebar {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
+    --bg-color-1: var(--color-1);          /* Fundo principal */
+    --bg-color-2: var(--color-2);          /* Seção secundária */
+    --bg-color-3: rgb(255, 255, 255);      /* Branco */
+    --bg-color-4: var(--color-4);          /* Cinza para bordas */
+    --bg-color-5: var(--color-5);          /* Preto */
 
-#sidebar-toggle {
-    margin-bottom: 0.5rem;
+    --font-primary: 'Roboto Slab', serif;
+    --font-secondary: 'Roboto Slab', serif;
+
+    --text-color: var(--color-3);          /* Texto preto */
+    --placeholder-color: rgba(0, 0, 0, 0.5);  /* Cinza escuro */
+    --hover-color: rgba(164, 188, 67, 1);  /* Verde hover */
 }
 
-nav a {
-    padding: 0.55rem 1rem;
+/* Aplicação de cores */
+.color-1 { color: var(--color-1); }
+.color-2 { color: var(--color-2); }
+.color-3 { color: var(--color-3); }
+.color-4 { color: var(--color-4); }
+.color-5 { color: var(--color-5); }
+
+.bg-color-1 { background-color: var(--bg-color-1); }
+.bg-color-2 { background-color: var(--bg-color-2); }
+.bg-color-3 { background-color: var(--bg-color-3); }
+.bg-color-4 { background-color: var(--bg-color-4); }
+.bg-color-5 { background-color: var(--bg-color-5); }
+
+/* Fontes e estilos gerais */
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-color-1);
+    color: var(--text-color);
 }
 
-.sidebar.w-20 {
-    width: 5rem;
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;  /* Títulos em extrabold */
+    font-family: var(--font-primary);
 }
 
-.sidebar-text {
-    transition: opacity 0.3s ease;
+p, span, button, input, select, textarea, th, label, h2 {
+    font-weight: 300;  /* Textos em light */
+    font-family: var(--font-secondary);
+    color: var(--text-color);
+}
+
+::placeholder {
+    color: var(--placeholder-color);
+    font-family: var(--font-secondary);
+    font-weight: 300;
+}
+
+/* Botões e interatividade */
+button {
+    border: 1px solid var(--color-5);  /* Borda preta */
+    background-color: var(--color-1);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+button:hover {
+    background-color: var(--hover-color);   /* Hover verde */
+    border-radius: 10px;
+    color: var(--color-1);
+}
+
+button.no-border {
+    border: none;
+    background-color: transparent;  /* Fundo transparente */
+    padding: 5px;                   
+}
+
+/* Ícones dentro do botão */
+button.no-border i {
+    color: var(--color-5);           /* Ícone preto */
+    font-size: 1.2em;                /* Tamanho do ícone */
+    transition: color 0.3s ease;     /* Animação de cor */
+}
+
+/* Hover no botão com ícone (sem fundo verde) */
+button.no-border:hover {
+    background-color: transparent;  /* Mantém fundo transparente no hover */
+}
+
+button.no-border:hover i {
+    color: var(--hover-color);  /* Apenas o ícone muda para verde */
+}
+
+input, select, textarea {
+    color: var(--color-5);  /* Cor preta para o texto digitado */
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--color-5);  /* Borda preta ao focar */
+    box-shadow: 0 0 5px var(--hover-color);  /* Hover verde */
+    color: var(--color-5);
+}
+
+/* Estilizando cartões e bordas */
+.card {
+    border: 1px solid var(--color-5);  /* Borda preta */
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--bg-color-1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Sombra leve */
+}
+
+.icon-button  {
+    color: var(--text-color); 
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+i {
+    color: var(--text-color); 
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+.icon-button:hover {
+    color: var(--hover-color);  /* Ícone fica verde no hover */
+}
+
+/* Links */
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+a:hover {
+    color: var(--hover-color);  /* Verde no hover */
+}
+
+
+img.icon-default {
+    width: 60px;  /* Largura padrão */
+    height: auto; /* Mantém a proporção da imagem */
+    display: inline-block;
+    vertical-align: middle; /* Alinhamento vertical */
+}
+
+/* Ajuste de espaçamento inferior (mb-5) */
+.mb-5 {
+    margin-bottom: 20px;
+}
+tr, thead{
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.466);
 }

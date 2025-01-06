@@ -8,6 +8,8 @@ from .models import Loja,Categoria,Fornecedor, Produto
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
+
+
 def login(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -15,8 +17,8 @@ def login(request):
         print(nome, senha)
         user = authenticate(username=nome, password=senha)
         if user:
-           
             login_django(request, user)
+            func_notifica_vencimento(request)
             return redirect('produtoview')
         else:
             print('entrou no erro')
@@ -203,12 +205,12 @@ def listar_categorias(request):
     categorias = Categoria.objects.filter(loja=request.user.loja)
     return categorias
 
-@login_required
+@login_required(login_url='/')
 def listar_fornecedores(request):
     fornecedores = Fornecedor.objects.filter(loja=request.user.loja)
     return fornecedores
 
-@login_required
+@login_required(login_url='/')
 def criar_fornecedor(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -227,7 +229,7 @@ def criar_fornecedor(request):
     return redirect('produtoview')
 
 
-@login_required
+@login_required(login_url='/')
 def editar_fornecedor(request, pk):
     fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
     
@@ -248,7 +250,7 @@ def editar_fornecedor(request, pk):
 
     return redirect('produtoview')
 
-@login_required
+@login_required(login_url='/')
 def excluir_fornecedor(request, pk):
     fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
     
@@ -259,13 +261,13 @@ def excluir_fornecedor(request, pk):
 
     return redirect('produtoview')
 
-@login_required
+@login_required(login_url='/')
 def listar_produtos(request):
     produtos = Produto.objects.filter(loja=request.user.loja)
     return produtos
 
 
-@login_required
+@login_required(login_url='/')
 def criar_produto(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -300,7 +302,7 @@ def criar_produto(request):
     return redirect('produtoview')
 
 
-
+@login_required(login_url='/')
 def editar_produto(request):
     if request.method == 'POST':
         produto_id = request.POST.get('produto_id')
@@ -349,7 +351,7 @@ def editar_produto(request):
     return redirect('estoqueview')
 
 
-@login_required
+@login_required(login_url='/')
 def excluir_produto(request,id_produto):    
     if request.method == 'POST':
         pk = id_produto
@@ -387,22 +389,38 @@ def func_notifica_vencimento(request):
             'tipo': 'urgente',
             'icone': 'fas fa-exclamation-circle text-red-500',
             'mensagem': f'O produto {produto.nome} está a menos de 14 dias de vencer.',
-            'tempo': 'Agora mesmo'
         })
     for produto in alerta_30:
         notificacoes.append({
             'tipo': 'moderado',
             'icone': 'fas fa-info-circle text-blue-500',
             'mensagem': f'O produto {produto.nome} vence em menos de 30 dias.',
-            'tempo': 'Hoje'
         })
     for produto in alerta_60:
         notificacoes.append({
             'tipo': 'baixo',
             'icone': 'fas fa-check-circle text-green-500',
             'mensagem': f'O produto {produto.nome} vence em menos de 60 dias.',
-            'tempo': 'Esta semana'
         })
+    for produto in all_produtos:
+        if produto.quantidade is not None:
+            # Definir limites diferentes por unidade
+            limite_minimo = {
+                'L': 10,
+                'KG': 5,
+                'UN': 20,
+                'PCT': 3,
+                'G': 100
+            }
+            unidade = produto.tipo_quantidade.upper()
+
+            # Verifica se a quantidade está abaixo do limite
+            if unidade in limite_minimo and produto.quantidade <= limite_minimo[unidade]:
+                notificacoes.append({
+                    'tipo': 'estoque',
+                    'icone': 'fas fa-box text-yellow-500',
+                    'mensagem': f'O produto {produto.nome} está com baixo estoque ({produto.quantidade} {unidade.upper()}).',
+                })
     request.session['notificacoes'] = notificacoes
     request.session['total_notificacoes'] = len(notificacoes)
 
