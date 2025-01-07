@@ -1,81 +1,70 @@
-
-<div class="p-6 overflow-x-auto">
-    <table class="w-full min-w-[600px] md:min-w-full text-left table-auto">
-        <thead class=" shadow-lg text-color-3">
-            <tr class="hidden md:table-row shadow-lg border-color-2" 
-            style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);
-">
-                <th class="py-2 px-4">Produto</th>
-                <th class="py-2 px-4">Status</th>
-                <th class="py-2 px-4">Quantidade</th>
-                <th class="py-2 px-4">Validade</th>
-                <th class="py-2 px-4">Ações</th>
-            </tr>
-        </thead>
-        <tbody >
-            
-            {% for produto in produtos %}
-                        <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0"
-                        style="margin-top: 5px;  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
-                        <td class="py-3 px-4 flex md:table-cell">
-                            <span class="md:hidden font-semibold w-1/3">Produto:</span> 
-                            <span>{{produto.nome}}</span>
-                        </td>
-                        <td class="py-3 px-4 flex md:table-cell">
-                            <span class="md:hidden font-semibold w-1/3">Status:</span> 
-                            <span class="text-green-500">
-                                {%if produto.status == 'em_estoque' %}
-                                Em estoque
-                                {%else%}
-                                Em uso
-                                {%endif%}
-                            </span>
-                        </td>
-                        <td class="py-3 px-4 flex md:table-cell">
-                            <span class="md:hidden font-semibold w-1/3">Quantidade:</span> 
-                            <span>{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
-                        </td>
-                        <td class="py-3 px-4 flex md:table-cell">
-                            <span class="md:hidden font-semibold w-1/3">Validade:</span> 
-                            <span>{{produto.validade}}</span>
-                        </td>
-                        <td class="py-3 px-4 flex md:table-cell space-x-3">
-                            <div class="flex space-x-3 items-center">
-                                
-                                    <a type="button" class="no-border text-blue-500 p-1 " 
-                                    onclick="abrirModalEditarProduto(
-                                        '{{produto.id}}',
-                                    '{{produto.nome}}', 
-                                    '{{produto.status}}',
-                                    '{{produto.quantidade}}', 
-                                    '{{produto.tipo_quantidade}}', 
-                                    '{{produto.validade}}',
-                                    '{{produto.codigo_de_barras}}',
-                                    '{{produto.fornecedor_id}}',
-                                    '{{produto.categoria_id}}')">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                            
-                                
-                                    <a type=""  class="no-border text-red-500 p-1"
-                                     id="openModalBtndeleteProdut" onclick="confirmarExclusao('{{ produto.id }}')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                    <a type="" class="no-border text-red-500 p-1"
-                                    onclick="abreModalAddMovimento('{{produto.nome}}', '{{produto.id}}', '{{produto.quantidade}}', '{{produto.status}}')">
-                                        <i class="fa-solid fa-dolly"></i>
-                                    </a>
-                                    
-                            </div>
-                        </td>
-                    </tr>
-                    
-
-            {%endfor %}
-        </tbody>
-    </table>
+<style>
+        .table-wrapper {
+            height: 700px; /* Altura da tabela com rolagem */
+            overflow-y: auto; /* Rolagem vertical */
+        }
+</style>
+<div class="p-6 overflow-x-auto table-wrapper">
+        <table class="w-full min-w-[400px] md:min-w-full text-left table-auto">
+            <thead class="shadow-lg text-color-3 sticky -top-6 bg-white  z-10"> <!-- Cabeçalho fixo -->
+                <tr class="hidden md:table-row shadow-lg border-color-2"
+                    style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);">
+                    <th class="py-2 px-4">Produto</th>
+                    <th class="py-2 px-4">Status</th>
+                    <th class="py-2 px-4">Quantidade</th>
+                    <th class="py-2 px-4">Validade</th>
+                    <th class="py-2 px-4">Ações</th>
+                </tr>
+            </thead>
+     
+            <tbody>
+                {% for produto in produtos %}
+                <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0"
+                    style="margin-top: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
+                    <td class="py-3 px-4 flex md:table-cell">
+                        <span class="md:hidden font-semibold w-1/3">Produto:</span>
+                        <span>{{produto.nome}}</span>
+                    </td>
+                    <td class="py-3 px-4 flex md:table-cell">
+                        <span class="md:hidden font-semibold w-1/3">Status:</span>
+                        <span class="{% if produto.status == 'em_estoque' %}text-green-500{% else %}text-yellow-500{% endif %}">
+                            {% if produto.status == 'em_estoque' %}
+                            Em estoque
+                            {% else %}
+                            Em uso
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 flex md:table-cell">
+                        <span class="md:hidden font-semibold w-1/3">Quantidade:</span>
+                        <span>{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
+                    </td>
+                    <td class="py-3 px-4 flex md:table-cell">
+                        <span class="md:hidden font-semibold w-1/3">Validade:</span>
+                        <span>{{produto.validade}}</span>
+                    </td>
+                    <td class="py-3 px-4 flex md:table-cell space-x-3">
+                        <div class="flex space-x-3 items-center">
+                            <a type="button" class="no-border text-blue-500 p-1"
+                                onclick="abrirModalEditarProduto('{{produto.id}}','{{produto.nome}}','{{produto.status}}','{{produto.quantidade}}','{{produto.tipo_quantidade}}','{{produto.validade}}','{{produto.codigo_de_barras}}','{{produto.fornecedor_id}}','{{produto.categoria_id}}')">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a type="button" class="no-border text-red-500 p-1"
+                                onclick="confirmarExclusao('{{ produto.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            <a type="button" class="no-border text-red-500 p-1"
+                                onclick="abreModalAddMovimento('{{produto.nome}}', '{{produto.id}}', '{{produto.quantidade}}', '{{produto.status}}')">
+                                <i class="fa-solid fa-dolly"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   
 </div>
-
 
 
 <!-- Modal (inicialmente oculto) -->

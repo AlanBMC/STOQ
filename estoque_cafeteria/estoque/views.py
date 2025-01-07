@@ -36,7 +36,7 @@ def produtoview(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     
-
+    print(request.user)
     hoje = date.today()
     return render(request, 'produtoview.html', {'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
@@ -203,15 +203,6 @@ def excluir_categoria(request, pk):
 
     return redirect('produtoview')
 
-def excluir_categoria2(request):
-    categoria = get_object_or_404(Categoria, pk=11, loja=request.user.loja)
-
-    if request.method == 'POST':
-        categoria.delete()
-        messages.success(request, 'Categoria excluída com sucesso.')
-        return redirect('produtoview')
-
-    return redirect('produtoview')
 
 @login_required(login_url='/')
 def listar_categorias(request):
@@ -378,6 +369,24 @@ def excluir_produto(request,id_produto):
 
 
 def func_notifica_vencimento(request):
+
+    '''
+        Função para notificar sobre produtos próximos ao vencimento e com baixo estoque.
+    Args:
+        request (HttpRequest): Objeto de requisição HTTP.
+    Descrição:
+        Esta função lista todos os produtos e verifica suas datas de validade e quantidades em estoque.
+        Notificações são geradas para produtos que estão próximos ao vencimento (em 14, 30 ou 60 dias)
+        e para produtos com quantidade em estoque abaixo de um limite mínimo definido por unidade de medida.
+    Notificações:
+        - Produtos com validade em menos de 14 dias são marcados como 'urgente'.
+        - Produtos com validade entre 15 e 30 dias são marcados como 'moderado'.
+        - Produtos com validade entre 31 e 60 dias são marcados como 'baixo'.
+        - Produtos com quantidade em estoque abaixo do limite mínimo são marcados como 'estoque'.
+    Sessão:
+        request.session['notificacoes']: Lista de dicionários contendo as notificações geradas.
+        request.session['total_notificacoes']: Número total de notificações geradas.
+    '''
     all_produtos = listar_produtos(request)
     hoje = date.today()
 
