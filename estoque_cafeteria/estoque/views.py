@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja,Categoria,Fornecedor, Produto
+from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
@@ -14,19 +14,19 @@ def login(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         senha = request.POST.get('senha')
-        print(nome, senha)
+        
         user = authenticate(username=nome, password=senha)
         if user:
             login_django(request, user)
             func_notifica_vencimento(request)
             return redirect('produtoview')
         else:
-            print('entrou no erro')
+          
             messages.error(request, 'Nome ou senha invalidas')
             return redirect('login')
 
     if request.method == 'GET':
-        print('entroui no get')
+        
         return render(request,  'login.html')
     
 
@@ -320,7 +320,7 @@ def editar_produto(request):
         validade = request.POST.get('validade')
         fornecedor_id = request.POST.get('Fornecedor')
         categoria_id = request.POST.get('Categoria')
-        print(categoria_id, fornecedor_id)
+        
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
@@ -426,3 +426,66 @@ def func_notifica_vencimento(request):
 
     
 
+@login_required(login_url='/')
+def cria_movimento_de_estoque(request):
+    if request.method == 'POST':
+        produto_id = request.POST.get('produto_id')
+        tipo_movimento = request.POST.get('tipo_movimento')
+        quantidade = request.POST.get('quantidade')
+        status = request.POST.get('status')
+        
+        # Converte a quantidade para float (aceita decimais)
+        try:
+            quantidade = float(quantidade)
+        except ValueError:
+            messages.error(request, 'A quantidade deve ser um número válido.')
+            return redirect('estoqueview')
+        
+        # Busca o produto vinculado à loja do usuário
+        produto = get_object_or_404(Produto, id=produto_id, loja=request.user.loja)
+        produto.status = status
+        
+        try:
+            # Lógica para entrada de produtos
+            if tipo_movimento == 'Entrada':
+                if quantidade <= 0:
+                    messages.error(request, 'A quantidade de entrada deve ser maior que zero.')
+                    return redirect('estoqueview')
+                
+                produto.quantidade += quantidade
+                produto.save()
+                MovimentoEstoque.objects.create(
+                    produto=produto,
+                    tipo_movimento=tipo_movimento,
+                    quantidade=quantidade,
+                    responsavel=request.user,
+                    loja=request.user.loja
+                )
+                messages.success(request, 'Entrada de estoque registrada com sucesso.')
+                return redirect('estoqueview')
+            
+            # Lógica para saída de produtos
+            elif tipo_movimento == 'Saida':
+                if produto.quantidade < quantidade:
+                    messages.error(request, 'Quantidade insuficiente para saída.')
+                    return redirect('estoqueview')
+                
+                produto.quantidade -= quantidade
+                produto.save()
+                MovimentoEstoque.objects.create(
+                    produto=produto,
+                    tipo_movimento=tipo_movimento,
+                    quantidade=quantidade,
+                    responsavel=request.user,
+                    loja=request.user.loja
+                )
+                messages.success(request, 'Saída de estoque registrada com sucesso.')
+                return redirect('estoqueview')
+
+            else:
+                messages.error(request, 'Tipo de movimento inválido.')
+                return redirect('estoqueview')
+        
+        except Exception as e:
+            messages.error(request, f'Ocorreu um erro: {str(e)}')
+            return redirect('estoqueview')

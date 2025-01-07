@@ -61,7 +61,11 @@
                                      id="openModalBtndeleteProdut" onclick="confirmarExclusao('{{ produto.id }}')">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                               
+                                    <a type="" class="no-border text-red-500 p-1"
+                                    onclick="abreModalAddMovimento('{{produto.nome}}', '{{produto.id}}', '{{produto.quantidade}}', '{{produto.status}}')">
+                                        <i class="fa-solid fa-dolly"></i>
+                                    </a>
+                                    
                             </div>
                         </td>
                     </tr>
@@ -181,6 +185,66 @@
     </div>
 </div>
 
+
+
+
+
+
+<!-- Modal (inicialmente oculto) -->
+<div id="productModalMovimento" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
+        <a id="closeModalBtnMovimento" onclick="fechaModalMovimento()" class="absolute  top-3 right-3 text-color-4 text-xl" style="cursor: pointer;">&times;</a>
+        
+        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Adicionar Movimentação</h2>
+        
+        <form method="post" action="{% url 'cria_movimento_de_estoque' %}">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="nome" class="block color-5 text-sm font-semibold mb-2" id="">Nome do Produto</label>
+                <label id="nomeProdutoMovimento"></label>
+                <input type="hidden" id="produto_id" name="produto_id" >
+            </div>
+
+            <div class="w-1/2">
+                <label for="Tipo de movimento" class="block text-color-4 text-sm font-semibold mb-2">Tipo de movimento</label>
+                <select id="tipo_movimento" name="tipo_movimento" required
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+
+                    <option value="Saida">Saida</option>
+                    <option value="Entrada">Entrada</option>
+                    <option value="Transferencia">Transferência</option>
+                </select>
+            </div>
+            <div class="flex space-x-4" style="margin: 5px;">
+              
+                <div class="mb-4">
+                    <label for="quantidade" class="block color-5 text-sm font-semibold mb-2">Quantidade</label>
+                    <input type="number" id="quantidade" name="quantidade" required step="0.001" min="0"
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+                <div class="w-1/2">
+                    <label for="Status produto" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
+                    <select id="status" name="status" required
+                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+
+                        <option value="Em estoque">Em estoque</option>
+                        <option value="Em uso">Em uso</option>
+                        
+                    </select>
+                </div>
+            </div>
+           
+
+            <button type="submit"
+                class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
+                <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
+            </button>
+        </form>
+    </div>
+</div>
+
+
 <form id="delete-form-produto" method="post" style="display: none;">
     {% csrf_token %}
     <input type="hidden" name="produto_id" id="produto-id">
@@ -264,4 +328,49 @@
             modal.classList.remove('flex');
         }
     });
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('productModalMovimento');
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    });
+
+
+    function abreModalAddMovimento(nomeProduto, produtoId, quantidade, status){
+    const modal = document.getElementById('productModalMovimento');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+            // Fecha o modal ao clicar fora do conteúdo
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        });
+
+        const nomeProdutoField = document.getElementById('nomeProdutoMovimento');
+        nomeProdutoField.innerText = nomeProduto;
+        const produtoid = document.getElementById('produto_id');
+        produtoid.value = produtoId;
+        
+        const quant = document.getElementById('quantidade');
+        quant.value = quantidade;
+
+        const statusField = document.getElementById('status');
+        quant.value = quantidade;
+        for (let i = 0; i < statusField.options.length; i++) {
+                if (statusField.options[i].value === status) {
+                    statusField.options[i].selected = true;
+                    break;
+                }
+            }
+
+   
+    }
+    function fechaModalMovimento() {
+        const modal = document.getElementById('productModalMovimento');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
 </script>

@@ -5,13 +5,13 @@
   <div class="flex items-center {%if message.tags == 'success' %} bg-green-400 {%else %} bg-red-500 {%endif%} text-black text-sm font-medium px-4 py-3 rounded-lg shadow-md" role="alert">
     <i class="{%if message.tags == 'success' %} fa-solid fa-circle-check {%else %} fa-solid fa-triangle-exclamation {%endif%} fa-solid fa-bomb"></i>
    
-    <span>{{ message }}</span>
+    <span class="m-2">{{ message }}</span>
       {% endfor %}
-      <button id="close-btn" class="ml-auto">
+      <a type="button" id="close-btn" class="ml-auto">
         <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 8.586L5.707 4.293a1 1 0 10-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 101.414 1.414L10 11.414l4.293 4.293a1 1 0 001.414-1.414L11.414 10l4.293-4.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path>
         </svg>
-      </button>
+      </a>
     </div>
   </div>
   {% endif %}
