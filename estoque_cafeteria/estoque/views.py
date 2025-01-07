@@ -8,6 +8,7 @@ from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
+import random
 
 
 def login(request):
@@ -34,6 +35,8 @@ def login(request):
 def produtoview(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
+    
+
     hoje = date.today()
     return render(request, 'produtoview.html', {'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
@@ -192,6 +195,16 @@ def editar_categoria(request, pk):
 @login_required(login_url='/')
 def excluir_categoria(request, pk):
     categoria = get_object_or_404(Categoria, pk=pk, loja=request.user.loja)
+
+    if request.method == 'POST':
+        categoria.delete()
+        messages.success(request, 'Categoria excluída com sucesso.')
+        return redirect('produtoview')
+
+    return redirect('produtoview')
+
+def excluir_categoria2(request):
+    categoria = get_object_or_404(Categoria, pk=11, loja=request.user.loja)
 
     if request.method == 'POST':
         categoria.delete()
@@ -489,3 +502,7 @@ def cria_movimento_de_estoque(request):
         except Exception as e:
             messages.error(request, f'Ocorreu um erro: {str(e)}')
             return redirect('estoqueview')
+        
+
+
+
