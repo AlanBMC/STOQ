@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import  SET_NULL
 
 
 class Loja(models.Model):
@@ -47,8 +48,9 @@ class Produto(models.Model):
     tipo_quantidade = models.CharField(max_length=20, choices=TIPO_QUANTIDADE_CHOICES)
     codigo_de_barras = models.CharField(max_length=50, unique=True)
     validade = models.DateField(null=True, blank=True)
-    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.CASCADE)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=SET_NULL, null=True, blank=True)
+    categoria = models.ForeignKey(Categoria, on_delete=SET_NULL, null=True, blank=True)
+
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
     
     status = models.CharField(

@@ -93,17 +93,20 @@
                     
                     {% if is_proprietario and usuario.id != request.user.id %}
                     
-                            <button class="text-red-500 hover:text-red-600" 
+                            <a class="text-red-500 hover:text-red-600" 
                             onclick="confirmarExclusao('{{ usuario.id }}', '{{ usuario.username }}')">
                                 <i class="fas fa-trash-alt"></i>
-                            </button>
+                            </a>
                     {% endif %}
                 </div>
             </div>
             {% endfor %}
-            <button id="closeListUsersModal" class="mt-6 text-sm text-gray-500 hover:underline">
-                Fechar
+            <button type="submit" class="w-full   py-2 rounded-lg hover:bg-blue-600 transition-all">
+                Salvar
             </button>
+            <a id="closeListUsersModal" class="mt-6 text-sm text-gray-500 hover:underline">
+                Fechar
+            </a>
         </div>
     </div>
     

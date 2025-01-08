@@ -44,6 +44,7 @@ def produtoview(request):
 def estoqueview(request):
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
+    
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     return render(request, 'estoque.html', {'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje})
@@ -512,6 +513,9 @@ def cria_movimento_de_estoque(request):
             messages.error(request, f'Ocorreu um erro: {str(e)}')
             return redirect('estoqueview')
         
+
+
+
 
 
 
