@@ -27,11 +27,13 @@ SECRET_KEY = 'django-insecure-6#nkm(kgo+)ofvln%sc@cvrwrmxpeid5gz()t+^3qy1xr+77nu
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',  # Permite qualquer subdomínio do ngrok
+    '*',  'estoque-cafeteria-v6.onrender.com'# Permite qualquer subdomínio do ngrok
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.ngrok-free.app',  # Permite domínios ngrok para requisições POST
+    'https://estoque-cafeteria-v6.onrender.com',  # Permite domínios ngrok para requisições POST
+        'https://*.ngrok-free.app',  # Permite testes locais com ngrok
+
 ]
 # Application definition
 

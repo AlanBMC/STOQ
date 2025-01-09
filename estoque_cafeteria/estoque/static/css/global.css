@@ -18,7 +18,7 @@
 
     --text-color: var(--color-3);          /* Texto preto */
     --placeholder-color: rgba(0, 0, 0, 0.5);  /* Cinza escuro */
-    --hover-color: rgba(164, 188, 67, 1);  /* Verde hover */
+    --hover-color: rgb(28, 28, 28);  /* Verde hover */
 }
 
 /* Aplicação de cores */

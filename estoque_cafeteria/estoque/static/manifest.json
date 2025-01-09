@@ -3,7 +3,7 @@
     "name": "Controle de Estoque",
     "short_name": "Estoque",
     "description": "Aplicação de Controle de Estoque",
-    "start_url": "/login",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#333333",

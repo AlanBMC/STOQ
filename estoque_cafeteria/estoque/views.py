@@ -8,10 +8,64 @@ from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
-import random
+from django.http import HttpResponseNotAllowed, HttpResponse
+from django.db.models import Sum
+from datetime import datetime, timedelta
 
+
+def obter_dados(request):
+    # Filtro opcional por tipo de movimento
+    filtro = request.GET.get('filtro', 'default')
+
+    # Obtendo a loja associada ao usuário atual (se aplicável)
+    user_loja = request.user.loja
+
+    # Filtrar movimentos por loja do usuário (se aplicável)
+    movimentos = MovimentoEstoque.objects.filter(loja=user_loja)
+
+    # Filtrar por tipo de movimento, se especificado
+    if filtro in ['entrada', 'saida', 'transferencia']:
+        movimentos = movimentos.filter(tipo_movimento=filtro)
+
+    # Dados agregados por mês
+    hoje = datetime.today()
+    meses = [(hoje - timedelta(days=30 * i)).strftime('%b') for i in range(2, -1, -1)]
+    movimentos_por_mes = [
+        movimentos.filter(data_movimento__month=(hoje - timedelta(days=30 * i)).month).aggregate(
+            total=Sum('quantidade')
+        )['total'] or 0 for i in range(2, -1, -1)
+    ]
+
+    # Dados para gráfico de barras e linha
+    labels = meses
+    values_barra = movimentos_por_mes
+    values_linha = [mov * 1.1 for mov in movimentos_por_mes]  # Exemplo de variação (pode ajustar)
+
+    # Dados para gráfico donut
+    tipos_movimento = ['entrada', 'saida', 'transferencia']
+    values_donut = [
+        movimentos.filter(tipo_movimento=tipo).aggregate(total=Sum('quantidade'))['total'] or 0
+        for tipo in tipos_movimento
+    ]
+
+    # Labels para o gráfico donut
+    donut_labels = ['Entradas', 'Saídas', 'Transferências']
+
+    return JsonResponse({
+        'labels': labels,
+        'values_barra': values_barra,
+        'values_linha': values_linha,
+        'values_donut': values_donut,
+        'donut_labels': donut_labels
+    })
+
+def dashboard(request):
+    return render(request, 'dashboard.html')
 
 def login(request):
+    if request.method == 'HEAD':
+        return HttpResponse(status=200) 
+    # Lógica de autenticação
     if request.method == 'POST':
         nome = request.POST.get('nome')
         senha = request.POST.get('senha')
@@ -22,21 +76,20 @@ def login(request):
             func_notifica_vencimento(request)
             return redirect('produtoview')
         else:
-          
-            messages.error(request, 'Nome ou senha invalidas')
+            messages.error(request, 'Nome ou senha inválidos')
             return redirect('login')
-
-    if request.method == 'GET':
-        
-        return render(request,  'login.html')
     
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    
+    return HttpResponseNotAllowed(['GET', 'POST'])
 
 @login_required(login_url='/')
 def produtoview(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     
-    print(request.user)
+    
     hoje = date.today()
     return render(request, 'produtoview.html', {'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
@@ -66,6 +119,7 @@ def configuracaoview(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
 
 
 @login_required(login_url='/')

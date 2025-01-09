@@ -2,6 +2,8 @@
         .table-wrapper {
             height: 700px; /* Altura da tabela com rolagem */
             overflow-y: auto; /* Rolagem vertical */
+            border-bottom-width: 60px;
+
         }
 </style>
 <div class="p-6 overflow-x-auto table-wrapper">
@@ -25,6 +27,7 @@
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Produto:</span>
                         <span>{{produto.nome}}</span>
+                        
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Status:</span>
@@ -38,7 +41,7 @@
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Quantidade:</span>
-                        <span>{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
+                        <span style="padding-left: 20px;">{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Categoria:</span>

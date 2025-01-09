@@ -9,6 +9,11 @@ urlpatterns = [
     path('estoqueview/', views.estoqueview, name='estoqueview'),
     path('configuracaoview/', views.configuracaoview, name='configuracaoview'),
 
+    #DASHBOARD
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('obter-dados/', views.obter_dados, name='obter_dados'),
+
+
     # ROTA USER 
     path('cria_usuario/', views.cria_usuario, name='cria_usuario'),
     path('muda_senha/', views.muda_senha, name='muda_senha'),
