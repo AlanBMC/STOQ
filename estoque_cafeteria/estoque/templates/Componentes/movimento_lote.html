@@ -1,0 +1,186 @@
+<style>
+    #batchMovementModal .modal-content {
+        max-width: 500px; /* Reduz a largura máxima */
+        max-height: calc(100vh - 20px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
+        margin: 10px 0; /* Adiciona margem de 10px no topo e no fundo */
+        display: flex;
+        flex-direction: column;
+        padding: 0; /* Remover padding geral */
+        overflow: hidden; /* Evitar rolagem no modal principal */
+        position: relative; /* Necessário para posicionar o botão de fechar */
+    }
+
+    /* Estilos para tablet */
+    @media (max-width: 768px) {
+        #batchMovementModal .modal-content {
+            max-width: 80%;
+            max-height: calc(100vh - 20px);
+        }
+
+        #batchMovementModal h2 {
+            font-size: 1.2rem; /* Reduz o tamanho da fonte */
+        }
+
+        #batchMovementModal input {
+            padding: 6px; /* Reduz o padding */
+        }
+
+        #batchMovementModal th, #batchMovementModal td {
+            padding: 4px; /* Reduz o padding */
+            font-size: 0.9rem; /* Reduz o tamanho da fonte */
+        }
+    }
+
+    /* Estilos para mobile */
+    @media (max-width: 480px) {
+        #batchMovementModal .modal-content {
+            max-width: 90%;
+            max-height: calc(100vh - 20px);
+        }
+
+        #batchMovementModal h2 {
+            font-size: 1rem; /* Reduz o tamanho da fonte */
+        }
+
+        #batchMovementModal input {
+            padding: 4px; /* Reduz o padding */
+        }
+
+        #batchMovementModal th, #batchMovementModal td {
+            padding: 3px; /* Reduz o padding */
+            font-size: 0.8rem; /* Reduz o tamanho da fonte */
+        }
+    }
+
+    /* Mantém o botão e o input fixos no topo */
+    #batchMovementModal .sticky-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        padding-bottom: 10px;
+    }
+
+    /* Mantém o botão de confirmação fixo na parte inferior */
+    #batchMovementModal .sticky-footer {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        z-index: 10;
+        padding-top: 10px;
+        text-align: right;
+    }
+
+    /* Conteúdo rolável */
+    #batchMovementModal .modal-body {
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    /* Estilo para o botão de fechar */
+    #closeBatchModalBtn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 20;
+    }
+</style>
+<div id="batchMovementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="modal-content max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative ">
+        <a id="closeBatchModalBtn" onclick="closeBatchMovementModal()" class="absolute top-3 right-3 text-gray-800 text-xl" style="cursor: pointer;">&times;</a>
+
+        <div class="sticky-header">
+            <h2 class="text-2xl text-gray-800 font-semibold mb-4">Movimentação em Lote</h2>
+
+            <div class="mb-4">
+                <input type="text" id="searchProductInput" oninput="filterProducts()" placeholder="Pesquisar produtos..."
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
+            </div>
+        </div>
+
+        <div class="modal-body" >
+            <!-- Tabela de Produtos -->
+            <div class="table-wrapper overflow-x-hidden" style="border-bottom-width: 10px;">
+                <table class="w-full text-left table-auto">
+                    <thead class="sticky top-0 bg-white shadow">
+                        <tr class="text-gray-800">
+                            <th class="py-2 px-2">Produto</th>
+                            <th class="py-2 px-2">Quantidade Atual</th>
+                            <th class="py-2 px-2">Quantidade</th>
+                            <th class="py-2 px-2">Tipo de Movimento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        {% for produto in produtos %}
+                        <tr class="hover:bg-gray-100 text-gray-800">
+                            <td class="py-2 px-2">{{ produto.nome }}</td>
+                            <td class="py-2 px-2">{{ produto.quantidade }}</td>
+                            <td class="py-2 px-2">
+                                <input type="number" name="quantidades[{{ produto.id }}]" min="0" step="0.001"
+                                    class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
+                            </td>
+                            <td class="py-2 px-2">
+                                <select name="movimentos[{{ produto.id }}]" required
+                                    class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
+                                    <option value="Saida">Saída</option>
+                                    <option value="Entrada">Entrada</option>
+                                    <option value="Transferencia">Transferência</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Botão de Confirmação -->
+        <form method="post" action="" class="mt-4">
+            {% csrf_token %}
+            <div class="sticky-footer">
+                <button type="submit"
+                style="margin-bottom: 5px;"
+                class="w-full bg-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
+                    Confirmar Movimentação
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function closeBatchMovementModal() {
+        const modal = document.getElementById('batchMovementModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function openBatchMovementModal() {
+        const modal = document.getElementById('batchMovementModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function filterProducts() {
+        const searchValue = document.getElementById('searchProductInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#productTableBody tr');
+        rows.forEach(row => {
+            const productName = row.cells[0].innerText.toLowerCase();
+            if (productName.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('batchMovementModal');
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    });
+</script>

@@ -9,55 +9,47 @@ from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
 from django.http import HttpResponseNotAllowed, HttpResponse
-from django.db.models import Sum
-from datetime import datetime, timedelta
+
+
 
 
 def obter_dados(request):
-    # Filtro opcional por tipo de movimento
-    filtro = request.GET.get('filtro', 'default')
+    # Pegar todas as categorias
+    loja = Loja.objects.get(id=request.user.loja.id)
+    categorias = Categoria.objects.filter(loja=loja)
+    fornecedores = Fornecedor.objects.filter(loja=loja)
+    produtos = Produto.objects.filter(loja=loja)
+    movimentodeestoque = MovimentoEstoque.objects.filter(loja=loja)
 
-    # Obtendo a loja associada ao usuário atual (se aplicável)
-    user_loja = request.user.loja
+    # Dados para movimentações
+    total_mov_categoria = {
+        categoria.nome: sum(
+            mov.quantidade for mov in movimentodeestoque if mov.produto.categoria == categoria
+        )
+        for categoria in categorias
+    }
 
-    # Filtrar movimentos por loja do usuário (se aplicável)
-    movimentos = MovimentoEstoque.objects.filter(loja=user_loja)
+    total_mov_fornecedor = {
+        fornecedor.nome: sum(
+            mov.quantidade for mov in movimentodeestoque if mov.produto.fornecedor == fornecedor
+        )
+        for fornecedor in fornecedores
+    }
 
-    # Filtrar por tipo de movimento, se especificado
-    if filtro in ['entrada', 'saida', 'transferencia']:
-        movimentos = movimentos.filter(tipo_movimento=filtro)
+    total_mov_produto = {
+        produto.nome: sum(
+            mov.quantidade for mov in movimentodeestoque if mov.produto == produto
+        )
+        for produto in produtos
+    }
 
-    # Dados agregados por mês
-    hoje = datetime.today()
-    meses = [(hoje - timedelta(days=30 * i)).strftime('%b') for i in range(2, -1, -1)]
-    movimentos_por_mes = [
-        movimentos.filter(data_movimento__month=(hoje - timedelta(days=30 * i)).month).aggregate(
-            total=Sum('quantidade')
-        )['total'] or 0 for i in range(2, -1, -1)
-    ]
-
-    # Dados para gráfico de barras e linha
-    labels = meses
-    values_barra = movimentos_por_mes
-    values_linha = [mov * 1.1 for mov in movimentos_por_mes]  # Exemplo de variação (pode ajustar)
-
-    # Dados para gráfico donut
-    tipos_movimento = ['entrada', 'saida', 'transferencia']
-    values_donut = [
-        movimentos.filter(tipo_movimento=tipo).aggregate(total=Sum('quantidade'))['total'] or 0
-        for tipo in tipos_movimento
-    ]
-
-    # Labels para o gráfico donut
-    donut_labels = ['Entradas', 'Saídas', 'Transferências']
-
+    # Retornar como JSON
     return JsonResponse({
-        'labels': labels,
-        'values_barra': values_barra,
-        'values_linha': values_linha,
-        'values_donut': values_donut,
-        'donut_labels': donut_labels
+        "total_mov_categoria": total_mov_categoria,
+        "total_mov_fornecedor": total_mov_fornecedor,
+        "total_mov_produto": total_mov_produto,
     })
+
 
 def dashboard(request):
     return render(request, 'dashboard.html')
@@ -88,7 +80,6 @@ def login(request):
 def produtoview(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
-    
     
     hoje = date.today()
     return render(request, 'produtoview.html', {'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})

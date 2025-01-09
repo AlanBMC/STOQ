@@ -1,168 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estilizado</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #c4c4d6; /* Fundo escuro */
-            color: #e2dddd;
-        }
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 3fr;
-            gap: 20px;
-            padding: 20px;
-        }
-        .sidebar {
-            background-color: #e4e4eb;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .sidebar select, .sidebar input {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #dbdbdb;
-            color: #fff;
-        }
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .chart-container {
-            background-color: #252532;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        canvas {
-            max-width: 100%;
-        }
-    </style>
-</head>
-<body>
-    <h1>Dashboard Estilizado</h1>
-    <div class="container">
-        <div class="sidebar">
-            <h2>Filtros</h2>
-            <select>
-                <option>Ano</option>
-                <option>2023</option>
-                <option>2024</option>
-            </select>
-            <select>
-                <option>Mês</option>
-                <option>Janeiro</option>
-                <option>Fevereiro</option>
-            </select>
-            <input type="date">
-            <input type="date">
+
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body{
+        padding: 0;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .chart-container {
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+    <!-- Gráficos -->
+    <div class="dashboard">
+        <div class="chart-container">
+            <canvas id="lineChart"></canvas>
         </div>
-        <div class="dashboard">
-            <div class="chart-container">
-                <canvas id="graficoBarra"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="graficoLinha"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="graficoDonut"></canvas>
-            </div>
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="pieChart"></canvas>
         </div>
     </div>
 
-    <script>
-        // Carregar os dados dinamicamente da view Django
-        fetch('/obter-dados/')  // Ajuste a URL para corresponder à rota configurada
-            .then(response => response.json())
-            .then(data => {
-                // Gráfico de Barras
-                const ctxBarra = document.getElementById('graficoBarra').getContext('2d');
-                new Chart(ctxBarra, {
-                    type: 'bar',
-                    data: {
-                        labels: data.labels,
-                        datasets: [{
-                            label: 'Movimentos de Estoque (Barras)',
-                            data: data.values_barra,
-                            backgroundColor: ['#4CAF50', '#FF5722', '#FFC107'], // Cores dos gráficos
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'top', labels: { color: '#fff' } },
-                            title: { display: true, text: 'Resumo dos Movimentos (Barras)', color: '#fff' }
-                        },
-                        scales: {
-                            x: { ticks: { color: '#fff' } },
-                            y: { ticks: { color: '#fff' } }
-                        }
-                    }
-                });
+<script>
+    // Função para buscar os dados
+    async function fetchData() {
+        const response = await fetch('/obter-dados/');
+        const data = await response.json();
+        return data;
+    }
 
-                // Gráfico de Linha
-                const ctxLinha = document.getElementById('graficoLinha').getContext('2d');
-                new Chart(ctxLinha, {
-                    type: 'line',
-                    data: {
-                        labels: data.labels,
-                        datasets: [{
-                            label: 'Movimentos de Estoque (Linhas)',
-                            data: data.values_linha,
-                            borderColor: '#3e95cd',
-                            fill: false,
-                            tension: 0.1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'top', labels: { color: '#fff' } },
-                            title: { display: true, text: 'Resumo dos Movimentos (Linhas)', color: '#fff' }
-                        },
-                        scales: {
-                            x: { ticks: { color: '#fff' } },
-                            y: { ticks: { color: '#fff' } }
-                        }
-                    }
-                });
+    fetchData().then(data => {
+        const totalMovCategoria = data.total_mov_categoria;
+        const totalMovFornecedor = data.total_mov_fornecedor;
+        const totalMovProduto = data.total_mov_produto;
 
-                // Gráfico Donut
-                const ctxDonut = document.getElementById('graficoDonut').getContext('2d');
-                new Chart(ctxDonut, {
-                    type: 'doughnut',
-                    data: {
-                        labels: data.donut_labels,
-                        datasets: [{
-                            label: 'Distribuição de Movimentos',
-                            data: data.values_donut,
-                            backgroundColor: ['#36A2EB', '#FF6384'], // Cores dos setores
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'top', labels: { color: '#fff' } },
-                            title: { display: true, text: 'Distribuição de Movimentos (Donut)', color: '#fff' }
-                        }
+        // Filtrar apenas categorias com movimentação para o gráfico de pizza
+        const pieChartLabels = Object.keys(totalMovProduto).filter(key => totalMovProduto[key] > 0);
+        const pieChartData = pieChartLabels.map(label => totalMovProduto[label]);
+
+        // Dados para o gráfico de linhas
+        const lineChartLabels = Object.keys(totalMovCategoria);
+        const lineChartData = Object.values(totalMovCategoria);
+
+        const lineChart = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: lineChartLabels,
+                datasets: [{
+                    label: 'Movimentação por Categoria',
+                    data: lineChartData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
                     }
-                });
-            })
-            .catch(error => console.error('Erro ao carregar os dados:', error));
-    </script>
-</body>
-</html>
+                }
+            }
+        });
+
+        // Dados para o gráfico de barras
+        const barChartLabels = Object.keys(totalMovFornecedor);
+        const barChartData = Object.values(totalMovFornecedor);
+
+        const barChart = new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: barChartLabels,
+                datasets: [{
+                    label: 'Movimentação por Fornecedor - Quantidade',
+                    data: barChartData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+        // Gráfico de pizza
+        const pieChart = new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: pieChartLabels,
+                datasets: [{
+                    label: 'Movimentação por Produto',
+                    data: pieChartData,
+                    backgroundColor: [
+    'rgba(255, 179, 186, 0.5)', // Rosa pastel
+    'rgba(174, 198, 207, 0.5)', // Azul pastel
+    'rgba(255, 223, 186, 0.5)', // Amarelo pastel
+    'rgba(170, 238, 187, 0.5)', // Verde pastel
+    'rgba(204, 192, 255, 0.5)'  // Lilás pastel
+],
+borderColor: [
+    'rgba(255, 179, 186, 1)', // Rosa pastel
+    'rgba(174, 198, 207, 1)', // Azul pastel
+    'rgba(255, 223, 186, 1)', // Amarelo pastel
+    'rgba(170, 238, 187, 1)', // Verde pastel
+    'rgba(204, 192, 255, 1)'  // Lilás pastel
+],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{%endblock%}

@@ -92,6 +92,12 @@
             <i class="fas fa-shopping-cart text-xl"></i>
             <p>Estoque</p>
         </a>
+
+        <a href="{% url 'dashboard' %}" 
+        class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'dashboard' %} active {% endif %}">
+         <i class="fas fa-shopping-cart text-xl"></i>
+         <p>dashboard</p>
+     </a>
     </div>
 </div>
 
