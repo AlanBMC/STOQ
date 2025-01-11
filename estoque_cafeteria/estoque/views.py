@@ -695,7 +695,9 @@ def cria_movimento_de_estoque_em_lote2(request):
                 if produto.quantidade < float(quantidades[indice]):
                     mensagem.append(f'Quantidade insuficiente para transferência: {produto.nome}.')
                     continue
-
+                if not loja_destino_id[indice]:
+                    mensagem.append(f'Loja destino não selecionada. Produto {produto.nome} não transferido.')
+                    continue
                 loja_destino = Loja.objects.get(id=loja_destino_id[indice])
                 print(loja_destino)
                 if not loja_destino:
@@ -709,8 +711,8 @@ def cria_movimento_de_estoque_em_lote2(request):
 
                 if not produto_destino:
                     # Criar categoria e fornecedor, se necessário
-                    categoria, _ = Categoria.objects.get_or_create(nome='Transferência', loja=loja_destino)
-                    fornecedor, _ = Fornecedor.objects.get_or_create(nome='Transferência', loja=loja_destino)
+                    categoria, _ = Categoria.objects.get_or_create(nome=produto.categoria.nome, loja=loja_destino)
+                    fornecedor, _ = Fornecedor.objects.get_or_create(nome=produto.fornecedor.nome, loja=loja_destino)
                     # Criar o produto na loja de destino
                     produto_destino = Produto.objects.create(
                         nome=produto.nome,
