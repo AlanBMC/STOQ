@@ -1,13 +1,19 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.login, name='login'),
     path('logout/', views.logout_view, name='logout_view'),
+    path('cadastrauser/', views.cadastra_usuario_loja, name='cadastra_usuario_loja'),
+
     path('produtoview/', views.produtoview, name='produtoview'),
     path('estoqueview/', views.estoqueview, name='estoqueview'),
     path('configuracaoview/', views.configuracaoview, name='configuracaoview'),
+
+    #ROTAS TESTES
+    path('listar_todos_produtos/<int:loja_id>/', views.listar_todos_produtos, name='listar_todos_produtos'),
 
     #DASHBOARD
     path('dashboard/', views.dashboard, name='dashboard'),

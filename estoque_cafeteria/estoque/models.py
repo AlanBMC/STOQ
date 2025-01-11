@@ -76,6 +76,6 @@ class MovimentoEstoque(models.Model):
     data_movimento = models.DateTimeField(auto_now_add=True)
     responsavel = models.ForeignKey(User, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
-
+    
     def __str__(self):
         return f"{self.tipo_movimento} - {self.produto.nome} ({self.quantidade})"

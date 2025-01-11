@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '*',  'estoque-cafeteria-v6.onrender.com'# Permite qualquer subdomínio do ngrok
 ]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CSRF_TRUSTED_ORIGINS = [
     'https://estoque-cafeteria-v6.onrender.com',  # Permite domínios ngrok para requisições POST
@@ -87,6 +88,12 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'alanbmc00@gmail.com'
+EMAIL_HOST_PASSWORD = 'moraesqw090303#'
 
 
 # Password validation
