@@ -78,72 +78,9 @@ def login(request):
     
     return HttpResponseNotAllowed(['GET', 'POST'])
 
-def cadastra_usuario_loja(request):
-    if request.method == 'POST':
-        nome = request.POST['nome']
-        email = request.POST['email']
-        senha = request.POST['senha']
-        confirmasenha = request.POST['confirmasenha']
-        loja_nome = request.POST['loja']
-
-        if senha != confirmasenha:
-            messages.error(request, 'As senhas não coincidem.')
-            return redirect('cadastra_usuario_loja')
-        if not validate_email(email):
-            messages.error(request, 'O e-mail fornecido não é válido.')
-            return redirect('cadastra_usuario_loja')
-        if User.objects.filter(username=email).exists():
-            messages.error(request, 'O e-mail já está em uso.')
-            return redirect('cadastra_usuario_loja')
-        if User.objects.filter(username=nome).exists():
-            messages.error(request, 'O nome já está em uso.')
-        if Loja.objects.filter(nome=loja_nome).exists():
-            messages.error(request, 'O nome da loja já está em uso.')
-            return redirect('cadastra_usuario_loja')
-
-        # Cria a loja
-        loja = Loja.objects.create(nome=loja_nome)
-
-        # Cria o usuário
-        user = User.objects.create_user(username=email, email=email, password=senha, first_name=nome)
-        user.loja = loja
-        user.save()
-
-        # Adiciona o usuário ao grupo de proprietário
-        grupo_proprietario = Group.objects.get(name='Proprietario')
-        user.groups.add(grupo_proprietario)
-
-        messages.success(request, 'Usuário cadastrado com sucesso.')
-        return redirect('login')
-
-    return render(request, 'cadastra_user.html')
 
 
 
-def listar_todos_produtos(request, loja_id):
-    try:
-        loja = Loja.objects.get(id=loja_id)
-    except Loja.DoesNotExist:
-        return JsonResponse({'error': 'Loja não encontrada'}, status=404)
-
-    produtos = Produto.objects.filter(loja=loja)
-    produtos_list = []
-
-    for produto in produtos:
-        produtos_list.append({
-            'nome': produto.nome,
-            'quantidade': produto.quantidade,
-            'tipo_quantidade': produto.tipo_quantidade,
-            'codigo_de_barras': produto.codigo_de_barras,
-            'validade': produto.validade,
-            'fornecedor': produto.fornecedor.nome if produto.fornecedor else None,
-            'categoria': produto.categoria.nome if produto.categoria else None,
-            'estoque_minimo': produto.estoque_minimo,
-            'loja': produto.loja.nome,
-            'status': produto.status,
-        })
-
-    return JsonResponse(produtos_list, safe=False)
 
 @login_required(login_url='/')
 def produtoview(request):
