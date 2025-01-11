@@ -37,7 +37,7 @@
                     <input type="number" id="quantidade" name="quantidade" required step="1" min="1"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
-            
+                
                 <!-- Campo de Tipo de Quantidade -->
                 <div class="w-1/2">
                     <label for="tipo_quantidade" class="block text-color-4 text-sm font-semibold mb-2">Tipo de Quantidade</label>
@@ -74,14 +74,20 @@
                     </select>
                 </div>
             </div>
-            <div class="mb-4">
-                <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
-                <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validade" name="validade" required
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-            </div>
             
-
-
+            <div class="flex space-x-4" style="margin: 5px;">
+                <div class="mb-4">
+                    <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
+                    <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validade" name="validade" required
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
+                    <input type="number" id="estoque_min" name="estoque_min"  step="0.001" min="1"
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+    
+            </div>
             <div class="flex space-x-4" style="margin: 5px;">
     
                 <!-- Fornecedor -->

@@ -54,7 +54,11 @@
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
                         <div class="flex space-x-3 items-center">
                             <a type="button" class="no-border text-blue-500 p-1"
-                                onclick="abrirModalEditarProduto('{{produto.id}}','{{produto.nome}}','{{produto.status}}','{{produto.quantidade}}','{{produto.tipo_quantidade}}','{{produto.validade}}','{{produto.codigo_de_barras}}','{{produto.fornecedor_id}}','{{produto.categoria_id}}')">
+                                onclick="abrirModalEditarProduto('{{produto.id}}',
+                                '{{produto.nome}}','{{produto.status}}',
+                                '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
+                                '{{produto.validade}}','{{produto.codigo_de_barras}}',
+                                '{{produto.fornecedor_id}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a type="button" class="no-border text-red-500 p-1"
@@ -140,13 +144,21 @@
                     </select>
                 </div>
             </div>
-            <div class="mb-4">
-                <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
-                <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validadeEdit" name="validade"
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-            </div>
+          
             
-
+            <div class="flex space-x-4" style="margin: 5px;">
+                <div class="mb-4">
+                    <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
+                    <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validadeEdit" name="validade" 
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
+                    <input type="number" id="estoqueMin" name="estoque_min" 
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+    
+            </div>
 
             <div class="flex space-x-4" style="margin: 5px;">
                 <input type="hidden" name="produto_id" id="produtoId">
@@ -263,7 +275,8 @@
     }
 
     // Função que abre o modal e preenche com os dados do produto
-    function abrirModalEditarProduto( produto_id, nome, status, quantidade, tipo_quantidade, validade, codigo_de_barras, fornecedor_id, categoria_id) {
+    function abrirModalEditarProduto( produto_id, nome, 
+    status, quantidade, tipo_quantidade, validade, codigo_de_barras, fornecedor_id, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
         const nomeField = document.getElementById('nomeProduto');
         const produto_idField = document.getElementById('produtoId');
@@ -274,7 +287,10 @@
         const fornecedor_idField = document.getElementById('Fornecedor');
         const categoria_idField = document.getElementById('Categoria');
         const statusField = document.getElementById('statusEdit');
+
+        const estoquemin = document.getElementById('estoqueMin');
         // Preenche os campos do modal com os valores passados
+        console.log(estoqueminimo);
         nomeField.value = nome;
         quantidadeField.value = quantidade;
         produto_idField.value = produto_id;
@@ -292,7 +308,7 @@
         }
         
 
-        
+        estoquemin.value = estoqueminimo;
 
         codigo_de_barrasField.value = codigo_de_barras;
         for (let i = 0; i < categoria_idField.options.length; i++) {

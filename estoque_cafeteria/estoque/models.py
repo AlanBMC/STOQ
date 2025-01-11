@@ -50,7 +50,7 @@ class Produto(models.Model):
     validade = models.DateField(null=True, blank=True)
     fornecedor = models.ForeignKey(Fornecedor, on_delete=SET_NULL, null=True, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=SET_NULL, null=True, blank=True)
-
+    estoque_minimo = models.FloatField(default=0)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
     
     status = models.CharField(

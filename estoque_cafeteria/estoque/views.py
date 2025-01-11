@@ -9,6 +9,7 @@ from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
 from django.http import HttpResponseNotAllowed, HttpResponse
+from django.core.mail import send_mail
 
 
 
@@ -327,7 +328,7 @@ def criar_produto(request):
         validade = request.POST.get('validade')
         fornecedor_id = request.POST.get('Fornecedor')
         categoria_id = request.POST.get('Categoria')
-
+        estoque_min = request.POST.get('estoque_min')
         # Verifica se o produto já existe na mesma loja
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
             messages.error(request, 'Produto com esse nome já existe.')
@@ -344,6 +345,7 @@ def criar_produto(request):
             validade=validade,
             fornecedor_id=fornecedor_id,
             categoria_id=categoria_id,
+            estoque_minimo=estoque_min,
             loja=request.user.loja
         )
         messages.success(request, 'Produto criado com sucesso.')
@@ -370,7 +372,7 @@ def editar_produto(request):
         validade = request.POST.get('validade')
         fornecedor_id = request.POST.get('Fornecedor')
         categoria_id = request.POST.get('Categoria')
-        
+        estoquemin = request.POST.get('estoque_min')
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
@@ -390,7 +392,9 @@ def editar_produto(request):
         produto.codigo_de_barras = codigo_de_barras
         if validade:
             produto.validade = validade
-
+        if estoquemin:
+            print(estoquemin)
+            produto.estoque_minimo = estoquemin
         produto.fornecedor_id = fornecedor_id
         produto.categoria_id = categoria_id
         produto.save()
@@ -436,10 +440,15 @@ def func_notifica_vencimento(request):
     all_produtos = listar_produtos(request)
     hoje = date.today()
 
+    # Categorias de alerta para validade
     alerta_60 = []
     alerta_30 = []
     alerta_14 = []
-    notificacoes = request.session.get('notificacoes')
+
+    # Lista para armazenar notificações
+    notificacoes = []
+
+    # Verificação de validade dos produtos
     for produto in all_produtos:
         if produto.validade:
             diferenca = produto.validade - hoje
@@ -451,7 +460,7 @@ def func_notifica_vencimento(request):
             elif timedelta(days=31) <= diferenca <= timedelta(days=60):
                 alerta_60.append(produto)
 
-    notificacoes = []
+    # Adicionando notificações de validade
     for produto in alerta_14:
         notificacoes.append({
             'tipo': 'urgente',
@@ -470,27 +479,27 @@ def func_notifica_vencimento(request):
             'icone': 'fas fa-check-circle text-green-500',
             'mensagem': f'O produto {produto.nome} vence em menos de 60 dias.',
         })
-    for produto in all_produtos:
-        if produto.quantidade is not None:
-            # Definir limites diferentes por unidade
-            limite_minimo = {
-                'L': 10,
-                'KG': 5,
-                'UN': 20,
-                'PCT': 3,
-                'G': 100
-            }
-            unidade = produto.tipo_quantidade.upper()
 
-            # Verifica se a quantidade está abaixo do limite
-            if unidade in limite_minimo and produto.quantidade <= limite_minimo[unidade]:
+    # Verificação de estoque mínimo
+    for produto in all_produtos:
+        if produto.quantidade is not None and produto.estoque_minimo is not None:
+            if produto.quantidade < produto.estoque_minimo:
                 notificacoes.append({
                     'tipo': 'estoque',
                     'icone': 'fas fa-box text-yellow-500',
-                    'mensagem': f'O produto {produto.nome} está com baixo estoque ({produto.quantidade} {unidade.upper()}).',
+                    'mensagem': f'O produto {produto.nome} está com baixo estoque \n Quantidade atual: ({produto.quantidade} {produto.tipo_quantidade.upper()}).',
                 })
+            elif produto.quantidade <= produto.estoque_minimo + 1 or (produto.tipo_quantidade.upper() == 'G' and produto.quantidade <= produto.estoque_minimo + 500):
+                notificacoes.append({
+                    'tipo': 'estoque_perto',
+                    'icone': 'fas fa-exclamation-circle text-orange-500',
+                    'mensagem': f'O produto {produto.nome} está
+                      perto de atingir o estoque mínimo  \n Quantidade atual: ({produto.quantidade} {produto.tipo_quantidade.upper()}) \n Quantidade minima {produto.estoque_minimo} .',
+                })
+    # Salvando notificações na sessão
     request.session['notificacoes'] = notificacoes
     request.session['total_notificacoes'] = len(notificacoes)
+
 
     
 
