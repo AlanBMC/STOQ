@@ -129,7 +129,7 @@ def cria_usuario(request):
         return redirect('configuracaoview')  # Redireciona para uma página de erro ou home
 
     if request.method == 'POST':
-        loja = Loja.objects.get(id=1)
+        loja = Loja.objects.get(id=request.user.loja.id)
         nome = request.POST.get('nome')
         grupo_funcionario = Group.objects.get(name='Funcionario')
         if not User.objects.filter(username=nome).exists():
