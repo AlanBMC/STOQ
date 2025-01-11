@@ -46,7 +46,7 @@ class Produto(models.Model):
     nome = models.CharField(max_length=100)
     quantidade = models.FloatField()
     tipo_quantidade = models.CharField(max_length=20, choices=TIPO_QUANTIDADE_CHOICES)
-    codigo_de_barras = models.CharField(max_length=50, unique=True)
+    codigo_de_barras = models.CharField(max_length=50)
     validade = models.DateField(null=True, blank=True)
     fornecedor = models.ForeignKey(Fornecedor, on_delete=SET_NULL, null=True, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=SET_NULL, null=True, blank=True)
@@ -58,6 +58,8 @@ class Produto(models.Model):
         choices=STATUS_CHOICES,
         default='em_estoque'
     )
+    class Meta:
+        unique_together = ('codigo_de_barras', 'loja')  # Restringe a unicidade para código de barras e loja
 
     def __str__(self):
         return f"{self.nome} - {self.quantidade} {self.tipo_quantidade} ({self.status})"
@@ -76,6 +78,6 @@ class MovimentoEstoque(models.Model):
     data_movimento = models.DateTimeField(auto_now_add=True)
     responsavel = models.ForeignKey(User, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
-    
+
     def __str__(self):
         return f"{self.tipo_movimento} - {self.produto.nome} ({self.quantidade})"
