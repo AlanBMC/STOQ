@@ -33,25 +33,28 @@
 
 </style>
     <!-- Gráficos -->
+
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
     <div class="dashboard">
-        
-        <div class="chart-container">
+       
+        <div id="step1" class="chart-container">
             <H1>Movimento por categoria</H1>
             <canvas id="lineChart" ></canvas>
-
+            
         </div>
-        <div class="chart-container">
+        <div id="step2" class="chart-container">
             <H1>Movimento por Fornecedor</H1>
             <canvas id="barChart"></canvas>
         </div>
-        <div class="chart-container">
+        <div id="step3" class="chart-container">
             <H1>Movimento por Produto</H1>
-            <H3>Soma</H3>
+            
             <canvas id="pieChart"></canvas>
         </div>
-        <div class="chart-container">
+        <div id="step4" class="chart-container">
             <H1>Movimento por Produto </H1>
-            <H3>Contagem</H3>
+            
             <canvas id="PolarChart"></canvas>
         </div>
       
@@ -208,6 +211,22 @@
         });
     });
 
-
 </script>
+
+<script>
+const driver = window.driver.js.driver;
+
+const driverObj = driver({
+    showProgress: true,
+    steps: [
+        {element: "#step1",popover: {title: "Grafico de Categoria ",description: "Faz uma contagem total de movimentação por categoria"}},
+        {element: "#step2",popover: {title: "Grafico de Fornecedor ",description: "Faz uma contagem total de movimentação por fornecedor"}},
+        {element: "#step3",popover: {title: "Movimento por Produto ",description: "Faz uma soma(soma a quantidade) total de movimentação por produto"}},
+        {element: "#step4",popover: {title: "Movimento por Produto ",description: "Faz uma Contagem total de movimentação por produto"}},
+
+    ]
+});
+driverObj.drive();
+</script>
+
 {%endblock%}

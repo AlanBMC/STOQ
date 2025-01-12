@@ -53,7 +53,7 @@
                     </td>
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
                         <div class="flex space-x-3 items-center">
-                            <a type="button" class="no-border text-blue-500 p-1"
+                            <a type="button" id="botao-edita-produto" class="no-border text-blue-500 p-1"
                                 onclick="abrirModalEditarProduto('{{produto.id}}',
                                 '{{produto.nome}}','{{produto.status}}',
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
@@ -61,15 +61,15 @@
                                 '{{produto.fornecedor_id}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a type="button" class="no-border text-red-500 p-1"
+                            <a type="button" id="botao-excluir-produto" class="no-border text-red-500 p-1"
                                 onclick="confirmarExclusao('{{ produto.id }}')">
                                 <i class="fas fa-trash"></i>
                             </a>
-                            <a type="button" class="no-border text-red-500 p-1"
+                            <a type="button" id="botao-movimento-estoque" class="no-border text-red-500 p-1"
                                 onclick="abreModalAddMovimento('{{produto.nome}}', '{{produto.id}}', '{{produto.quantidade}}', '{{produto.status}}')">
                                 <i class="fa-solid fa-dolly"></i>
                             </a>
-                            <a type="button" class="no-border text-red-500 p-1"
+                            <a type="button" id="botao-movimento-estoque-lote" class="no-border text-red-500 p-1"
                             onclick=
                             "openBatchMovementModal()">
                             <i class="fa-brands fa-opencart"></i>
