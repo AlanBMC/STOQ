@@ -74,6 +74,19 @@ def dashboard(request):
 
 def login(request):
     '''
+    Handles user login requests.
+    Supports the following HTTP methods:
+    - HEAD: Returns a 200 status code to indicate the server is reachable.
+    - POST: Authenticates the user with the provided credentials (username and password).
+      If authentication is successful, logs the user in, triggers a notification function,
+      and redirects to the 'produtoview' page. If authentication fails, displays an error
+      message and redirects back to the login page.
+    - GET: Renders the login page.
+    Parameters:
+    request (HttpRequest): The HTTP request object containing method and data.
+    Returns:
+    HttpResponse: Depending on the request method and authentication result, returns an
+    appropriate HTTP response.
     
     '''
     if request.method == 'HEAD':
