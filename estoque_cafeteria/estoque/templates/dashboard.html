@@ -38,7 +38,6 @@
         <div class="chart-container">
             <H1>Movimento por categoria</H1>
             <canvas id="lineChart" ></canvas>
-            <button onclick="downloadAllChartsAsPDF()">Baixar em PDF</button>
 
         </div>
         <div class="chart-container">
@@ -66,33 +65,6 @@
         return data;
     }
     
-    async function downloadAllChartsAsPDF() {
-    const { jsPDF } = window.jspdf; // Obtém o jsPDF
-    const pdf = new jsPDF(); // Cria um novo PDF
-    const chartIds = ['lineChart', 'barChart', 'pieChart', 'PolarChart']; // IDs dos gráficos
-
-    for (let i = 0; i < chartIds.length; i++) {
-        const chartElement = document.getElementById(chartIds[i]);
-
-        // Captura o gráfico como imagem usando html2canvas
-        const canvas = await html2canvas(chartElement);
-        const imgData = canvas.toDataURL('image/png');
-
-        // Calcula proporções para a imagem no PDF
-        const imgWidth = 190; // Largura máxima da imagem no PDF
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Adiciona a imagem no PDF
-        if (i > 0) {
-            pdf.addPage(); // Adiciona uma nova página no PDF para o próximo gráfico
-        }
-        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    }
-
-    // Salva o arquivo PDF
-    pdf.save('TodosOsGraficos.pdf');
-}
-
 
 
     fetchData().then(data => {
