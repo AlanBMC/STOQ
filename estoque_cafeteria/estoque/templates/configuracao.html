@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {%load static %}
-
+{%block title%} Configurações {%endblock%}
 {% block content %}
 <style>
   
@@ -8,7 +8,6 @@
     overflow: hidden;
 }
 </style>
-{% block title %}Configurações{% endblock %}
 
 <div class=" bg-gray-100 flex flex-col items-center p-6">
 
@@ -203,7 +202,7 @@
             steps: [
                 {element: "#editar-nome",popover: {title: "Editar nome",description: "Edite o nome do usuário"}},
                 {element: "#editar-senha",popover: {title: "Editar senha",description: "Edite a senha do usuário Recomentamos que a senha tenha pelo menos 8 caracteres"}},
-                {element: "#criar-usuario",popover: {title: "Criar usuário",description: "Disponivel somente para proprietários"}},
+                {element: "#criar-usuario",popover: {title: "Criar usuário",description: "Disponível somente para proprietários"}},
                 {element: "#listar-usuarios",popover: {title: "Lista todos os usuários da loja",description: "Lista todos os usuários da loja, e permite excluir (disponivel somente para proprietários)"}},
 
                 
