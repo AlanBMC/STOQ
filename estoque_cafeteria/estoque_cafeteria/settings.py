@@ -27,11 +27,11 @@ SECRET_KEY = 'django-insecure-6#nkm(kgo+)ofvln%sc@cvrwrmxpeid5gz()t+^3qy1xr+77nu
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',  'estoque-cafeteria-v6.onrender.com'# Permite qualquer subdomínio do ngrok
+    '*',  'estoque-cafeteria-v1.onrender.com'# Permite qualquer subdomínio do ngrok
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://estoque-cafeteria-v6.onrender.com',  # Permite domínios ngrok para requisições POST
+    'https://estoque-cafeteria-v1.onrender.com',  # Permite domínios ngrok para requisições POST
         'https://*.ngrok-free.app',  # Permite testes locais com ngrok
 
 ]
@@ -136,3 +136,4 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Para produção (collectstatic)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

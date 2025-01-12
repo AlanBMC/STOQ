@@ -9,8 +9,7 @@ from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta
 from django.http import HttpResponseNotAllowed, HttpResponse
-from django.core.mail import send_mail
-from validate_email import validate_email
+
 
 
 
@@ -24,33 +23,47 @@ def obter_dados(request):
     movimentodeestoque = MovimentoEstoque.objects.filter(loja=loja)
 
     # Dados para movimentações
+    
+
     total_mov_categoria = {
-        categoria.nome: sum(
-            mov.quantidade for mov in movimentodeestoque if mov.produto.categoria == categoria
-        )
+        categoria.nome: {
+
+        "soma":sum(mov.quantidade for mov in movimentodeestoque if mov.produto.categoria == categoria),
+        "contagem": sum(1 for mov in movimentodeestoque if mov.produto.categoria == categoria)
+        }
+        
         for categoria in categorias
     }
-
     total_mov_fornecedor = {
         fornecedor.nome: sum(
-            mov.quantidade for mov in movimentodeestoque if mov.produto.fornecedor == fornecedor
+            1 for mov in movimentodeestoque if mov.produto.fornecedor == fornecedor
         )
         for fornecedor in fornecedores
     }
 
+    contagemporproduto = {
+        produto.nome: {
+            "quantidade_mov": sum(1 for mov in movimentodeestoque if mov.produto == produto),
+            "quantidade_total": sum(mov.quantidade for mov in movimentodeestoque if mov.produto == produto)
+        }
+        for produto in produtos
+    }
     total_mov_produto = {
         produto.nome: sum(
             mov.quantidade for mov in movimentodeestoque if mov.produto == produto
         )
         for produto in produtos
     }
-
+    
     # Retornar como JSON
     return JsonResponse({
         "total_mov_categoria": total_mov_categoria,
         "total_mov_fornecedor": total_mov_fornecedor,
         "total_mov_produto": total_mov_produto,
+        "contagemproduto": contagemporproduto
     })
+
+
 
 
 def dashboard(request):
@@ -398,7 +411,7 @@ def editar_produto(request):
         if validade:
             produto.validade = validade
         if estoquemin:
-            print(estoquemin)
+            
             produto.estoque_minimo = estoquemin
         produto.fornecedor_id = fornecedor_id
         produto.categoria_id = categoria_id
@@ -699,7 +712,6 @@ def cria_movimento_de_estoque_em_lote2(request):
                     mensagem.append(f'Loja destino não selecionada. Produto {produto.nome} não transferido.')
                     continue
                 loja_destino = Loja.objects.get(id=loja_destino_id[indice])
-                print(loja_destino)
                 if not loja_destino:
                     mensagem.append(f'Loja destino não encontrada. Produto {produto.nome} não transferido.')
                     continue
