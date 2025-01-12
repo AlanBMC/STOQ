@@ -212,4 +212,19 @@ window.onclick = function(event) {
     }
 }
 </script>
+<script>
+       const driver = window.driver.js.driver;
+
+const driverObj = driver({
+    showProgress: true,
+    steps: [
+    {element: "#notificationBtn",popover: {title: "Notificação",description: "Aqui você pode ver as notificações do sistema"}},
+    {element: "#botaosair",popover: {title: "Sair",description: "Aqui você pode sair do sistema"}},
+
+   
+        
+    ]
+});
+driverObj.drive();
+</script>
 {% endblock %}

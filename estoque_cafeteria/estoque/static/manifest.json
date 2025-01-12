@@ -21,15 +21,15 @@
     ],
     "screenshots": [
         {
-          "src": "/static/images/print1200.png",
-          "sizes": "1200x800",
+          "src": "/static/images/printtablet.png",
+          "sizes": "2360x1640",
           "type": "image/png",
           "form_factor": "wide"
         },
         {
-          "src": "/static/images/print800.png",
-          "sizes": "800x1200",
-          "type": "image/png"
+          "src": "/static/images/printcelular.jpg",
+          "sizes": "720x1505",
+          "type": "image/jpg"
         }
       ]
   }

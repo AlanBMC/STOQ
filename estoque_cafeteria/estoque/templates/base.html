@@ -23,14 +23,14 @@
         <div class="w-1/7"></div>
         <h1 class="text-2xl font-semibold color-3  ">{% block header %}the coffee. ザ・コーヒー{% endblock %}</h1>
 
-        <div class="relative" id="notificacao-sino">
+        <div class="relative" >
             <a class="no-border text-color-1 relative" id="notificationBtn">
                 <i class="fas fa-bell text-2xl"></i>
                 <span class="absolute top-0 right-0 bg-red-500 h-4 w-4 
                 rounded-full flex items-center justify-center text-xs text-white">{{ request.session.total_notificacoes }}</span>
             </a>
             
-                <a href="{% url 'logout_view'%}" class="ml-10" >
+                <a href="{% url 'logout_view'%}" id="botaosair" class="ml-10" >
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </a>
                 {%include 'componentes/notificacao.html' %}
@@ -130,24 +130,6 @@
 
   
 </script>
-<script>
-    const driver = window.driver.js.driver;
 
-const driverObj = driver({
-    showProgress: true,
-    steps: [
-        {element: "#input-busca-produto",popover: {title: "Filtro de busca",description: "Digite o nome do produto ou o codigo de barras para encontra-lo"}},
-        {element: "#drop-categoria-busca",popover: {title: "Filtro",description: "filtre por categoria para encontrar o produto desejado"}},
-        {element: "#botao-edita-produto",popover: {title: "Editar produto",description: "Atenção isso apenas edita e para uma experiencia melhor caso queira dar entrada ou saida em produtos utilize o botão de movimento ", style:{backgroundColor: "red", color: "white"}}},
-        {element: "#botao-excluir-produto",popover: {title: "Excluir Produto ",description: "Voce exclui o produto selecionado"}},
-        {element: "#botao-movimento-estoque",popover: {title: "Movimento de estoque  ",description: "Movimento de estoque é uma maneira de dar entrada e saida nos produtos, este botão faz para um produto por vez"}},
-        {element: "#botao-movimento-estoque-lote",popover: {title: "Movimento de estoque em lote",description: "diferente do movimento de estoque este botão faz a movimentação de varios produtos de uma vez só"}},
-        {element: "#notificacao-sino",popover: {title: "Notificação",description: "Aqui você pode ver as notificações do sistema"}},
-
-        
-    ]
-});
-driverObj.drive();
-</script>
 </body>
 </html>

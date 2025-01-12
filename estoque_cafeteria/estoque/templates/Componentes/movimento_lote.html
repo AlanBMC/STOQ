@@ -115,9 +115,9 @@
                         <tr class="text-gray-800">
                             <th class="py-2 px-2">Produto</th>
                             <th class="py-2 px-2">Quantidade Atual</th>
-                            <th class="py-2 px-2">Quantidade</th>
-                            <th class="py-2 px-2">Tipo de Movimento</th>
-                            <th class="py-2 px-2">Loja</th>
+                            <th id="quantidadePOP" class="py-2 px-2">Quantidade</th>
+                            <th id="tipo-movimentoPOP" class="py-2 px-2">Tipo de Movimento</th>
+                            <th id="lojaPOP" class="py-2 px-2">Loja</th>
                         </tr>
                     </thead>
                     <tbody id="productTableBody">
@@ -204,4 +204,18 @@
             modal.classList.remove('flex');
         }
     });
+</script>
+<script>
+const driver = window.driver.js.driver;
+const driverObj = driver({
+    showProgress: true,
+    steps: [
+   
+        {element: "#quantidadePOP",popover: {title: "Definir quantidade",description: "Aqui você define a quantidade que deseja movimentar"}},
+        {element: "#tipo-movimentoPOP",popover: {title: "Definir o tipo de movimento",description: "Aqui você define se é uma entrada (Produtos comprados), Saída (Produtos vendidos) ou Transferência (Produtos que saem de uma loja e vão para outra)"}},
+
+        
+    ]
+});
+driverObj.drive();
 </script>
