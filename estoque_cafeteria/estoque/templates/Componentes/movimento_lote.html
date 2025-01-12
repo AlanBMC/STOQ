@@ -93,6 +93,7 @@
         z-index: 20;
     }
 </style>
+
 <div id="batchMovementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="modal-content max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative  ">
         <a id="closeBatchModalBtn" onclick="closeBatchMovementModal()" class="absolute top-3 right-3 text-gray-800 text-xl" style="cursor: pointer;">&times;</a>
@@ -115,23 +116,23 @@
                         <tr class="text-gray-800">
                             <th class="py-2 px-2">Produto</th>
                             <th class="py-2 px-2">Quantidade Atual</th>
-                            <th id="quantidadePOP" class="py-2 px-2">Quantidade</th>
-                            <th id="tipo-movimentoPOP" class="py-2 px-2">Tipo de Movimento</th>
-                            <th id="lojaPOP" class="py-2 px-2">Loja</th>
+                            <th id="" class="py-2 px-2">Quantidade</th>
+                            <th id="" class="py-2 px-2">Tipo de Movimento</th>
+                            <th id="" class="py-2 px-2">Loja</th>
                         </tr>
                     </thead>
                     <tbody id="productTableBody">
                         {% for produto in produtos %}
                         <tr class="hover:bg-gray-100 text-gray-800">
                             <td class="py-2 px-2">{{ produto.nome }}</td>
-                            <td class="py-2 px-2">{{ produto.quantidade }}</td>
-                            <td class="py-2 px-2">
+                            <td  class="py-2 px-2">{{ produto.quantidade }}</td>
+                            <td id="quantidadePOP" class="py-2 px-2">
                                 <input type="number" name="quantidades" min="0" step="0.001"
                                 class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
                                     <input type="hidden" name="produto_ids" value="{{ produto.id }}">
 
                                 </td>
-                            <td class="py-2 px-2">
+                            <td id="tipo-movimentoPOP" class="py-2 px-2">
                                 <select name="movimentos" required
                                     class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
                                     <option value="Saida">Saída</option>
@@ -140,7 +141,7 @@
                                 </select>
                             </td>
                             <td class="py-2 px-2">
-                                <select name="loja_destino_id" 
+                                <select id="lojaPOP" name="loja_destino_id" 
                                     class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
                                     <option value="">Selecione uma loja parceira</option>
                                     {%for loja in lojas %}
@@ -182,6 +183,19 @@
         const modal = document.getElementById('batchMovementModal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        const driver = window.driver.js.driver;
+        const driverObj = driver({
+            showProgress: true,
+            steps: [
+                {element: "#searchProductInput",popover: {title: "Procurar produto",description: "Pesquise pelo nome do produto para acelerar a busca"}},
+                {element: "#quantidadePOP",popover: {title: "Definir quantidade",description: "Defina a quantidade que deseja movimentar"}},
+                {element: "#tipo-movimentoPOP",popover: {title: "Definir o tipo de movimento",description: "Defina se o movimento é uma entrada (Produtos comprados), Saída (Produtos vendidos) ou Transferência (Produtos que saem de uma loja e vão para outra)"}},
+                {element: "#lojaPOP",popover: {title: "Selecionar loja",description: "Esta funcionalidade so funciona se o tipo de movimento for Transferência, após seelecionar a loja(as) destino(os), clique em confirmar movimentação"}},
+
+                
+            ]
+        });
+        driverObj.drive();
     }
 
     function filterProducts() {
@@ -204,18 +218,5 @@
             modal.classList.remove('flex');
         }
     });
-</script>
-<script>
-const driver = window.driver.js.driver;
-const driverObj = driver({
-    showProgress: true,
-    steps: [
-   
-        {element: "#quantidadePOP",popover: {title: "Definir quantidade",description: "Aqui você define a quantidade que deseja movimentar"}},
-        {element: "#tipo-movimentoPOP",popover: {title: "Definir o tipo de movimento",description: "Aqui você define se é uma entrada (Produtos comprados), Saída (Produtos vendidos) ou Transferência (Produtos que saem de uma loja e vão para outra)"}},
 
-        
-    ]
-});
-driverObj.drive();
 </script>

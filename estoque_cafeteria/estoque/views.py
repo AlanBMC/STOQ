@@ -7,7 +7,7 @@ import json
 from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
-from datetime import date, timedelta
+from datetime import date, timedelta,datetime
 from django.http import HttpResponseNotAllowed, HttpResponse
 
 
@@ -15,6 +15,9 @@ from django.http import HttpResponseNotAllowed, HttpResponse
 
 
 def obter_dados(request):
+    '''
+    Obter dados para o dashboard
+    '''
     # Pegar todas as categorias
     loja = Loja.objects.get(id=request.user.loja.id)
     categorias = Categoria.objects.filter(loja=loja)
@@ -70,6 +73,9 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 def login(request):
+    '''
+    
+    '''
     if request.method == 'HEAD':
         return HttpResponse(status=200) 
     # Lógica de autenticação
@@ -97,11 +103,12 @@ def login(request):
 
 @login_required(login_url='/')
 def produtoview(request):
+
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     loja_name = request.user.loja.nome
     hoje = date.today()
-    return render(request, 'produtoview.html', {'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', { 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def estoqueview(request):

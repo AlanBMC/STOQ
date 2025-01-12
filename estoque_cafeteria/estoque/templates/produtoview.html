@@ -76,12 +76,12 @@
             </div>
             
             <div class="flex space-x-4" style="margin: 5px;">
-                <div class="mb-4">
+                <div class="mb-4" id="validadepop">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
                     <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validade" name="validade" required
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
-                <div class="w-1/2">
+                <div class="w-1/2" id="estoqueMin">
                     <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
                     <input type="number" id="estoque_min" name="estoque_min"  step="0.001" min="1"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
@@ -171,10 +171,26 @@
     const closeModalBtn = document.getElementById('closeModalBtn');
     const modal = document.getElementById('productModal');
 
+
+    
     // Abre o modal
     openModalBtn.addEventListener('click', () => {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        const driver = window.driver.js.driver;
+
+        const driverObj = driver({
+            showProgress: true,
+            steps: [
+            {element: "#validadepop",popover: {title: "Validade",description: "Cadastre as validades dos produtos para que o sistema possa notificá-lo. Recomendamos especial atenção ao cadastro de validades para frutas e verduras, devido ao curto prazo de consumo."}},
+            {element: "#estoqueMin",popover: {title: "Estoque minimo",description: "A quantidade mínima que o produto deve ter em estoque é um limite estratégico para evitar rupturas. Recomendamos definir um valor que garanta tempo suficiente para repor o estoque antes que ele se esgote completamente, considerando o tempo de entrega dos fornecedores e a demanda média do produto."}},
+
+        
+                
+            ]
+        });
+        driverObj.drive();
+
     });
 
     // Fecha o modal ao clicar no botão de fechar
@@ -191,7 +207,7 @@
         }
     });
 
-    function abrirModalFornecedor() {
+function abrirModalFornecedor() {
     document.getElementById('modalFornecedor').classList.remove('hidden');
 }
 

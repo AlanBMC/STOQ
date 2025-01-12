@@ -16,8 +16,10 @@
     <link rel="stylesheet" href="{% static 'css/global.css'%}">
 </head>
 <body class="color-2 flex min-h-screen">
+    {% if show_tour%}
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+    {%endif%}
     <div class="w-full bg-color-3 py-3 px-6 shadow-md flex justify-between items-center fixed top-0 left-0 z-50">
        
         <div class="w-1/7"></div>
