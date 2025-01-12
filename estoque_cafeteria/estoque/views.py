@@ -161,6 +161,15 @@ def configuracaoview(request):
 
 @login_required(login_url='/')
 def logout_view(request):
+    """
+    Funcionalidade:
+    Realiza o logout do usuário e redireciona para a página de login.
+    Argumento:
+    request: Objeto HttpRequest que contém os dados da requisição.
+    Retorno:
+    Redireciona o usuário para a URL de login.
+    """
+
     logout(request)
     return redirect('login')
 
@@ -168,9 +177,12 @@ def logout_view(request):
 
 @login_required(login_url='/')
 def cria_usuario(request):
-    '''
-    Cria ususario com senha padrao 123
-    '''
+    """
+    Funcionalidade: Cria um novo usuário se o nome não existir e o usuário tiver permissão.
+    Argumentos: request - objeto HttpRequest contendo dados da requisição.
+    Retorno: Redireciona para 'configuracaoview' com mensagem de sucesso ou erro.
+    """
+    
     if not request.user.has_perm('auth.add_user'):
         messages.error(request, 'Você não tem permissão para criar usuários.')
         return redirect('configuracaoview')  # Redireciona para uma página de erro ou home
@@ -192,10 +204,12 @@ def cria_usuario(request):
 
 @login_required(login_url='/')
 def muda_senha(request):
-    '''
-    Recebe senha antiga e senha nova
-    atualiza senha
-    '''
+    """
+    Funcionalidade: Altera a senha do usuário autenticado.
+    Argumento: request - objeto HttpRequest contendo os dados da requisição.
+    Retorno: Redireciona para 'configuracaoview' com mensagem de sucesso ou erro.
+    """
+    
     if request.method == 'POST':
         senha_antiga = request.POST.get('senha_antiga')
         senha_nova = request.POST.get('senha_nova')
@@ -212,9 +226,12 @@ def muda_senha(request):
 
 @login_required(login_url='/')
 def editar_nome_user(request):
-    '''
-    Edita nome do usuario
-    '''
+    """
+    Funcionalidade: Edita o nome de usuário do usuário logado.
+    Argumento: request (HttpRequest) - Requisição HTTP contendo o novo nome de usuário.
+    Retorno: Redireciona para 'configuracaoview' com mensagem de sucesso ou erro.
+    """
+
     if request.method ==  'POST':
         nome = request.POST.get('nome')
         if User.objects.filter(username=nome).exclude(id=request.user.id).exists():
@@ -257,6 +274,12 @@ def listar_usuarios_da_loja_atual(request):
 
 @login_required(login_url='/')
 def criar_categoria(request):
+    """
+    Funcionalidade: Cria uma nova categoria para a loja do usuário logado.
+    Argumento: request - Objeto HttpRequest contendo os dados da requisição.
+    Retorno: Redireciona para a visualização de produtos.
+    """
+
     if request.method == 'POST':
         nome = request.POST.get('nomeCategoria')
         
@@ -274,6 +297,15 @@ def criar_categoria(request):
 
 @login_required(login_url='/')
 def editar_categoria(request, pk):
+    """
+    Edita uma categoria existente.
+    Argumentos:
+    - request: Objeto HttpRequest contendo dados da requisição.
+    - pk: ID da categoria a ser editada.
+    Retorno:
+    Redireciona para a lista de categorias ou para a visualização do produto.
+    """
+
     categoria = get_object_or_404(Categoria, pk=pk, loja=request.user.loja)
     
     if request.method == 'POST':
@@ -293,6 +325,15 @@ def editar_categoria(request, pk):
 
 @login_required(login_url='/')
 def excluir_categoria(request, pk):
+    """
+    Exclui uma categoria específica.
+    Argumentos:
+    - request: Objeto HttpRequest.
+    - pk: ID da categoria a ser excluída.
+    Retorno:
+    - Redireciona para 'produtoview'.
+    """
+
     categoria = get_object_or_404(Categoria, pk=pk, loja=request.user.loja)
 
     if request.method == 'POST':
@@ -305,16 +346,34 @@ def excluir_categoria(request, pk):
 
 @login_required(login_url='/')
 def listar_categorias(request):
+    """
+    Funcionalidade: Lista as categorias da loja do usuário.
+    Argumento: request - Objeto de requisição HTTP.
+    Retorno: QuerySet de categorias filtradas pela loja do usuário.
+    """
+
     categorias = Categoria.objects.filter(loja=request.user.loja)
     return categorias
 
 @login_required(login_url='/')
 def listar_fornecedores(request):
+    """
+    Funcionalidade: Lista os fornecedores da loja do usuário.
+    Argumento: request - objeto de requisição HTTP.
+    Retorno: QuerySet de fornecedores filtrados pela loja do usuário.
+    """
+
     fornecedores = Fornecedor.objects.filter(loja=request.user.loja)
     return fornecedores
 
 @login_required(login_url='/')
 def criar_fornecedor(request):
+    """
+    Funcionalidade: Cria um novo fornecedor se o método for POST e não houver duplicidade.
+    Argumento: request - objeto HttpRequest contendo dados da requisição.
+    Retorno: Redireciona para 'produtoview' com mensagem de sucesso ou erro.
+    """
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         contato = request.POST.get('contato')
@@ -334,6 +393,15 @@ def criar_fornecedor(request):
 
 @login_required(login_url='/')
 def editar_fornecedor(request, pk):
+    """
+    Edita um fornecedor existente.
+    Args:
+        request (HttpRequest): O objeto de solicitação HTTP.
+        pk (int): O ID primário do fornecedor a ser editado.
+    Returns:
+        HttpResponse: Redireciona para a visualização do produto.
+    """
+    
     fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
     
     if request.method == 'POST':
@@ -355,7 +423,19 @@ def editar_fornecedor(request, pk):
 
 @login_required(login_url='/')
 def excluir_fornecedor(request, pk):
-    
+    """
+    Exclui um fornecedor específico.
+    Funcionalidade:
+    - Obtém o fornecedor pelo ID (pk) e verifica se pertence à loja do usuário.
+    - Se o método da requisição for POST, exclui o fornecedor e redireciona para a visualização de produtos com uma mensagem de sucesso.
+    - Se o método não for POST, apenas redireciona para a visualização de produtos.
+    Argumentos:
+    - request: Objeto HttpRequest contendo os dados da requisição.
+    - pk: ID do fornecedor a ser excluído.
+    Retorno:
+    - Redireciona para a visualização de produtos.
+    """
+
     fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
     
     if request.method == 'POST':
@@ -364,6 +444,7 @@ def excluir_fornecedor(request, pk):
         return redirect('produtoview')
 
     return redirect('produtoview')
+
 
 @login_required(login_url='/')
 def listar_produtos(request):
@@ -382,6 +463,12 @@ def listar_produtos(request):
 
 @login_required(login_url='/')
 def criar_produto(request):
+    """
+    Funcionalidade: Cria um novo produto se não existir na loja do usuário.
+    Argumentos: request (HttpRequest) - Requisição HTTP contendo dados do produto.
+    Retorno: Redireciona para 'produtoview' com mensagem de sucesso ou erro.
+    """
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         quantidade = request.POST.get('quantidade')
@@ -564,73 +651,10 @@ def func_notifica_vencimento(request):
 
     
 
-@login_required(login_url='/')
-def cria_movimento_de_estoque(request):
-    if request.method == 'POST':
-        produto_id = request.POST.get('produto_id')
-        tipo_movimento = request.POST.get('tipo_movimento')
-        quantidade = request.POST.get('quantidade')
-        status = request.POST.get('status')
-        
-        # Converte a quantidade para float (aceita decimais)
-        try:
-            quantidade = float(quantidade)
-        except ValueError:
-            messages.error(request, 'A quantidade deve ser um número válido.')
-            return redirect('estoqueview')
-        
-        # Busca o produto vinculado à loja do usuário
-        produto = get_object_or_404(Produto, id=produto_id, loja=request.user.loja)
-        produto.status = status
-        
-        try:
-            # Lógica para entrada de produtos
-            if tipo_movimento == 'Entrada':
-                if quantidade <= 0:
-                    messages.error(request, 'A quantidade de entrada deve ser maior que zero.')
-                    return redirect('estoqueview')
-                
-                produto.quantidade += quantidade
-                produto.save()
-                MovimentoEstoque.objects.create(
-                    produto=produto,
-                    tipo_movimento=tipo_movimento,
-                    quantidade=quantidade,
-                    responsavel=request.user,
-                    loja=request.user.loja
-                )
-                messages.success(request, 'Entrada de estoque registrada com sucesso.')
-                return redirect('estoqueview')
-            
-            # Lógica para saída de produtos
-            elif tipo_movimento == 'Saida':
-                if produto.quantidade < quantidade:
-                    messages.error(request, 'Quantidade insuficiente para saída.')
-                    return redirect('estoqueview')
-                
-                produto.quantidade -= quantidade
-                produto.save()
-                MovimentoEstoque.objects.create(
-                    produto=produto,
-                    tipo_movimento=tipo_movimento,
-                    quantidade=quantidade,
-                    responsavel=request.user,
-                    loja=request.user.loja
-                )
-                messages.success(request, 'Saída de estoque registrada com sucesso.')
-                return redirect('estoqueview')
 
-            else:
-                messages.error(request, 'Tipo de movimento inválido.')
-                return redirect('estoqueview')
-        
-        except Exception as e:
-            messages.error(request, f'Ocorreu um erro: {str(e)}')
-            return redirect('estoqueview')
-        
 
 @login_required(login_url='/')
-def cria_movimento_de_estoque_em_lote2(request):
+def cria_movimento_de_estoque_em_lote(request):
     if request.method == 'POST':
         quantidades = request.POST.getlist('quantidades')
         movimentos = request.POST.getlist('movimentos')

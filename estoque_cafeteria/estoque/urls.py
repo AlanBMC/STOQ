@@ -17,7 +17,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('obter-dados/', views.obter_dados, name='obter_dados'),
     #MOVIMENTO DE ESTOQUE EM LOTE
-    path('cria_movimento_de_estoque_em_lote/', views.cria_movimento_de_estoque_em_lote2, name='cria_movimento_de_estoque_em_lote'),
+    path('cria_movimento_de_estoque_em_lote/', views.cria_movimento_de_estoque_em_lote, name='cria_movimento_de_estoque_em_lote'),
 
     # ROTA USER 
     path('cria_usuario/', views.cria_usuario, name='cria_usuario'),
