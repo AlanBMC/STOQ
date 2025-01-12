@@ -9,7 +9,7 @@ from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta,datetime
 from django.http import HttpResponseNotAllowed, HttpResponse
-
+from django.utils.timezone import now
 
 
 
@@ -66,29 +66,61 @@ def obter_dados(request):
         "contagemproduto": contagemporproduto
     })
 
+def tour_site(request):
+    """
+    Verifica se o tour deve ser mostrado para o usuário com base no último login.
+    """
+    
+    
+    user = request.user
+    if user.last_name == '':
+        user.last_name = 'tour 1'
+        user.save()
+        return True
+    elif user.last_name == 'tour 1': 
+        user.last_name = 'tour 2'
+        user.save()
+        return True
+    else:
+        user.last_name = 'tour 3'
+        user.save()
+        return False
 
+def verifica_last_name(request):
+    user =  request.user
+    if user.last_name == 'tour 1':
+        return True
+    elif user.last_name == 'tour 2':
+        return True
+    else:
+        return False
 
 @login_required(login_url='/')
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    show_tour = verifica_last_name(request)
+    return render(request, 'dashboard.html', {'show_tour': show_tour})
 
 def login(request):
-    '''
-    Handles user login requests.
-    Supports the following HTTP methods:
-    - HEAD: Returns a 200 status code to indicate the server is reachable.
-    - POST: Authenticates the user with the provided credentials (username and password).
-      If authentication is successful, logs the user in, triggers a notification function,
-      and redirects to the 'produtoview' page. If authentication fails, displays an error
-      message and redirects back to the login page.
-    - GET: Renders the login page.
-    Parameters:
-    request (HttpRequest): The HTTP request object containing method and data.
+    """
+    Função de view para autenticação de usuários.
+    Args:
+        request (HttpRequest): Objeto de requisição HTTP.
     Returns:
-    HttpResponse: Depending on the request method and authentication result, returns an
-    appropriate HTTP response.
-    
-    '''
+        HttpResponse: Resposta HTTP com status apropriado ou redirecionamento.
+    Métodos HTTP suportados:
+        - HEAD: Retorna status 200 para verificar a disponibilidade do serviço.
+        - POST: Processa a autenticação do usuário com base no nome e senha fornecidos.
+        - GET: Renderiza a página de login.
+    Fluxo de POST:
+        - Obtém 'nome' e 'senha' do request.POST.
+        - Autentica o usuário com authenticate().
+        - Se autenticado, realiza login com login_django(), notifica vencimento e redireciona para 'produtoview'.
+        - Se falhar, exibe mensagem de erro e redireciona para a página de login.
+    Retorna:
+        - HttpResponseNotAllowed: Se o método HTTP não for GET, POST ou HEAD.
+    """
+
+     
     if request.method == 'HEAD':
         return HttpResponse(status=200) 
     # Lógica de autenticação
@@ -99,6 +131,7 @@ def login(request):
         user = authenticate(username=nome, password=senha)
         if user:
             login_django(request, user)
+            tour_site(request)
             func_notifica_vencimento(request)
             return redirect('produtoview')
         else:
@@ -120,11 +153,12 @@ def produtoview(request):
         HttpResponse: A página de visualização de produtos renderizada.
     """
     
+    show_tour = verifica_last_name(request)
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     loja_name = request.user.loja.nome
     hoje = date.today()
-    return render(request, 'produtoview.html', { 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 
 
@@ -140,7 +174,8 @@ def estoqueview(request):
     lojas = Loja.objects.all()
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
-    return render(request, 'estoque.html', {'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojas})
+    show_tour = verifica_last_name(request)
+    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojas})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -155,8 +190,8 @@ def configuracaoview(request):
     '''
     usuarios =listar_usuarios_da_loja_atual(request)
     is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
-    
-    return render(request, 'configuracao.html', {'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    show_tour = verifica_last_name(request)
+    return render(request, 'configuracao.html', {'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
@@ -505,6 +540,14 @@ def criar_produto(request):
 
 @login_required(login_url='/')
 def editar_produto(request):
+    """
+    Edita um produto existente no estoque.
+    Args:
+        request (HttpRequest): Objeto de requisição HTTP contendo os dados do produto a ser editado.
+    Returns:
+        HttpResponse: Redireciona para a visualização do estoque com mensagens de sucesso ou erro.
+    """
+
     if request.method == 'POST':
         produto_id = request.POST.get('produto_id')
         
@@ -649,12 +692,16 @@ def func_notifica_vencimento(request):
     request.session['total_notificacoes'] = len(notificacoes)
 
 
-    
-
-
-
 @login_required(login_url='/')
 def cria_movimento_de_estoque_em_lote(request):
+    """
+    Cria movimentos de estoque em lote (entrada, saída e transferência) para produtos.
+    Args:
+        request (HttpRequest): Objeto de requisição HTTP contendo dados do formulário.
+    Returns:
+        HttpResponse: Redireciona para a visualização do estoque com mensagens de sucesso ou erro.
+    """
+    
     if request.method == 'POST':
         quantidades = request.POST.getlist('quantidades')
         movimentos = request.POST.getlist('movimentos')

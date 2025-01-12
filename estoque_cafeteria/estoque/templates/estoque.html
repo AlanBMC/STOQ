@@ -10,7 +10,7 @@
    
         <input type="text" id="input-busca-produto" placeholder="Buscar Produto..." 
             class="border p-2 rounded-lg focus:ring-color-1 focus:outline-none w-full sm:w-auto">
-      
+        
         <select id="drop-categoria-busca" class="border p-2 rounded-lg w-full sm:w-auto">
             <option value="">Categoria</option>
             {% for cate in categorias %}
@@ -19,6 +19,13 @@
 
             
         </select>
+        <div id="botao-movimento-estoque-lote" >
+            <button onclick=
+            "openBatchMovementModal()" class="bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all"> 
+                <i class="fa-brands fa-opencart color-4"></i>
+
+                Movimento</button>
+        </div>
       </div>
       <script>
 document.addEventListener("DOMContentLoaded", function () {

@@ -16,8 +16,6 @@ urlpatterns = [
     #DASHBOARD
     path('dashboard/', views.dashboard, name='dashboard'),
     path('obter-dados/', views.obter_dados, name='obter_dados'),
-    #MOVIMENTO DE ESTOQUE EM LOTE
-    path('cria_movimento_de_estoque_em_lote/', views.cria_movimento_de_estoque_em_lote, name='cria_movimento_de_estoque_em_lote'),
 
     # ROTA USER 
     path('cria_usuario/', views.cria_usuario, name='cria_usuario'),
@@ -43,7 +41,7 @@ urlpatterns = [
     path('produtos/editar/', views.editar_produto, name='editar_produto'),
     path('produtos_excluir/<int:id_produto>/', views.excluir_produto, name='excluir_produto'),
 
-    path('cria_movimento_de_estoque/', views.cria_movimento_de_estoque, name='cria_movimento_de_estoque'),
+    path('cria_movimento_de_estoque_em_lote/', views.cria_movimento_de_estoque_em_lote, name='cria_movimento_de_estoque_em_lote'),
 
     path('offline/', views.offline, name='offline'),
 

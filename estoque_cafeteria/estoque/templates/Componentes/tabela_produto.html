@@ -66,15 +66,8 @@
                                 onclick="confirmarExclusao('{{ produto.id }}')">
                                 <i class="fas fa-trash"></i>
                             </a>
-                            <a type="button" id="botao-movimento-estoque" class="no-border text-red-500 p-1"
-                                onclick="abreModalAddMovimento('{{produto.nome}}', '{{produto.id}}', '{{produto.quantidade}}', '{{produto.status}}')">
-                                <i class="fa-solid fa-dolly"></i>
-                            </a>
-                            <a type="button" id="botao-movimento-estoque-lote" class="no-border text-red-500 p-1"
-                            onclick=
-                            "openBatchMovementModal()">
-                            <i class="fa-brands fa-opencart"></i>
-                        </a>
+                            
+                            
                         </div>
                     </td>
                 </tr>
@@ -212,7 +205,7 @@
         
         <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Adicionar Movimentação</h2>
         
-        <form method="post" action="{% url 'cria_movimento_de_estoque' %}">
+        <form method="post" action="">
             {% csrf_token %}
             
             <div class="mb-4">
@@ -406,10 +399,9 @@ const driverObj = driver({
 
         {element: "#input-busca-produto",popover: {title: "Filtro de busca",description: " Digite o nome do produto ou o codigo de barras para encontra-lo"}},
         {element: "#drop-categoria-busca",popover: {title: "Filtro",description: "filtre por categoria para encontrar o produto desejado"}},
+        {element: "#botao-movimento-estoque-lote",popover: {title: "Movimento de estoque em lote",description: "Movimenta o estoque de varios produtos de uma vez, ou uma unica vez"}},
         {element: "#botao-edita-produto",popover: {title: "Editar produto",description: "Atenção isso apenas edita e para uma experiencia melhor caso queira dar entrada ou saida em produtos utilize o botão de movimento ", style:{backgroundColor: "red", color: "white"}}},
         {element: "#botao-excluir-produto",popover: {title: "Excluir Produto ",description: "Voce exclui o produto selecionado"}},
-        {element: "#botao-movimento-estoque",popover: {title: "Movimento de estoque  ",description: "Movimento de estoque é uma maneira de dar entrada e saida nos produtos, este botão faz para um produto por vez"}},
-        {element: "#botao-movimento-estoque-lote",popover: {title: "Movimento de estoque em lote",description: "diferente do movimento de estoque este botão faz a movimentação de varios produtos de uma vez só"}},
 
         
     ]

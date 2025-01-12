@@ -4,7 +4,7 @@
     --color-1: rgb(255, 255, 255);         /* Fundo branco */
     --color-2: rgba(245, 245, 245, 1);     /* Cinza claro */
     --color-3: rgb(0, 0, 0);               /* Preto */
-    --color-4: rgb(128, 128, 128);         /* Cinza médio */
+    --color-4: rgb(148, 148, 148);         /* Cinza médio */
     --color-5: rgb(0, 0, 0);               /* Preto */
 
     --bg-color-1: var(--color-1);          /* Fundo principal */
