@@ -68,7 +68,7 @@ def obter_dados(request):
 
 
 
-
+@login_required(login_url='/')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
@@ -111,20 +111,30 @@ def login(request):
     return HttpResponseNotAllowed(['GET', 'POST'])
 
 
-
-
-
 @login_required(login_url='/')
 def produtoview(request):
-
+  
+    """
+      Renderiza a página de visualização de produtos com a lista de categorias, fornecedores, nome da loja e a data de hoje.
+        request (HttpRequest): O objeto de requisição HTTP.
+        HttpResponse: A página de visualização de produtos renderizada.
+    """
+    
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     loja_name = request.user.loja.nome
     hoje = date.today()
     return render(request, 'produtoview.html', { 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
+
+
 @login_required(login_url='/')
 def estoqueview(request):
+    '''
+    Renderiza a página de estoque com a lista de produtos, categorias, fornecedores e a data de hoje.
+    Argumentos: request (HttpRequest): O objeto de requisição HTTP.
+    Retorna: HttpResponse: estoque.html com os seguites parâmetros: categorias, fornecedores, produtos e today.
+    '''
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
     lojas = Loja.objects.all()
@@ -138,7 +148,11 @@ def offline(request):
 
 @login_required(login_url='/')
 def configuracaoview(request):
-    
+    '''
+    Função para renderizar a página de configuração.
+    Argumentos: request (HttpRequest): O objeto de requisição HTTP.
+    Retorna: HttpResponse: A página de configuração renderizada com os seguintes parâmetros: usuários e is_proprietario.
+    '''
     usuarios =listar_usuarios_da_loja_atual(request)
     is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
     
@@ -341,6 +355,7 @@ def editar_fornecedor(request, pk):
 
 @login_required(login_url='/')
 def excluir_fornecedor(request, pk):
+    
     fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
     
     if request.method == 'POST':
@@ -352,6 +367,15 @@ def excluir_fornecedor(request, pk):
 
 @login_required(login_url='/')
 def listar_produtos(request):
+    """
+    Funcionalidade:
+    Lista os produtos disponíveis na loja do usuário logado.
+    Argumento:
+    request (HttpRequest): Objeto de requisição HTTP que contém informações sobre a solicitação.
+    Retorno:
+    QuerySet: Conjunto de produtos filtrados pela loja do usuário.
+    """
+
     produtos = Produto.objects.filter(loja=request.user.loja)
     return produtos
 
