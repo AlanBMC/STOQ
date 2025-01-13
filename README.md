@@ -1,8 +1,8 @@
 # Controle de Estoque com Django e PWA
 
-![Logo do Projeto](insira-link-ou-caminho-da-logo-aqui)
 
-Este projeto implementa um sistema de controle de estoque utilizando Django, com suporte a Progressive Web App (PWA) para garantir acessibilidade offline e uma experiência de aplicativo nativa.
+<img src="logo_thecoffe.ico" width="150px"></br> 
+Este projeto implementa um sistema de controle de estoque utilizando Django, com suporte a Progressive Web App (PWA) para garantir uma experiência de aplicativo nativa.
 
 ## Recursos Principais
 
@@ -16,8 +16,6 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 - **Notificações**: Alertas automáticos para produtos com estoque baixo ou próximos do vencimento.
 
 ### Progressive Web App (PWA)
-
-
 
 - Instalação do sistema como aplicativo em dispositivos móveis e desktops.
 
@@ -148,7 +146,7 @@ Este projeto está licenciado sob a Licença MIT. Consulte o arquivo LICENSE par
 
 ### Contato
 
-Se tiver dúvidas ou sugestões, entre em contato pelo e-mail: [seuemail@exemplo.com](mailto\:seuemail@exemplo.com).
+Se tiver dúvidas ou sugestões, entre em contato pelo e-mail: [seuemail@exemplo.com](mailto:seuemail@exemplo.com).
 
 **Sua Foto**:
 *(Insira sua foto aqui ou um link para uma imagem de perfil)*
