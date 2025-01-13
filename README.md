@@ -125,7 +125,7 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 Abaixo está o diagrama de modelagem lógica do sistema:
 
-*(Insira a imagem ou link do diagrama gerado aqui)*
+*irei colocar imagens aqui*
 
 ## Design
 
@@ -136,18 +136,18 @@ O design do sistema é responsivo e otimizado para dispositivos móveis e deskto
 - **Bootstrap ou Tailwind (se aplicável)**
 - **Templates Django**
 
-*(Adicione imagens ou capturas de tela do design do sistema aqui)*
+*irei colocar imagens aqui*
 
-## Licença
 
-Este projeto está licenciado sob a Licença MIT. Consulte o arquivo LICENSE para mais detalhes.
 
----
+## Sobre o autor
 
-### Contato
+<!-- Coloque seu nome, uma foto sua e uma pequena bio sobre você na seguinte tabela: -->
+|  |  |
+|:-------------:|:------------------------------------------------------------:|
+|  <img src="EU2.jpg" width="150px"></br> **Alan Bruno Morais Costa** | 
+Me chamo Alan, sou estudante de Ciências da Computação na Universidade Federal de Mato Grosso (UFMT) e estou participando de um curso oferecido pela Cyber-edux. Neste repositório, apresento o Cardy, um sistema inovador de gerenciamento de tarefas e estudos projetado para melhorar a organização e eficiência de estudantes e profissionais.  |
 
-Se tiver dúvidas ou sugestões, entre em contato pelo e-mail: [seuemail@exemplo.com](mailto:seuemail@exemplo.com).
-
-**Sua Foto**:
-*(Insira sua foto aqui ou um link para uma imagem de perfil)*
+- **Email:** alanbrunomoraescosta18@hotmail.com
+- **LinkedIn:** [Alan's LinkedIn](https://www.linkedin.com/in/alan-morais-4861322b0)
 
