@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{%load static %}
+{%block title%} Configurações {%endblock%}
+{% block content %}
+<style>
+  
+    body.modal-open {
+    overflow: hidden;
+}
+</style>
+
+<div class=" bg-gray-100 flex flex-col items-center p-6">
+
+    <!-- Botão de Listagem de Usuários -->
+    <div id="listar-usuarios" class="w-full max-w-4xl mb-6">
+        <button id="listUsersBtn" class="w-full bg-color-1  py-3 rounded-lg shadow-md hover:bg-color-2 transition-all">
+            <i class="fas fa-users mr-2"></i> Listar Usuários
+        </button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
+        <!-- Editar Nome -->
+        <div id="editar-nome" class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
+            <img src="{% static 'images/icon_editarnome.svg' %}" alt="Editar nome" class="icon-default mb-5 p-2">            
+            <h2 class="text-xl font-semibold mb-2">Editar Nome</h2>
+            <button id="editNameBtn" class="mt-4    px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
+                Editar
+            </button>
+        </div>
+    
+        <!-- Editar Senha -->
+        <div id="editar-senha" class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
+            <img src="{% static 'images/icon_muda_senha.svg' %}" alt="Alterar senha" style="width: 90px;" class="icon-default mb-5 p-2">
+            <h2 class="text-xl font-semibold mb-2">Alterar Senha</h2>
+            <button id="alteraSenhaBtn" class="mt-4  px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all">
+                Alterar
+            </button>
+        </div>
+    
+        <!-- Criar Usuário -->
+        <div id="criar-usuario" class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
+            <img src="{% static 'images/icon_criaUser.svg' %}" alt="Criar Usuário" class="icon-default mb-5 p-2">      
+            <h2 class="text-xl  font-semibold mb-2">Criar Usuário</h2>
+            <button id="createUserBtn" class="mt-4  px-4 py-2 rounded-lg hover:bg-green-600 transition-all">
+                Criar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <!-- Modal - Criar Usuário -->
+    <div id="createUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Criar Usuário</h2>
+            <form action="{%url 'cria_usuario'%}" method="POST"> {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Nome</label>
+                    <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Senha padrão: 123</label>
+                </div>
+                
+                <button type="submit" class="w-full   py-2 rounded-lg hover:bg-green-600 transition-all">
+                    Salvar
+                </button>
+            </form>
+            <a id="closeCreateUserModal" class="mt-4 bg-color text-sm hover:underline">
+                Cancelar
+            </a>
+        </div>
+    </div>
+    
+    <!-- Modal - Listar Usuários -->
+    <div id="listUsersModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+            <h2 class="text-2xl font-semibold mb-4">Usuários</h2>
+        
+           
+
+            {% for usuario in usuarios %}
+            <div class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
+                <div class="flex justify-between items-center p-4">
+                    <div>
+                        <p class="text-lg font-medium">{{usuario.username}}</p>
+                        <span class="text-sm text-gray-500"> {% for grupo in usuario.groups.all %}
+                            {{ grupo.name }}
+                        {% empty %}
+                            Sem grupo
+                        {% endfor %}</span>
+                    </div>
+                    
+                    {% if is_proprietario and usuario.id != request.user.id %}
+                    
+                            <a class="text-red-500 hover:text-red-600" 
+                            onclick="confirmarExclusao('{{ usuario.id }}', '{{ usuario.username }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            <button type="submit" class="w-full   py-2 rounded-lg hover:bg-blue-600 transition-all">
+                Salvar
+            </button>
+            <a id="closeListUsersModal" class="mt-6 text-sm text-gray-500 hover:underline">
+                Fechar
+            </a>
+        </div>
+    </div>
+    
+    <!-- Modal - Editar Nome -->
+    <div id="editNameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Editar Nome</h2>
+            <form action="{% url 'editar_nome_user' %}" method="POST" > {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Novo Nome</label>
+                    <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="w-full   py-2 rounded-lg  transition-all">
+                    Salvar
+                </button>
+            </form>
+            <a id="closeEditNameModal" class="mt-4 text-sm  hover:underline">
+                Cancelar
+            </a>
+        </div>
+    </div>
+<!-- Modal - Editar Senha -->
+    <div id="alteraSenhaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 class="text-2xl font-semibold mb-4">Editar senha</h2>
+            <form action="{% url 'muda_senha' %}" method="POST"> {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Senha antiga</label>
+                    <input type="password" name="senha_antiga" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Nova Senha</label>
+                    <input type="password" name="senha_nova" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Confirmar Senha</label>
+                    <input type="password" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500"required>
+                </div>
+                <button type="submit" class="w-full   py-2 rounded-lg  transition-all">
+                    Salvar
+                </button>
+            </form>
+            <a id="closealteraSenha" class="mt-4 text-sm  hover:underline">
+                Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+    <!-- Seção de Cards -->
+    <!-- Formulário Oculto para Exclusão -->
+<form id="delete-form" method="post" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" id="user-id">
+</form>
+    <script>
+   function confirmarExclusao(userId, username) {
+        if (confirm(`Tem certeza que deseja excluir o usuário ${username}?`)) {
+            const form = document.getElementById('delete-form');
+            document.getElementById('user-id').value = userId;
+            form.action = `/delete_usuario/${userId}/`;  // Rota de exclusão
+            form.submit();
+        }
+    }
+
+        const openModal = (btnId, modalId, closeId) => {
+            const btn = document.getElementById(btnId);
+            const modal = document.getElementById(modalId);
+            const closeBtn = document.getElementById(closeId);
+    
+            btn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+    
+            closeBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+    
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        };
+    
+        // Aplicar para cada modal
+        openModal('createUserBtn', 'createUserModal', 'closeCreateUserModal');
+        openModal('listUsersBtn', 'listUsersModal', 'closeListUsersModal');
+        openModal('editNameBtn', 'editNameModal', 'closeEditNameModal');
+        openModal('alteraSenhaBtn', 'alteraSenhaModal', 'closealteraSenha');
+    </script>
+<script>
+          const driver = window.driver.js.driver;
+        const driverObj = driver({
+            showProgress: true,
+            steps: [
+                {element: "#editar-nome",popover: {title: "Editar nome",description: "Edite o nome do usuário"}},
+                {element: "#editar-senha",popover: {title: "Editar senha",description: "Edite a senha do usuário Recomentamos que a senha tenha pelo menos 8 caracteres"}},
+                {element: "#criar-usuario",popover: {title: "Criar usuário",description: "Disponível somente para proprietários"}},
+                {element: "#listar-usuarios",popover: {title: "Lista todos os usuários da loja",description: "Lista todos os usuários da loja, e permite excluir (disponivel somente para proprietários)"}},
+
+                
+            ]
+        });
+        driverObj.drive();
+</script>
+{% endblock %}

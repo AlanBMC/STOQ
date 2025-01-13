@@ -1,21 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;800&display=swap');
+
 :root {
-    --color-1: rgb(191, 151, 128);
-    --color-2: rgb(223, 203, 192);
-    --color-3: rgb(20, 13, 13);
-    --color-4: rgb(128, 128, 128);
-    --color-5: rgb(0, 0, 0);
+    --color-1: rgb(255, 255, 255);         /* Fundo branco */
+    --color-2: rgba(245, 245, 245, 1);     /* Cinza claro */
+    --color-3: rgb(0, 0, 0);               /* Preto */
+    --color-4: rgb(128, 128, 128);         /* Cinza médio */
+    --color-5: rgb(0, 0, 0);               /* Preto */
 
-    --bg-color-1: var(--color-1);
-    --bg-color-2: var(--color-2);
-    --bg-color-3: rgb(255, 255, 255);
-    --bg-color-4: var(--color-4);
-    --bg-color-5: var(--color-5);
+    --bg-color-1: var(--color-1);          /* Fundo principal */
+    --bg-color-2: var(--color-2);          /* Seção secundária */
+    --bg-color-3: rgb(255, 255, 255);      /* Branco */
+    --bg-color-4: var(--color-4);          /* Cinza para bordas */
+    --bg-color-5: var(--color-5);          /* Preto */
 
-    --font-primary: 'Poppins', sans-serif;
-    --font-secondary: 'Lora', serif;
-    --text-color: rgb(58, 53, 53);
-    --placeholder-color: rgba(58, 53, 53, 0.7);
-    --hover-color: rgba(31, 27, 27, 0.9);
+    --font-primary: 'Roboto Slab', serif;
+    --font-secondary: 'Roboto Slab', serif;
+
+    --text-color: var(--color-3);          /* Texto preto */
+    --placeholder-color: rgba(0, 0, 0, 0.5);  /* Cinza escuro */
+    --hover-color: rgb(17, 17, 17);  /* Verde hover */
 }
 
 /* Aplicação de cores */
@@ -34,24 +37,124 @@
 /* Fontes e estilos gerais */
 body {
     font-family: var(--font-primary);
+    background-color: var(--bg-color-1);
+    color: var(--text-color);
 }
 
-p, span, button, input, select, textarea {
-    color: var(--text-color);  /* Preto */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;  /* Títulos em extrabold */
+    font-family: var(--font-primary);
+}
+
+p, span, button, input, select, textarea, th, label, h2 {
+    font-weight: 300;  /* Textos em light */
     font-family: var(--font-secondary);
+    color: var(--text-color);
 }
 
 ::placeholder {
-    color: var(--placeholder-color);  /* Placeholder com leve transparência */
+    color: var(--placeholder-color);
     font-family: var(--font-secondary);
+    font-weight: 300;
 }
 
+/* Botões e interatividade */
+button {
+    border: 1px solid var(--color-5);  /* Borda preta */
+    background-color: var(--color-1);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 button:hover {
-    color: var(--hover-color);  /* Alteração sutil ao passar o mouse */
+    background-color: var(--hover-color);   /* Hover verde */
+    border-radius: 10px;
+    color: var(--color-1);
 }
 
+button.no-border {
+    border: none;
+    background-color: transparent;  /* Fundo transparente */
+    padding: 5px;                   
+}
+
+/* Ícones dentro do botão */
+button.no-border i {
+    color: var(--color-5);           /* Ícone preto */
+    font-size: 1.2em;                /* Tamanho do ícone */
+    transition: color 0.3s ease;     /* Animação de cor */
+}
+
+/* Hover no botão com ícone (sem fundo verde) */
+button.no-border:hover {
+    background-color: transparent;  /* Mantém fundo transparente no hover */
+}
+
+button.no-border:hover i {
+    color: var(--hover-color);  /* Apenas o ícone muda para verde */
+}
+
+input, select, textarea {
+    color: var(--color-5);  /* Cor preta para o texto digitado */
+}
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--text-color);  /* Borda preta ao focar */
-    box-shadow: 0 0 3px var(--placeholder-color);
+    border-color: var(--color-5);  /* Borda preta ao focar */
+    box-shadow: 0 0 5px var(--hover-color);  /* Hover verde */
+    color: var(--color-5);
+}
+
+/* Estilizando cartões e bordas */
+.card {
+    border: 1px solid var(--color-5);  /* Borda preta */
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--bg-color-1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Sombra leve */
+}
+
+.icon-button  {
+    color: var(--text-color); 
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+i {
+    color: var(--text-color); 
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+.icon-button:hover {
+    color: var(--hover-color);  /* Ícone fica verde no hover */
+}
+
+/* Links */
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+a:hover {
+    color: var(--hover-color);  /* Verde no hover */
+}
+
+
+img.icon-default {
+    width: 60px;  /* Largura padrão */
+    height: auto; /* Mantém a proporção da imagem */
+    display: inline-block;
+    vertical-align: middle; /* Alinhamento vertical */
+}
+
+/* Ajuste de espaçamento inferior (mb-5) */
+.mb-5 {
+    margin-bottom: 20px;
+}
+tr, thead{
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.466);
 }

@@ -1,0 +1,42 @@
+<div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+    <div class="p-4 border-b">
+        <p class="text-sm font-semibold">Notificações</p>
+    </div>
+    <div class="divide-y divide-gray-200 max-h-60 overflow-y-auto">
+        {% if request.session.notificacoes %}
+            {% for notificacao in request.session.notificacoes %}
+                <div class="
+                    p-4 flex items-start space-x-3
+                    {% if notificacao.tipo == 'urgente' %} bg-red-100 {% elif notificacao.tipo == 'moderado' %} bg-blue-100 {% elif notificacao.tipo == 'baixo' %} bg-green-100 {% elif notificacao.tipo == 'estoque' %} bg-yellow-100 {% elif notificacao.tipo == 'estoque_perto' %} bg-orange-100 {% endif %}
+                ">
+                    <i class="{{ notificacao.icone }} text-lg"></i>
+                    <div>
+                        <p class="text-sm leading-relaxed">
+                            {{ notificacao.mensagem }}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="p-4 text-center text-sm text-gray-500">
+                Nenhuma notificação no momento.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+<script>
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+
+    notificationBtn.addEventListener('click', () => {
+        notificationDropdown.classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.classList.add('hidden');
+        }
+    });
+</script>

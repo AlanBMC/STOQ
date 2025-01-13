@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#333333">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo192.png' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="{% static 'images/logo_thecoffe.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/global.css'%}">
+</head>
+<body class="color-2 flex min-h-screen">
+    {% if show_tour%}
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+    {%endif%}
+    <div class="w-full bg-color-3 py-3 px-6 shadow-md flex justify-between items-center fixed top-0 left-0 z-50">
+       
+        <div class="w-1/7"></div>
+        <h1 class="text-2xl font-semibold color-3  ">{% block header %}the coffee. ザ・コーヒー{% endblock %}</h1>
+
+        <div class="relative" >
+            <a class="no-border text-color-1 relative" id="notificationBtn">
+                <i class="fas fa-bell text-2xl"></i>
+                <span class="absolute top-0 right-0 bg-red-500 h-4 w-4 
+                rounded-full flex items-center justify-center text-xs text-white">{{ request.session.total_notificacoes }}</span>
+            </a>
+            
+                <a href="{% url 'logout_view'%}" id="botaosair" class="ml-10" >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+                {%include 'componentes/notificacao.html' %}
+            </div>
+    </div>
+
+
+<!-- Main Content -->
+<div class="flex-1  p-6 mt-16">
+    {%include 'componentes/alerta_global.html' %}
+
+    {% block content %}
+
+    {% endblock %}
+</div>
+
+<style>
+  .active {
+        background-color: rgba(164, 188, 67, 1);  /* Cor de fundo verde */
+        border-radius: 12px;
+        transform: scale(1.05);  /* Aumenta ligeiramente o botão ativo */
+        transition: all 0.4s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Efeito de elevação */
+        padding: 5px;
+    }
+
+    .active i {
+        font-size: 1.3rem;  /* Aumenta o tamanho do ícone */
+        transition: font-size 0.8s ease-in-out;
+    }
+
+    
+    .nav-item:active {
+    transform: scale(0.95);
+}
+    .nav-item:hover {
+        transform: scale(1.08);  /* Leve aumento ao passar o mouse */
+    }
+</style>
+
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-color-1 rounded-lg shadow-xl w-11/12 max-w-md">
+    <div class="flex justify-around py-4">
+        <!-- Configurações -->
+        <a href="{% url 'configuracaoview' %}" 
+           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'configuracaoview' %} active {% endif %}">
+            <i class="fas fa-home text-xl"></i>
+            <p>Configurações</p>
+        </a>
+        
+        <!-- Produto -->
+        <a href="{% url 'produtoview' %}" 
+           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'produtoview' %} active {% endif %}">
+            <i class="fas fa-user text-xl"></i>
+            <p>Produto</p>
+        </a>
+
+        <!-- Estoque -->
+        <a href="{% url 'estoqueview' %}" 
+           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'estoqueview' %} active {% endif %}">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <p>Estoque</p>
+        </a>
+
+        <a href="{% url 'dashboard' %}" 
+        class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'dashboard' %} active {% endif %}">
+         <i class="fas fa-shopping-cart text-xl"></i>
+         <p>dashboard</p>
+     </a>
+    </div>
+</div>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'sw.js' %}")
+        .then(() => {
+            console.log("Service Worker registrado com sucesso.");
+        })
+        .catch((error) => {
+            console.error("Falha ao registrar o Service Worker:", error);
+        });
+    }
+
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+
+    // Alternar visibilidade do dropdown ao clicar no sino
+    notificationBtn.addEventListener('click', () => {
+        notificationDropdown.classList.toggle('hidden');
+    });
+
+    // Fechar dropdown ao clicar fora dele
+    window.addEventListener('click', (e) => {
+        if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.classList.add('hidden');
+        }
+    });
+
+  
+</script>
+
+</body>
+</html>

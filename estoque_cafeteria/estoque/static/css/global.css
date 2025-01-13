@@ -4,7 +4,7 @@
     --color-1: rgb(255, 255, 255);         /* Fundo branco */
     --color-2: rgba(245, 245, 245, 1);     /* Cinza claro */
     --color-3: rgb(0, 0, 0);               /* Preto */
-    --color-4: rgb(128, 128, 128);         /* Cinza médio */
+    --color-4: rgb(148, 148, 148);         /* Cinza médio */
     --color-5: rgb(0, 0, 0);               /* Preto */
 
     --bg-color-1: var(--color-1);          /* Fundo principal */
@@ -18,7 +18,7 @@
 
     --text-color: var(--color-3);          /* Texto preto */
     --placeholder-color: rgba(0, 0, 0, 0.5);  /* Cinza escuro */
-    --hover-color: rgba(164, 188, 67, 1);  /* Verde hover */
+    --hover-color: rgb(28, 28, 28);  /* Verde hover */
 }
 
 /* Aplicação de cores */
@@ -60,7 +60,7 @@ p, span, button, input, select, textarea, th, label, h2 {
 
 /* Botões e interatividade */
 button {
-    border: 1px solid var(--color-5);  /* Borda preta */
+    border: 3px solid var(--color-5);  /* Borda preta */
     background-color: var(--color-1);
     color: var(--text-color);
     cursor: pointer;
@@ -106,7 +106,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Estilizando cartões e bordas */
 .card {
-    border: 1px solid var(--color-5);  /* Borda preta */
+    border: 6px solid var(--color-5);  /* Borda preta */
     border-radius: 10px;
     padding: 20px;
     background-color: var(--bg-color-1);
@@ -128,6 +128,7 @@ i {
 .icon-button:hover {
     color: var(--hover-color);  /* Ícone fica verde no hover */
 }
+
 
 /* Links */
 a {

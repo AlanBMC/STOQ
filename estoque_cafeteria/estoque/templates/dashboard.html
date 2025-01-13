@@ -1,0 +1,231 @@
+
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    body{
+        padding: 0;
+    }
+    h1, h3{
+        text-align: center;
+        color: black;
+    }
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        margin-bottom: 50px;
+
+    }
+
+    .chart-container {
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+    <!-- Gráficos -->
+
+    
+    <div class="dashboard">
+       
+        <div id="step1" class="chart-container">
+            <H1>Movimento por categoria</H1>
+            <canvas id="lineChart" ></canvas>
+            
+        </div>
+        <div id="step2" class="chart-container">
+            <H1>Movimento por Fornecedor</H1>
+            <canvas id="barChart"></canvas>
+        </div>
+        <div id="step3" class="chart-container">
+            <H1>Movimento por Produto</H1>
+            
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div id="step4" class="chart-container">
+            <H1>Movimento por Produto </H1>
+            
+            <canvas id="PolarChart"></canvas>
+        </div>
+      
+    </div>
+
+<script>
+    // Função para buscar os dados
+    async function fetchData() {
+        const response = await fetch('/obter-dados/');
+        const data = await response.json();
+        return data;
+    }
+    
+
+
+    fetchData().then(data => {
+        const totalMovCategoria = data.total_mov_categoria;
+        const totalMovFornecedor = data.total_mov_fornecedor;
+        const totalMovProduto = data.total_mov_produto;
+        const contagemporproduto =  data.contagemproduto
+        // Filtrar apenas categorias com movimentação para o gráfico de pizza
+        const pieChartLabels = Object.keys(totalMovProduto).filter(key => totalMovProduto[key] > 0);
+        const pieChartData = pieChartLabels.map(label => totalMovProduto[label]);
+        // Dados para o gráfico de linhas
+        const lineChartLabels = Object.keys(totalMovCategoria)
+        const lineChartDataSoma = lineChartLabels.map(label => totalMovCategoria[label].soma);
+        const lineChartContagem = lineChartLabels.map(label => totalMovCategoria[label].contagem);
+        // dados para o grafico de radar
+        const arealabels = Object.keys(contagemporproduto).filter(key => contagemporproduto[key].quantidade_mov > 0); 
+        const dataProdutoQuantidadeMov = arealabels.map(label => contagemporproduto[label].quantidade_mov);
+        const dataProdutoquantidadeTotal = arealabels.map(label => contagemporproduto[label].quantidade_total);
+
+        
+
+
+       
+        const dataPolar = {
+            labels: arealabels,
+            datasets: [{
+                label: 'Contagem',
+                data: dataProdutoQuantidadeMov,
+                backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(75, 192, 192)',
+                'rgb(255, 205, 86)',
+                'rgb(201, 203, 207)',
+                'rgb(54, 162, 235)'
+                ]
+            }]
+            };       
+        
+        const confPolar = new Chart(document.getElementById('PolarChart'),{
+        type: 'polarArea',
+        data: dataPolar,
+        options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+        
+
+       
+
+        
+        const lineChart = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: lineChartLabels,
+                datasets: [{
+                    label: 'Valores',
+                    data: lineChartContagem,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+
+      
+      
+        // Dados para o gráfico de barras
+        const barChartLabels = Object.keys(totalMovFornecedor);
+        const barChartData = Object.values(totalMovFornecedor);
+
+        const barChart = new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: barChartLabels,
+                datasets: [{
+                    label: 'Movimentação por Fornecedor - Quantidade',
+                    data: barChartData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+        // Gráfico de pizza
+        const pieChart = new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: pieChartLabels,
+                datasets: [{
+                    label: 'Movimentação por Produto',
+                    data: pieChartData,
+                    backgroundColor: [
+                            'rgba(255, 179, 186, 0.5)', // Rosa pastel
+                            'rgba(174, 198, 207, 0.5)', // Azul pastel
+                            'rgba(255, 223, 186, 0.5)', // Amarelo pastel
+                            'rgba(170, 238, 187, 0.5)', // Verde pastel
+                            'rgba(204, 192, 255, 0.5)'  // Lilás pastel
+                        ],
+                        borderColor: [
+                            'rgba(255, 179, 186, 1)', // Rosa pastel
+                            'rgba(174, 198, 207, 1)', // Azul pastel
+                            'rgba(255, 223, 186, 1)', // Amarelo pastel
+                            'rgba(170, 238, 187, 1)', // Verde pastel
+                            'rgba(204, 192, 255, 1)'  // Lilás pastel
+                        ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+
+<script>
+const driver = window.driver.js.driver;
+
+const driverObj = driver({
+    showProgress: true,
+    steps: [
+        {element: "#step1",popover: {title: "Gráfico de Categoria ",description: "Faz uma contagem total de movimentação por categoria"}},
+        {element: "#step2",popover: {title: "Gráfico de Fornecedor ",description: "Faz uma contagem total de movimentação por fornecedor"}},
+        {element: "#step3",popover: {title: "Movimento por Produto ",description: "Faz uma soma(soma a quantidade) total de movimentação por produto"}},
+        {element: "#step4",popover: {title: "Movimento por Produto ",description: "Faz uma Contagem total de movimentação por produto"}},
+
+    ]
+});
+driverObj.drive();
+</script>
+
+{%endblock%}

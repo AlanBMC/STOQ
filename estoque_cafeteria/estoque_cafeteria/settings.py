@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +26,15 @@ SECRET_KEY = 'django-insecure-6#nkm(kgo+)ofvln%sc@cvrwrmxpeid5gz()t+^3qy1xr+77nu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    '*',  'estoque-cafeteria-v1.onrender.com'# Permite qualquer subdomínio do ngrok
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://estoque-cafeteria-v1.onrender.com',  # Permite domínios ngrok para requisições POST
+        'https://*.ngrok-free.app',  # Permite testes locais com ngrok
 
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,7 +62,7 @@ ROOT_URLCONF = 'estoque_cafeteria.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+    'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,6 +87,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -128,3 +136,4 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Para produção (collectstatic)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

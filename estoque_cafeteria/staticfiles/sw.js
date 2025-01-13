@@ -1,6 +1,6 @@
 const CACHE_NAME = 'estoque-cache-v4';
 const urlsToCache = [
-    '/',
+    '/login/',
     '/static/css/global.css',
     '/static/images/logo192.png',
     '/templates/offline.html'
