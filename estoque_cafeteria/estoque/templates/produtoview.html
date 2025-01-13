@@ -1,14 +1,41 @@
 {% extends 'base.html' %}
 {% block title %}Cadastro produto{% endblock %}
 {% block content %}
-<div class="mt-10 ml-6">
-    <button id="openModalBtn" class="bg-color-1 text-color-3  px-6 py-3 rounded-lg m-3 shadow-md hover:bg-opacity-90 transition-all">
+<style>
+    /* Estilo padrão para os botões */
+    button {
+        padding: 15px 24px; /* Padding padrão */
+        font-size: 20px; /* Tamanho do texto padrão */
+        border-radius: 8px; /* Bordas arredondadas */
+        width: 300px;
+    }
+
+    /* Para tablets (largura mínima de 768px) */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        button {
+            padding: 25px 50px; /* Aumenta o padding para tablets */
+            font-size: 26px; /* Texto um pouco maior */
+            width: 300px;
+        }
+    }
+
+    /* Para celulares (largura máxima de 767px) */
+    @media (max-width: 767px) {
+        button {
+            padding: 30px 40px; /* Aumenta ainda mais o padding para celulares */
+            width: 300px;
+            font-size: 25px; /* Texto ainda maior */
+        }
+    }
+</style>
+<div class="button-container" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
+    <button id="openModalBtn" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Produto
     </button>
-    <button onclick="abrirModalFornecedor()"  class="bg-color-1 text-color-3 m-3 px-6 py-3 rounded-lg shadow-md hover:bg-opacity-90 transition-all">
+    <button onclick="abrirModalFornecedor()" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Fornecedor
-        </button>
-    <button onclick="abrirModalCategoria()" class="bg-color-1 text-color-3 m-3  px-6 py-3 rounded-lg shadow-md hover:bg-opacity-90 transition-all">
+    </button>
+    <button onclick="abrirModalCategoria()" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Categoria
     </button>
 </div>
