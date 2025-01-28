@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque
+from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque, UserLoja  
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta,datetime
@@ -143,7 +143,6 @@ def login(request):
     
     return HttpResponseNotAllowed(['GET', 'POST'])
 
-
 @login_required(login_url='/')
 def produtoview(request):
   
@@ -156,10 +155,27 @@ def produtoview(request):
     show_tour = verifica_last_name(request)
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
-    loja_name = request.user.loja.nome
-    hoje = date.today()
-    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    loja_name = UserLoja.objects.filter(user=request.user).first()
 
+    hoje = date.today()
+    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+
+@login_required(login_url='/')
+def inicio(request):
+  
+    """
+      Renderiza a página de visualização de produtos com a lista de categorias, fornecedores, nome da loja e a data de hoje.
+        request (HttpRequest): O objeto de requisição HTTP.
+        HttpResponse: A página de visualização de produtos renderizada.
+    """
+    
+    show_tour = verifica_last_name(request)
+    categorias =  listar_categorias(request)
+    fornecedores = listar_fornecedores(request)
+    loja_name = UserLoja.objects.filter(user=request.user).first()
+
+    hoje = date.today()
+    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 
 @login_required(login_url='/')
@@ -304,6 +320,7 @@ def listar_usuarios_da_loja_atual(request):
     Lista usuarios da loja 1
     '''
     loja_do_usuario = request.user.loja  # Loja do usuário logado
+    
     usuarios = User.objects.filter(loja=loja_do_usuario)  # Filtra usuários da mesma loja
     return usuarios
 
