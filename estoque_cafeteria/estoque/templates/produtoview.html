@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Cadastro produto{% endblock %}
+ 
 {% block content %}
 <style>
     /* Estilo padrão para os botões */
@@ -42,10 +43,9 @@
     <button onclick="abrirModalCategoria()" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Categoria
     </button>
-<button data-modal-target="default-modal" data-modal-toggle="default-modal"
-    class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    type="button">
-    Loja
+<button onclick="AbrirModalLoja()"
+    class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
+    <i class="fas fa-plus mr-2"></i> Ver lojas
 </button>
 
    
@@ -206,6 +206,29 @@
     </div>
 </div>
 
+<div id="modalLoja" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg w-auto">
+        <h2 class="text-lg font-semibold mb-4">Ver lojas</h2>
+        <form id="formLojaView" action="" method="POST"> {% csrf_token %}
+            <div class="m-3">
+                <label for="lojas" class="block text-color-4
+                 text-sm font-semibold mb-2">Lojas</label>
+                <select id="lojas" name="lojas" required
+                    class="w-full p-3 border rounded-lg 
+                    focus:outline-none focus:ring-2 focus:ring-color-1">
+            
+                    <option value="UN">Unidade</option>
+                    
+                </select>
+            </div>
+            <button type="submit" class="w-full  py-2 rounded-lg ">
+                Salvar
+            </button>
+        </form>
+    </div>
+</div>
+
+
 
 
 <script>
@@ -253,20 +276,26 @@ function abrirModalFornecedor() {
     document.getElementById('modalFornecedor').classList.remove('hidden');
 }
 
+
 function abrirModalCategoria() {
     document.getElementById('modalCategoria').classList.remove('hidden');
 }
-
+function AbrirModalLoja() {
+    document.getElementById('modalLoja').classList.remove('hidden');
+}
 // Fechar modal ao clicar fora do formulário
 window.onclick = function(event) {
     let modalFornecedor = document.getElementById('modalFornecedor');
     let modalCategoria = document.getElementById('modalCategoria');
-    
+    let modalLoja = document.getElementById('modalLoja');
     if (event.target == modalFornecedor) {
         modalFornecedor.classList.add('hidden');
     }
     if (event.target == modalCategoria) {
         modalCategoria.classList.add('hidden');
+    }
+    if (event.target == modalLoja) {
+        modalLoja.classList.add('hidden');
     }
 }
 </script>
