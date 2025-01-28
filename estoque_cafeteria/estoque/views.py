@@ -161,26 +161,12 @@ def produtoview(request):
     hoje = date.today()
     return render(request, 'produtoview.html', {'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
-@login_required(login_url='/')
-def inicio(request):
-  
-    """
-      Renderiza a página de visualização de produtos com a lista de categorias, fornecedores, nome da loja e a data de hoje.
-        request (HttpRequest): O objeto de requisição HTTP.
-        HttpResponse: A página de visualização de produtos renderizada.
-    """
-    
-    show_tour = verifica_last_name(request)
-    categorias =  listar_categorias(request)
-    fornecedores = listar_fornecedores(request)
-    loja_name = UserLoja.objects.filter(user=request.user).first()
-    lojas = UserLoja.objects.filter(user=request.user)
-    lojasDoUser = [user.loja for user in lojas]
 
-    hoje = date.today()
-    return render(request, 'produtoview.html', {'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
-
-
+def update_loja_user(request):
+    if request.method == 'POST':
+        loja_atual = request.POST.get('lojas')
+        print(loja_atual)
+        return redirect('produtoview')
 @login_required(login_url='/')
 def estoqueview(request):
     '''

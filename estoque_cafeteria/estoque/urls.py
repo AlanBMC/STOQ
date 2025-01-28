@@ -8,11 +8,12 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout_view'),
 
     path('produtoview/', views.produtoview, name='produtoview'),
+
     path('estoqueview/', views.estoqueview, name='estoqueview'),
     path('configuracaoview/', views.configuracaoview, name='configuracaoview'),
 
     #ROTAS TESTES
-
+    path('update_loja_user/', views.update_loja_user, name='update_loja_user'),
     #DASHBOARD
     path('dashboard/', views.dashboard, name='dashboard'),
     path('obter-dados/', views.obter_dados, name='obter_dados'),
