@@ -156,9 +156,10 @@ def produtoview(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     loja_name = UserLoja.objects.filter(user=request.user).first()
-
+    lojas = UserLoja.objects.filter(user=request.user)
+    lojasDoUser = [user.loja for user in lojas]
     hoje = date.today()
-    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def inicio(request):
@@ -173,9 +174,11 @@ def inicio(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     loja_name = UserLoja.objects.filter(user=request.user).first()
+    lojas = UserLoja.objects.filter(user=request.user)
+    lojasDoUser = [user.loja for user in lojas]
 
     hoje = date.today()
-    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 
 @login_required(login_url='/')
