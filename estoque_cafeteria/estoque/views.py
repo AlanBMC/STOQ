@@ -155,17 +155,23 @@ def produtoview(request):
     show_tour = verifica_last_name(request)
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
-    loja_name = UserLoja.objects.filter(user=request.user).first()
+    loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas]
+    is_proprietario = request.user.groups.filter(name="proprietario").exists()
+    print(is_proprietario)
     hoje = date.today()
-    return render(request, 'produtoview.html', {'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name.loja.nome, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 
 def update_loja_user(request):
     if request.method == 'POST':
         loja_atual = request.POST.get('lojas')
-        print(loja_atual)
+        usuario = request.user
+        loja = get_object_or_404(Loja, id=loja_atual)
+        usuario.loja = loja
+        usuario.save()
+        messages.success(request, 'salvo')
         return redirect('produtoview')
 @login_required(login_url='/')
 def estoqueview(request):
