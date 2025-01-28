@@ -209,11 +209,11 @@
 {%if is_proprietario %}
 <div id="modalLoja" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg w-auto">
-        <h2 class="text-lg font-semibold  mb-4">Ver lojas</h2>
+        <h2 class="text-lg font-semibold  mb-4">Ver lojas parceiras</h2>
         <form id="formLojaView" action="{%url 'update_loja_user' %}" method="POST"> {% csrf_token %}
             <div class="m-3 p-3">
                 <label for="lojas" class="block text-color-4
-                 text-sm font-semibold mb-2">Lojas</label>
+                 text-sm font-semibold mb-2">Lojas parceiras</label>
                 <select id="lojas" name="lojas" required
                     class="w-full p-5 border rounded-lg 
                     focus:outline-none focus:ring-2 focus:ring-color-1">

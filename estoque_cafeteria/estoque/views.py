@@ -158,12 +158,12 @@ def produtoview(request):
     loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas]
-    is_proprietario = request.user.groups.filter(name="proprietario").exists()
+    is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     print(is_proprietario)
     hoje = date.today()
     return render(request, 'produtoview.html', {'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
-
+@login_required(login_url='/')
 def update_loja_user(request):
     if request.method == 'POST':
         loja_atual = request.POST.get('lojas')
@@ -173,6 +173,7 @@ def update_loja_user(request):
         usuario.save()
         messages.success(request, 'salvo')
         return redirect('produtoview')
+
 @login_required(login_url='/')
 def estoqueview(request):
     '''
@@ -183,10 +184,15 @@ def estoqueview(request):
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
     lojas = Loja.objects.all()
+    lojas2 = UserLoja.objects.filter(user=request.user)
+    lojasDoUser = [user.loja for user in lojas2]
+    #Criar um novo Grupo
+    for lo in lojasDoUser:
+        print(lo.nome)
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojas})
+    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
