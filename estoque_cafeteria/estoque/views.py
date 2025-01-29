@@ -978,6 +978,8 @@ def obter_dados_banco(request):
     return JsonResponse(dados_completos, safe=False)
 
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User, Group, Permission
 
 @transaction.atomic  # Garante que a operação seja atômica
 @csrf_exempt  # Permite chamadas sem CSRF (para testes)
@@ -1009,6 +1011,11 @@ def restore_backup(request):
                         for field in modelo._meta.many_to_many:
                             if field.name in registro:
                                 many_to_many_fields[field.name] = registro.pop(field.name)
+
+                        # Resolver chave estrangeira ContentType na tabela Permission
+                        if modelo == Permission and "content_type" in registro:
+                            content_type_id = registro.pop("content_type")
+                            registro["content_type"] = ContentType.objects.get(id=content_type_id)
 
                         # Cria o objeto sem os campos ManyToMany
                         obj = modelo.objects.create(**registro)
