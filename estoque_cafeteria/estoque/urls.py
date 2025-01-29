@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.conf.urls import handler404, handler500
 
 urlpatterns = [
     path('', views.login, name='login'),
@@ -50,4 +51,5 @@ urlpatterns = [
     path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json')
 
 ]
- 
+handler404 = views.error_404_view
+handler500 = views.error_500_view
