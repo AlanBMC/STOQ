@@ -48,7 +48,7 @@ urlpatterns = [
     path('offline/', views.offline, name='offline'),
 
     path('backup/', views.obter_dados_banco, name='backup'),
-    path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json')
+    path('api/importar-dados/', views.restore_backup, name='importar_dados_json')
 
 ]
 handler404 = views.error_404_view

@@ -11,7 +11,7 @@ from datetime import date, timedelta,datetime
 from django.http import HttpResponseNotAllowed, HttpResponse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
-
+from django.db import transaction, connection
 from django.db import connection
 from django.apps import apps
 from django.core.serializers import serialize
@@ -976,3 +976,49 @@ def obter_dados_banco(request):
             print(f"Erro ao buscar dados da tabela {tabela}: {str(e)}")
     
     return JsonResponse(dados_completos, safe=False)
+
+
+
+@transaction.atomic  # Garante que a operação seja atômica
+@csrf_exempt  # Permite chamadas sem CSRF (para testes)
+def restore_backup(request):
+    if request.method != "POST":
+        return JsonResponse({"erro": "Método não permitido"}, status=405)
+
+    try:
+        data = json.loads(request.body)  # Lê o JSON enviado na requisição
+
+        with transaction.atomic():
+            # Apaga todas as tabelas antes de inserir os novos dados
+            for model in apps.get_models():
+                model.objects.all().delete()
+
+            # Percorre as tabelas e insere os registros novamente
+            for tabela, registros in data.items():
+                modelo = None
+                for model in apps.get_models():
+                    if model._meta.db_table == tabela:
+                        modelo = model
+                        break
+
+                if modelo:
+                    for registro in registros:
+                        many_to_many_fields = {}
+                        
+                        # Separa campos ManyToMany para tratar depois
+                        for field in modelo._meta.many_to_many:
+                            if field.name in registro:
+                                many_to_many_fields[field.name] = registro.pop(field.name)
+
+                        # Cria o objeto sem os campos ManyToMany
+                        obj = modelo.objects.create(**registro)
+
+                        # Agora adiciona os valores nos campos ManyToMany
+                        for field_name, values in many_to_many_fields.items():
+                            many_to_many_field = getattr(obj, field_name)
+                            many_to_many_field.set(values)  # Usa `.set()`, como o Django exige
+
+        return JsonResponse({"mensagem": "Banco de dados restaurado com sucesso!"})
+
+    except Exception as e:
+        return JsonResponse({"erro": str(e)}, status=400)
