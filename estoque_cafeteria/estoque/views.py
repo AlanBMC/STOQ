@@ -12,7 +12,9 @@ from django.http import HttpResponseNotAllowed, HttpResponse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 
-
+from django.db import connection
+from django.apps import apps
+from django.core.serializers import serialize
 
 def obter_dados(request):
     '''
@@ -832,39 +834,6 @@ def cria_movimento_de_estoque_em_lote(request):
 
 
 
-@login_required(login_url='/')
-def retornadados(request):
-    """
-    Retorna os dados do banco de dados em formato JSON.
-    """
-    lojas = Loja.objects.all().values()
-    users_loja = UserLoja.objects.select_related('user', 'loja').values('user__username', 'loja__nome')
-    fornecedores = Fornecedor.objects.select_related('loja').values('nome', 'contato', 'loja__nome')
-    categorias = Categoria.objects.select_related('loja').values('nome', 'loja__nome')
-    produtos = Produto.objects.select_related('fornecedor', 'categoria', 'loja').values(
-        'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras', 'validade',
-        'fornecedor__nome', 'categoria__nome', 'estoque_minimo', 'loja__nome', 'status'
-    )
-    movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
-        'produto__nome', 'tipo_movimento', 'quantidade', 'data_movimento', 'responsavel__username', 'loja__nome'
-    )
-    usuarios = User.objects.all().values('id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'date_joined')
-
-    data = {
-        'lojas': list(lojas),
-        'users_loja': list(users_loja),
-        'fornecedores': list(fornecedores),
-        'categorias': list(categorias),
-        'produtos': list(produtos),
-        'movimentos_estoque': list(movimentos),
-        'usuarios': list(usuarios)
-    }
-    
-    return JsonResponse(data, safe=False)
-
-def test_500(request):
-    raise Exception("Erro de teste 500")
-
 @csrf_exempt  # Desabilita a verificação CSRF para facilitar testes com Postman
 def importar_dados_json(request):
     """
@@ -934,7 +903,33 @@ def importar_dados_json(request):
                 responsavel=responsavel,
                 loja=loja
             )
-
+        for usuario in data.get('usuarios', []):
+            username = usuario.get('username')
+            loja_id = usuario.get('loja')
+            email = usuario.get('email', '')  # Garante que email não seja None
+            first_name = usuario.get('first_name', '')
+            last_name = usuario.get('last_name', '')
+            senha = '123'
+            if not username or not loja_id:
+                continue
+            try: 
+                loja = Loja.objects.get(id=loja_id)
+            except Loja.DoesNotExist:
+                print('nao existe loja')
+                continue
+            user, created = User.objects.get_or_create(username=username, defaults={
+                            "email": email,
+                            "first_name": first_name,
+                            "last_name": last_name,
+                            "is_active": usuario.get("is_active", True),
+                            "date_joined": usuario.get("date_joined"),
+                        })
+            if created:  # Se o usuário foi criado agora, define a senha padrão
+                user.set_password("123")
+                user.save()
+            if hasattr(user, 'loja'):
+                user.loja = loja
+                user.save()
         return JsonResponse({'success': 'Dados importados com sucesso'}, status=201)
 
     except Exception as e:
@@ -950,3 +945,34 @@ def error_500_view(request):
 
 def error_401_view(request, exception=None):
     return render(request, 'errors/401.html', status=401)
+
+
+
+def obter_dados_banco(request):
+    todas_tabelas = connection.introspection.table_names()
+    dados_completos = {}
+
+    for tabela in todas_tabelas:
+        try:
+            modelo = None
+            for model in apps.get_models():
+                if model._meta.db_table == tabela:
+                    modelo = model
+                    break
+
+            if modelo:
+                # Serializando os modelos do Django
+                objetos = modelo.objects.all()
+                dados_serializados = json.loads(serialize('json', objetos))
+                dados_completos[tabela] = [obj["fields"] for obj in dados_serializados]
+            else:
+                # Se não tem modelo, faz consulta SQL bruta
+                with connection.cursor() as cursor:
+                    cursor.execute(f"SELECT * FROM {tabela}")  # Busca tudo da tabela
+                    colunas = [desc[0] for desc in cursor.description]
+                    dados_completos[tabela] = [dict(zip(colunas, row)) for row in cursor.fetchall()]
+        
+        except Exception as e:
+            print(f"Erro ao buscar dados da tabela {tabela}: {str(e)}")
+    
+    return JsonResponse(dados_completos, safe=False)

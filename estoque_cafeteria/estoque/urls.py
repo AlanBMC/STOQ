@@ -47,7 +47,7 @@ urlpatterns = [
 
     path('offline/', views.offline, name='offline'),
 
-    path('backup/', views.retornadados, name='backup'),
+    path('backup/', views.obter_dados_banco, name='backup'),
     path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json')
 
 ]
