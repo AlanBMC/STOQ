@@ -46,7 +46,8 @@ urlpatterns = [
 
     path('offline/', views.offline, name='offline'),
 
-    path('backup/', views.retornadados, name='backup')
+    path('backup/', views.retornadados, name='backup'),
+    path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json')
 
 ]
  

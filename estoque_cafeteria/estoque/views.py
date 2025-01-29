@@ -10,7 +10,7 @@ from django.contrib.auth import login as login_django
 from datetime import date, timedelta,datetime
 from django.http import HttpResponseNotAllowed, HttpResponse
 from django.utils.timezone import now
-
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -848,6 +848,7 @@ def retornadados(request):
     movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
         'produto__nome', 'tipo_movimento', 'quantidade', 'data_movimento', 'responsavel__username', 'loja__nome'
     )
+    usuarios = User.objects.all().values('id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'date_joined')
 
     data = {
         'lojas': list(lojas),
@@ -856,9 +857,84 @@ def retornadados(request):
         'categorias': list(categorias),
         'produtos': list(produtos),
         'movimentos_estoque': list(movimentos),
+        'usuarios': list(usuarios)
     }
 
     return JsonResponse(data, safe=False)
 
 
 
+@csrf_exempt  # Desabilita a verificação CSRF para facilitar testes com Postman
+def importar_dados_json(request):
+    """
+    Recebe um JSON e insere os dados no banco de dados.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        # Criando Lojas
+        for loja_data in data.get('lojas', []):
+            loja, _ = Loja.objects.get_or_create(id=loja_data.get('id'), defaults={'nome': loja_data.get('nome')})
+
+        # Criando Usuários e Associando às Lojas
+        for user_loja in data.get('users_loja', []):
+            user, _ = User.objects.get_or_create(username=user_loja.get('user__username'))
+            loja = Loja.objects.get(nome=user_loja.get('loja__nome'))
+            UserLoja.objects.get_or_create(user=user, loja=loja)
+
+        # Criando Fornecedores
+        for fornecedor_data in data.get('fornecedores', []):
+            loja = Loja.objects.get(nome=fornecedor_data.get('loja__nome'))
+            Fornecedor.objects.get_or_create(
+                nome=fornecedor_data.get('nome'),
+                contato=fornecedor_data.get('contato'),
+                loja=loja
+            )
+
+        # Criando Categorias
+        for categoria_data in data.get('categorias', []):
+            loja = Loja.objects.get(nome=categoria_data.get('loja__nome'))
+            Categoria.objects.get_or_create(nome=categoria_data.get('nome'), loja=loja)
+
+        # Criando Produtos
+        for produto_data in data.get('produtos', []):
+            loja = Loja.objects.get(nome=produto_data.get('loja__nome'))
+            fornecedor = Fornecedor.objects.filter(nome=produto_data.get('fornecedor__nome')).first()
+            categoria = Categoria.objects.filter(nome=produto_data.get('categoria__nome')).first()
+
+            Produto.objects.get_or_create(
+                nome=produto_data.get('nome'),
+                codigo_de_barras=produto_data.get('codigo_de_barras'),
+                defaults={
+                    'quantidade': produto_data.get('quantidade'),
+                    'tipo_quantidade': produto_data.get('tipo_quantidade'),
+                    'validade': produto_data.get('validade'),
+                    'fornecedor': fornecedor,
+                    'categoria': categoria,
+                    'estoque_minimo': produto_data.get('estoque_minimo'),
+                    'loja': loja,
+                    'status': produto_data.get('status')
+                }
+            )
+
+        # Criando Movimentos de Estoque
+        for movimento_data in data.get('movimentos_estoque', []):
+            produto = Produto.objects.get(nome=movimento_data.get('produto__nome'))
+            loja = Loja.objects.get(nome=movimento_data.get('loja__nome'))
+            responsavel = User.objects.get(username=movimento_data.get('responsavel__username'))
+
+            MovimentoEstoque.objects.create(
+                produto=produto,
+                tipo_movimento=movimento_data.get('tipo_movimento'),
+                quantidade=movimento_data.get('quantidade'),
+                responsavel=responsavel,
+                loja=loja
+            )
+
+        return JsonResponse({'success': 'Dados importados com sucesso'}, status=201)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
