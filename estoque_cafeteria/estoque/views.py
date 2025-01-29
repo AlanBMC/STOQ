@@ -712,6 +712,7 @@ def func_notifica_vencimento(request):
 
 @login_required(login_url='/')
 def cria_movimento_de_estoque_em_lote(request):
+
     """
     Cria movimentos de estoque em lote (entrada, saída e transferência) para produtos.
     Args:
@@ -721,6 +722,7 @@ def cria_movimento_de_estoque_em_lote(request):
     """
     
     if request.method == 'POST':
+
         quantidades = request.POST.getlist('quantidades')
         movimentos = request.POST.getlist('movimentos')
         produto_ids = request.POST.getlist('produto_ids')
@@ -826,3 +828,37 @@ def cria_movimento_de_estoque_em_lote(request):
         elif mensagem:
             messages.error(request, f'{" ".join(mensagem)}')
         return redirect('estoqueview')
+    
+
+
+
+@login_required(login_url='/')
+def retornadados(request):
+    """
+    Retorna os dados do banco de dados em formato JSON.
+    """
+    lojas = Loja.objects.all().values()
+    users_loja = UserLoja.objects.select_related('user', 'loja').values('user__username', 'loja__nome')
+    fornecedores = Fornecedor.objects.select_related('loja').values('nome', 'contato', 'loja__nome')
+    categorias = Categoria.objects.select_related('loja').values('nome', 'loja__nome')
+    produtos = Produto.objects.select_related('fornecedor', 'categoria', 'loja').values(
+        'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras', 'validade',
+        'fornecedor__nome', 'categoria__nome', 'estoque_minimo', 'loja__nome', 'status'
+    )
+    movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
+        'produto__nome', 'tipo_movimento', 'quantidade', 'data_movimento', 'responsavel__username', 'loja__nome'
+    )
+
+    data = {
+        'lojas': list(lojas),
+        'users_loja': list(users_loja),
+        'fornecedores': list(fornecedores),
+        'categorias': list(categorias),
+        'produtos': list(produtos),
+        'movimentos_estoque': list(movimentos),
+    }
+
+    return JsonResponse(data, safe=False)
+
+
+

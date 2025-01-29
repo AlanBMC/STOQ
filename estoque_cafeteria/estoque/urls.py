@@ -46,5 +46,7 @@ urlpatterns = [
 
     path('offline/', views.offline, name='offline'),
 
+    path('backup/', views.retornadados, name='backup')
+
 ]
  
