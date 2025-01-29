@@ -5,10 +5,17 @@ from django.db.models import  SET_NULL
 
 class Loja(models.Model):
     nome = models.CharField(max_length=100)
-
+    
     def __str__(self):
         return self.nome
 
+class UserLoja(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    loja = models.ForeignKey(Loja, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.loja.nome}"
+    
 User.add_to_class('loja', models.ForeignKey(Loja, on_delete=models.SET_NULL, null=True, blank=True))
 
 class Fornecedor(models.Model):

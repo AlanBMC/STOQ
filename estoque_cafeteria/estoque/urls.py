@@ -2,17 +2,19 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.conf.urls import handler404, handler500
 
 urlpatterns = [
     path('', views.login, name='login'),
     path('logout/', views.logout_view, name='logout_view'),
 
     path('produtoview/', views.produtoview, name='produtoview'),
+
     path('estoqueview/', views.estoqueview, name='estoqueview'),
     path('configuracaoview/', views.configuracaoview, name='configuracaoview'),
 
     #ROTAS TESTES
-
+    path('update_loja_user/', views.update_loja_user, name='update_loja_user'),
     #DASHBOARD
     path('dashboard/', views.dashboard, name='dashboard'),
     path('obter-dados/', views.obter_dados, name='obter_dados'),
@@ -45,5 +47,10 @@ urlpatterns = [
 
     path('offline/', views.offline, name='offline'),
 
+    path('backup/', views.obter_dados_banco, name='backup'),
+    path('api/importar-dados/', views.restore_backup, name='importar_dados_json')
+
 ]
- 
+handler404 = views.error_404_view
+handler500 = views.error_500_view
+handler401 = views.error_401_view

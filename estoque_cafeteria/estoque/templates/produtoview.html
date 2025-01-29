@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Cadastro produto{% endblock %}
+ 
 {% block content %}
 <style>
     /* Estilo padrão para os botões */
@@ -13,7 +14,7 @@
     /* Para tablets (largura mínima de 768px) */
     @media (min-width: 768px) and (max-width: 1024px) {
         button {
-            padding: 25px 50px; /* Aumenta o padding para tablets */
+            padding: 25px 20px; /* Aumenta o padding para tablets */
             font-size: 26px; /* Texto um pouco maior */
             width: 300px;
         }
@@ -28,6 +29,10 @@
         }
     }
 </style>
+
+
+
+
 <div class="button-container" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
     <button id="openModalBtn" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Produto
@@ -38,7 +43,16 @@
     <button onclick="abrirModalCategoria()" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Categoria
     </button>
+{%if is_proprietario %}
+<button onclick="AbrirModalLoja()"
+    class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
+    <i class="fas fa-plus mr-2"></i> Ver lojas
+</button>
+{%endif%}
+   
 </div>
+
+
 
 <!-- Modal (inicialmente oculto) -->
 <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
@@ -110,7 +124,7 @@
                 </div>
                 <div class="w-1/2" id="estoqueMin">
                     <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
-                    <input type="number" id="estoque_min" name="estoque_min"  step="0.001" min="1"
+                    <input type="number" id="estoque_min" name="estoque_min" required  step="0.001" min="1"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
     
@@ -192,6 +206,31 @@
         </form>
     </div>
 </div>
+{%if is_proprietario %}
+<div id="modalLoja" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg w-auto">
+        <h2 class="text-lg font-semibold  mb-4">Ver lojas parceiras</h2>
+        <form id="formLojaView" action="{%url 'update_loja_user' %}" method="POST"> {% csrf_token %}
+            <div class="m-3 p-3">
+                <label for="lojas" class="block text-color-4
+                 text-sm font-semibold mb-2">Lojas parceiras</label>
+                <select id="lojas" name="lojas" required
+                    class="w-full p-5 border rounded-lg 
+                    focus:outline-none focus:ring-2 focus:ring-color-1">
+                    {% for loja in lojasDoUser %}
+                    <option value="{{loja.id}}" class="p-3">{{loja.nome}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+            <button type="submit" class="w-full  py-2 rounded-lg ">
+                Salvar
+            </button>
+        </form>
+    </div>
+</div>
+{%endif%}
+
+
 
 <script>
     const openModalBtn = document.getElementById('openModalBtn');
@@ -238,20 +277,26 @@ function abrirModalFornecedor() {
     document.getElementById('modalFornecedor').classList.remove('hidden');
 }
 
+
 function abrirModalCategoria() {
     document.getElementById('modalCategoria').classList.remove('hidden');
 }
-
+function AbrirModalLoja() {
+    document.getElementById('modalLoja').classList.remove('hidden');
+}
 // Fechar modal ao clicar fora do formulário
 window.onclick = function(event) {
     let modalFornecedor = document.getElementById('modalFornecedor');
     let modalCategoria = document.getElementById('modalCategoria');
-    
+    let modalLoja = document.getElementById('modalLoja');
     if (event.target == modalFornecedor) {
         modalFornecedor.classList.add('hidden');
     }
     if (event.target == modalCategoria) {
         modalCategoria.classList.add('hidden');
+    }
+    if (event.target == modalLoja) {
+        modalLoja.classList.add('hidden');
     }
 }
 </script>

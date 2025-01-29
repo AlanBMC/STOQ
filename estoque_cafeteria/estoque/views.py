@@ -4,15 +4,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque
+from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque, UserLoja  
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
 from datetime import date, timedelta,datetime
 from django.http import HttpResponseNotAllowed, HttpResponse
 from django.utils.timezone import now
-
-
-
+from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction, connection
+from django.db import connection
+from django.apps import apps
+from django.core.serializers import serialize
 
 def obter_dados(request):
     '''
@@ -143,7 +145,6 @@ def login(request):
     
     return HttpResponseNotAllowed(['GET', 'POST'])
 
-
 @login_required(login_url='/')
 def produtoview(request):
   
@@ -157,10 +158,23 @@ def produtoview(request):
     categorias =  listar_categorias(request)
     fornecedores = listar_fornecedores(request)
     loja_name = request.user.loja.nome
+    lojas = UserLoja.objects.filter(user=request.user)
+    lojasDoUser = [user.loja for user in lojas]
+    is_proprietario = request.user.groups.filter(name="Proprietario").exists()
+    print(is_proprietario)
     hoje = date.today()
-    return render(request, 'produtoview.html', {'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
-
+@login_required(login_url='/')
+def update_loja_user(request):
+    if request.method == 'POST':
+        loja_atual = request.POST.get('lojas')
+        usuario = request.user
+        loja = get_object_or_404(Loja, id=loja_atual)
+        usuario.loja = loja
+        usuario.save()
+        messages.success(request, 'salvo')
+        return redirect('produtoview')
 
 @login_required(login_url='/')
 def estoqueview(request):
@@ -172,10 +186,15 @@ def estoqueview(request):
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
     lojas = Loja.objects.all()
+    lojas2 = UserLoja.objects.filter(user=request.user)
+    lojasDoUser = [user.loja for user in lojas2]
+    #Criar um novo Grupo
+    for lo in lojasDoUser:
+        print(lo.nome)
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojas})
+    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -304,6 +323,7 @@ def listar_usuarios_da_loja_atual(request):
     Lista usuarios da loja 1
     '''
     loja_do_usuario = request.user.loja  # Loja do usuário logado
+    
     usuarios = User.objects.filter(loja=loja_do_usuario)  # Filtra usuários da mesma loja
     return usuarios
 
@@ -694,6 +714,7 @@ def func_notifica_vencimento(request):
 
 @login_required(login_url='/')
 def cria_movimento_de_estoque_em_lote(request):
+
     """
     Cria movimentos de estoque em lote (entrada, saída e transferência) para produtos.
     Args:
@@ -703,6 +724,7 @@ def cria_movimento_de_estoque_em_lote(request):
     """
     
     if request.method == 'POST':
+
         quantidades = request.POST.getlist('quantidades')
         movimentos = request.POST.getlist('movimentos')
         produto_ids = request.POST.getlist('produto_ids')
@@ -808,3 +830,202 @@ def cria_movimento_de_estoque_em_lote(request):
         elif mensagem:
             messages.error(request, f'{" ".join(mensagem)}')
         return redirect('estoqueview')
+    
+
+
+
+@csrf_exempt  # Desabilita a verificação CSRF para facilitar testes com Postman
+def importar_dados_json(request):
+    """
+    Recebe um JSON e insere os dados no banco de dados.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        # Criando Lojas
+        for loja_data in data.get('lojas', []):
+            loja, _ = Loja.objects.get_or_create(id=loja_data.get('id'), defaults={'nome': loja_data.get('nome')})
+
+        # Criando Usuários e Associando às Lojas
+        for user_loja in data.get('users_loja', []):
+            user, _ = User.objects.get_or_create(username=user_loja.get('user__username'))
+            loja = Loja.objects.get(nome=user_loja.get('loja__nome'))
+            UserLoja.objects.get_or_create(user=user, loja=loja)
+
+        # Criando Fornecedores
+        for fornecedor_data in data.get('fornecedores', []):
+            loja = Loja.objects.get(nome=fornecedor_data.get('loja__nome'))
+            Fornecedor.objects.get_or_create(
+                nome=fornecedor_data.get('nome'),
+                contato=fornecedor_data.get('contato'),
+                loja=loja
+            )
+
+        # Criando Categorias
+        for categoria_data in data.get('categorias', []):
+            loja = Loja.objects.get(nome=categoria_data.get('loja__nome'))
+            Categoria.objects.get_or_create(nome=categoria_data.get('nome'), loja=loja)
+
+        # Criando Produtos
+        for produto_data in data.get('produtos', []):
+            loja = Loja.objects.get(nome=produto_data.get('loja__nome'))
+            fornecedor = Fornecedor.objects.filter(nome=produto_data.get('fornecedor__nome')).first()
+            categoria = Categoria.objects.filter(nome=produto_data.get('categoria__nome')).first()
+
+            Produto.objects.get_or_create(
+                nome=produto_data.get('nome'),
+                codigo_de_barras=produto_data.get('codigo_de_barras'),
+                defaults={
+                    'quantidade': produto_data.get('quantidade'),
+                    'tipo_quantidade': produto_data.get('tipo_quantidade'),
+                    'validade': produto_data.get('validade'),
+                    'fornecedor': fornecedor,
+                    'categoria': categoria,
+                    'estoque_minimo': produto_data.get('estoque_minimo'),
+                    'loja': loja,
+                    'status': produto_data.get('status')
+                }
+            )
+
+        # Criando Movimentos de Estoque
+        for movimento_data in data.get('movimentos_estoque', []):
+            produto = Produto.objects.get(nome=movimento_data.get('produto__nome'))
+            loja = Loja.objects.get(nome=movimento_data.get('loja__nome'))
+            responsavel = User.objects.get(username=movimento_data.get('responsavel__username'))
+
+            MovimentoEstoque.objects.create(
+                produto=produto,
+                tipo_movimento=movimento_data.get('tipo_movimento'),
+                quantidade=movimento_data.get('quantidade'),
+                responsavel=responsavel,
+                loja=loja
+            )
+        for usuario in data.get('usuarios', []):
+            username = usuario.get('username')
+            loja_id = usuario.get('loja')
+            email = usuario.get('email', '')  # Garante que email não seja None
+            first_name = usuario.get('first_name', '')
+            last_name = usuario.get('last_name', '')
+            senha = '123'
+            if not username or not loja_id:
+                continue
+            try: 
+                loja = Loja.objects.get(id=loja_id)
+            except Loja.DoesNotExist:
+                print('nao existe loja')
+                continue
+            user, created = User.objects.get_or_create(username=username, defaults={
+                            "email": email,
+                            "first_name": first_name,
+                            "last_name": last_name,
+                            "is_active": usuario.get("is_active", True),
+                            "date_joined": usuario.get("date_joined"),
+                        })
+            if created:  # Se o usuário foi criado agora, define a senha padrão
+                user.set_password("123")
+                user.save()
+            if hasattr(user, 'loja'):
+                user.loja = loja
+                user.save()
+        return JsonResponse({'success': 'Dados importados com sucesso'}, status=201)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    
+
+def error_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+def error_500_view(request):
+    return render(request, '500.html', status=500)
+
+
+def error_401_view(request, exception=None):
+    return render(request, 'errors/401.html', status=401)
+
+
+
+def obter_dados_banco(request):
+    todas_tabelas = connection.introspection.table_names()
+    dados_completos = {}
+
+    for tabela in todas_tabelas:
+        try:
+            modelo = None
+            for model in apps.get_models():
+                if model._meta.db_table == tabela:
+                    modelo = model
+                    break
+
+            if modelo:
+                # Serializando os modelos do Django
+                objetos = modelo.objects.all()
+                dados_serializados = json.loads(serialize('json', objetos))
+                dados_completos[tabela] = [obj["fields"] for obj in dados_serializados]
+            else:
+                # Se não tem modelo, faz consulta SQL bruta
+                with connection.cursor() as cursor:
+                    cursor.execute(f"SELECT * FROM {tabela}")  # Busca tudo da tabela
+                    colunas = [desc[0] for desc in cursor.description]
+                    dados_completos[tabela] = [dict(zip(colunas, row)) for row in cursor.fetchall()]
+        
+        except Exception as e:
+            print(f"Erro ao buscar dados da tabela {tabela}: {str(e)}")
+    
+    return JsonResponse(dados_completos, safe=False)
+
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User, Group, Permission
+
+@transaction.atomic  # Garante que a operação seja atômica
+@csrf_exempt  # Permite chamadas sem CSRF (para testes)
+def restore_backup(request):
+    if request.method != "POST":
+        return JsonResponse({"erro": "Método não permitido"}, status=405)
+
+    try:
+        data = json.loads(request.body)  # Lê o JSON enviado na requisição
+
+        with transaction.atomic():
+            # Apaga todas as tabelas antes de inserir os novos dados
+            for model in apps.get_models():
+                model.objects.all().delete()
+
+            # Percorre as tabelas e insere os registros novamente
+            for tabela, registros in data.items():
+                modelo = None
+                for model in apps.get_models():
+                    if model._meta.db_table == tabela:
+                        modelo = model
+                        break
+
+                if modelo:
+                    for registro in registros:
+                        many_to_many_fields = {}
+                        
+                        # Separa campos ManyToMany para tratar depois
+                        for field in modelo._meta.many_to_many:
+                            if field.name in registro:
+                                many_to_many_fields[field.name] = registro.pop(field.name)
+
+                        # Resolver chave estrangeira ContentType na tabela Permission
+                        if modelo == Permission and "content_type" in registro:
+                            content_type_id = registro.pop("content_type")
+                            registro["content_type"] = ContentType.objects.get(id=content_type_id)
+
+                        # Cria o objeto sem os campos ManyToMany
+                        obj = modelo.objects.create(**registro)
+
+                        # Agora adiciona os valores nos campos ManyToMany
+                        for field_name, values in many_to_many_fields.items():
+                            many_to_many_field = getattr(obj, field_name)
+                            many_to_many_field.set(values)  # Usa `.set()`, como o Django exige
+
+        return JsonResponse({"mensagem": "Banco de dados restaurado com sucesso!"})
+
+    except Exception as e:
+        return JsonResponse({"erro": str(e)}, status=400)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Loja, Fornecedor, Categoria, Produto, MovimentoEstoque
+from .models import Loja, Fornecedor, Categoria, Produto, MovimentoEstoque, UserLoja
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -54,3 +54,9 @@ class MovimentoEstoqueAdmin(admin.ModelAdmin):
     search_fields = ('produto__nome',)
     list_filter = ('tipo_movimento', 'loja', 'data_movimento')
     date_hierarchy = 'data_movimento'
+
+@admin.register(UserLoja)
+class UserLoja(admin.ModelAdmin):
+    list_display = ('user', 'loja')
+    search_fields = ('user', 'loja')
+    list_filter = ('loja',)
