@@ -53,3 +53,4 @@ urlpatterns = [
 ]
 handler404 = views.error_404_view
 handler500 = views.error_500_view
+handler401 = views.error_401_view
