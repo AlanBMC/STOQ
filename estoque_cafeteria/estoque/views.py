@@ -947,3 +947,6 @@ def error_404_view(request, exception):
 def error_500_view(request):
     return render(request, '500.html', status=500)
 
+
+def error_401_view(request, exception=None):
+    return render(request, 'errors/401.html', status=401)
