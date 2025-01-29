@@ -938,3 +938,11 @@ def importar_dados_json(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+    
+
+def error_404_view(request, exception):
+    return render(request, 'errors/404.html', status=404)
+
+def error_500_view(request):
+    return render(request, 'errors/500.html', status=500)
+
