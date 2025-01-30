@@ -937,12 +937,20 @@ def importar_dados_json(request):
 def cadastroUserLoja(request):
     if request.method == 'POST':
         nome =  request.POST.get('nome')
+        email = request.POST.get('email')
         senha = request.POST.get('senha')
-        senha_confirma = request.POST.get('senha_confirmar')
+        senha_confirma = request.POST.get('confirmasenha')
         loja = request.POST.get('loja')
-        logo_loja =  request.POST.file('logo-loja')
-
-        return render(request, 'cadastra_user.html')
+        logo_loja =  request.FILES.get('logo-loja')
+        if logo_loja:
+            # Verifica se o arquivo é uma imagem
+            if not logo_loja.content_type.startswith('image/'):
+                messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                
+                return redirect('cadastra-user-loja')
+            else:
+                return redirect('cadastra-user-loja')
+        return redirect('cadastra-user-loja')
     if request.method == 'GET':
         return render(request,'cadastra_user.html')
 
