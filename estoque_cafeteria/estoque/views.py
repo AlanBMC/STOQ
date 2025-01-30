@@ -941,4 +941,8 @@ def cadastroUserLoja(request):
         senha_confirma = request.POST.get('senha_confirmar')
         loja = request.POST.get('loja')
         logo_loja =  request.POST.file('logo-loja')
-        
+
+        return render(request, 'cadastra_user.html')
+    if request.method == 'GET':
+        return render(request,'cadastra_user.html')
+
