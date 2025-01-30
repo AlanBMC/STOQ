@@ -8,42 +8,105 @@
     <title>Sign In</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="{% static 'css/global.css'%}">
 </head>
 
 <body class="flex justify-center items-center min-h-screen color-2">
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.js"></script>
+
     <div class="bg-white rounded-3xl shadow-lg p-8 max-w-sm w-full">
         <h1 class="text-3xl font-bold text-center color-3">Cadastro</h1>
         
-        <form class="mt-6" action="{% url 'cadastra_usuario_loja' %}" method="POST" > {% csrf_token %}
+        <form class="mt-6" action="{%url 'cadastra-user-loja'%}" method="POST" enctype="multipart/form-data" > {% csrf_token %}
 
             <div id="mensagem-alertas">
                 {% include 'componentes/alerta_global.html' %}
 
             </div>
             <div class="mb-4">
-                <input type="text" required placeholder="Nome" name="nome" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
+                <input type="text"  required placeholder="Nome" name="nome" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
             </div>
             <div class="mb-4">
-                <input type="email" required placeholder="Email" name="email" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
+                <input type="email" required  placeholder="Email" name="email" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
             </div>
             <div class="mb-4">
-                <input type="password" required placeholder="Senha" name="senha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
+                <input type="password" required  placeholder="Senha" name="senha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
+                <p id="senha-mensagem" class="text-sm text-red-500 mt-1 hidden"></p>
             </div>
             <div class="mb-4">
-                <input type="password" required placeholder="Confirma senha" name="confirmasenha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
+                <input type="password" required  placeholder="Confirma senha" name="confirmasenha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
+                <p id="confirma-mensagem" class="text-sm text-red-500 mt-1 hidden"></p>
             </div>
             <div class="mb-4">
-                <input type="text" required placeholder="Nome da loja" name="loja" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
+                <input type="text" required  placeholder="Nome da loja" name="loja" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
             </div>
-            <button type="submit"  class="w-full py-3 rounded-lg bg-color-1 text-color-1 font-semibold hover:opacity-80">Entrar</button>
+           
+            <input
+                class="block w-full mt-4 mb-4 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                aria-describedby="user_avatar_help" required accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar" type="file">
+
+            <button type="submit" id="botao-submit"  class="w-full py-3 mb-5 rounded-lg bg-color-1 text-color-1 font-semibold hover:opacity-80">Entrar</button>
             <div>
 
-                <a href="">Voltar para o login</a>
+
+
+
+                <a href="{%url 'login'%}" >Voltar para o login</a>
             </div>
         </form>
       
       
     </div>
+  
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const senhaInput = document.querySelector("input[name='senha']");
+            const confirmaSenhaInput = document.querySelector("input[name='confirmasenha']");
+            const senhaMensagem = document.getElementById("senha-mensagem");
+            const confirmaMensagem = document.getElementById("confirma-mensagem");
+            const botaoSubmit = document.getElementById("botao-submit");
+
+            function validarSenha() {
+                const senha = senhaInput.value;
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/;
+                console.log(senha)
+                if (!regex.test(senha)) {
+                    senhaMensagem.textContent = "A senha deve ter no mínimo 8 caracteres, incluindo uma maiúscula, uma minúscula, um número e um caractere especial.";
+                    senhaMensagem.classList.remove("hidden");
+                    return false;
+                } else {
+                    senhaMensagem.classList.add("hidden");
+                    return true;
+                }
+            }
+
+            function validarConfirmacaoSenha() {
+                if (senhaInput.value !== confirmaSenhaInput.value) {
+                    confirmaMensagem.textContent = "As senhas não coincidem.";
+                    confirmaMensagem.classList.remove("hidden");
+                    return false;
+                } else {
+                    confirmaMensagem.classList.add("hidden");
+                    return true;
+                }
+            }
+
+            if (senhaInput && confirmaSenhaInput) {
+                senhaInput.addEventListener("input", validarSenha);
+                confirmaSenhaInput.addEventListener("input", validarConfirmacaoSenha);
+            }
+
+            if (botaoSubmit) {
+                botaoSubmit.addEventListener("click", function (event) {
+                    if (!validarSenha() || !validarConfirmacaoSenha()) {
+                        event.preventDefault();
+                    }
+                });
+            }
+        });
+
+</script>
 </html>

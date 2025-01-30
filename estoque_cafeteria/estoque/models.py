@@ -5,7 +5,7 @@ from django.db.models import  SET_NULL
 
 class Loja(models.Model):
     nome = models.CharField(max_length=100)
-    
+    logo = models.ImageField(upload_to='logos/', blank=True, null=True)
     def __str__(self):
         return self.nome
 

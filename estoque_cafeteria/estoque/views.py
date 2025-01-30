@@ -100,7 +100,10 @@ def verifica_last_name(request):
 @login_required(login_url='/')
 def dashboard(request):
     show_tour = verifica_last_name(request)
-    return render(request, 'dashboard.html', {'show_tour': show_tour})
+    loja_name = request.user.loja.nome
+    loja_logo = request.user.loja.logo
+    
+    return render(request, 'dashboard.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour})
 
 def login(request):
     """
@@ -161,9 +164,9 @@ def produtoview(request):
     lojas = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas]
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
-    print(is_proprietario)
+    loja_logo = request.user.loja.logo
     hoje = date.today()
-    return render(request, 'produtoview.html', {'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def update_loja_user(request):
@@ -185,16 +188,17 @@ def estoqueview(request):
     '''
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
-    lojas = Loja.objects.all()
+    loja_logo = request.user.loja.logo
     lojas2 = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas2]
+    loja_name = request.user.loja.nome
     #Criar um novo Grupo
     for lo in lojasDoUser:
         print(lo.nome)
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -210,7 +214,9 @@ def configuracaoview(request):
     usuarios =listar_usuarios_da_loja_atual(request)
     is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
     show_tour = verifica_last_name(request)
-    return render(request, 'configuracao.html', {'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    loja_name = request.user.loja.nome
+    loja_logo = request.user.loja.logo
+    return render(request, 'configuracao.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
@@ -832,9 +838,6 @@ def cria_movimento_de_estoque_em_lote(request):
         return redirect('estoqueview')
     
 
-
-
-
 def error_404_view(request, exception):
     return render(request, '404.html', status=404)
 
@@ -937,81 +940,37 @@ def importar_dados_json(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
-    # Busca todas as lojas
-    lojas = Loja.objects.all()
+def cadastroUserLoja(request):
+    if request.method == 'POST':
+        nome =  request.POST.get('nome')
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+        senha_confirma = request.POST.get('confirmasenha')
+        loja_nome = request.POST.get('loja')
+        logo_loja =  request.FILES.get('logo-loja')
+        if senha == senha_confirma:
+            
+            if logo_loja:
+                # Verifica se o arquivo é uma imagem
+                if not logo_loja.content_type.startswith('image/'):
+                    messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                    return redirect('cadastra-user-loja')
+                else:
+                    grupo_proprietario = Group.objects.get(name='Proprietario')
+                    if not User.objects.filter(username=nome).exists():
+                        loja = Loja.objects.create(nome=loja_nome, logo=logo_loja)
+                        user = User.objects.create_user(username= nome,email=email, password= senha, loja=loja)
+                        user.groups.add(grupo_proprietario)
+                        user.save()
+                        messages.success(request,'Cadastro concluido')
+                        return redirect('login')
+            else:
+                messages.error(request, 'Loja sem logo')
+                return redirect('cadastra-user-loja')
+        else:
+            messages.error(request, 'Senhas não coincidem')
+            return redirect('cadastra-user-loja')
+        return redirect('cadastra-user-loja')
+    if request.method == 'GET':
+        return render(request,'cadastra_user.html')
 
-    # Estrutura para armazenar os dados
-    data = {
-        'lojas': [],
-    }
-
-    for loja in lojas:
-        # Dados da loja
-        loja_data = {
-            'id': loja.id,
-            'nome': loja.nome,
-            'usuarios': [],
-            'fornecedores': [],
-            'categorias': [],
-            'produtos': [],
-            'movimentos_estoque': [],
-        }
-
-        # Busca os usuários associados à loja
-        usuarios_loja = UserLoja.objects.filter(loja=loja).select_related('user')
-        for user_loja in usuarios_loja:
-            loja_data['usuarios'].append({
-                'id': user_loja.user.id,
-                'username': user_loja.user.username,
-                'email': user_loja.user.email,
-            })
-
-        # Busca os fornecedores da loja
-        fornecedores = Fornecedor.objects.filter(loja=loja)
-        for fornecedor in fornecedores:
-            loja_data['fornecedores'].append({
-                'id': fornecedor.id,
-                'nome': fornecedor.nome,
-                'contato': fornecedor.contato,
-            })
-
-        # Busca as categorias da loja
-        categorias = Categoria.objects.filter(loja=loja)
-        for categoria in categorias:
-            loja_data['categorias'].append({
-                'id': categoria.id,
-                'nome': categoria.nome,
-            })
-
-        # Busca os produtos da loja
-        produtos = Produto.objects.filter(loja=loja).select_related('fornecedor', 'categoria')
-        for produto in produtos:
-            loja_data['produtos'].append({
-                'id': produto.id,
-                'nome': produto.nome,
-                'quantidade': produto.quantidade,
-                'tipo_quantidade': produto.tipo_quantidade,
-                'codigo_de_barras': produto.codigo_de_barras,
-                'validade': produto.validade,
-                'fornecedor': produto.fornecedor.nome if produto.fornecedor else None,
-                'categoria': produto.categoria.nome if produto.categoria else None,
-                'estoque_minimo': produto.estoque_minimo,
-                'status': produto.status,
-            })
-
-        # Busca os movimentos de estoque da loja
-        movimentos = MovimentoEstoque.objects.filter(loja=loja).select_related('produto', 'responsavel')
-        for movimento in movimentos:
-            loja_data['movimentos_estoque'].append({
-                'id': movimento.id,
-                'produto': movimento.produto.nome,
-                'tipo_movimento': movimento.tipo_movimento,
-                'quantidade': movimento.quantidade,
-                'data_movimento': movimento.data_movimento,
-                'responsavel': movimento.responsavel.username,
-            })
-
-        # Adiciona os dados da loja ao resultado final
-        data['lojas'].append(loja_data)
-
-    return JsonResponse(data,safe=True)
