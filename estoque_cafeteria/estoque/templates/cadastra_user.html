@@ -26,26 +26,26 @@
 
             </div>
             <div class="mb-4">
-                <input type="text"  placeholder="Nome" name="nome" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
+                <input type="text"  required placeholder="Nome" name="nome" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
             </div>
             <div class="mb-4">
-                <input type="email"  placeholder="Email" name="email" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
+                <input type="email" required  placeholder="Email" name="email" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
             </div>
             <div class="mb-4">
-                <input type="password"  placeholder="Senha" name="senha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
+                <input type="password" required  placeholder="Senha" name="senha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
                 <p id="senha-mensagem" class="text-sm text-red-500 mt-1 hidden"></p>
             </div>
             <div class="mb-4">
-                <input type="password"  placeholder="Confirma senha" name="confirmasenha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
+                <input type="password" required  placeholder="Confirma senha" name="confirmasenha" class="w-full px-4 py-3 rounded-lg border color-3 focus:outline-none">
                 <p id="confirma-mensagem" class="text-sm text-red-500 mt-1 hidden"></p>
             </div>
             <div class="mb-4">
-                <input type="text"  placeholder="Nome da loja" name="loja" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
+                <input type="text" required  placeholder="Nome da loja" name="loja" class="w-full px-4 py-3 rounded-lg border color-5 focus:outline-none">
             </div>
            
             <input
                 class="block w-full mt-4 mb-4 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                aria-describedby="user_avatar_help" accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar" type="file">
+                aria-describedby="user_avatar_help" required accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar" type="file">
 
             <button type="submit" id="botao-submit"  class="w-full py-3 mb-5 rounded-lg bg-color-1 text-color-1 font-semibold hover:opacity-80">Entrar</button>
             <div>
@@ -71,8 +71,8 @@
 
             function validarSenha() {
                 const senha = senhaInput.value;
-                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/;
+                console.log(senha)
                 if (!regex.test(senha)) {
                     senhaMensagem.textContent = "A senha deve ter no mínimo 8 caracteres, incluindo uma maiúscula, uma minúscula, um número e um caractere especial.";
                     senhaMensagem.classList.remove("hidden");

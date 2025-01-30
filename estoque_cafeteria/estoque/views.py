@@ -940,16 +940,30 @@ def cadastroUserLoja(request):
         email = request.POST.get('email')
         senha = request.POST.get('senha')
         senha_confirma = request.POST.get('confirmasenha')
-        loja = request.POST.get('loja')
+        loja_nome = request.POST.get('loja')
         logo_loja =  request.FILES.get('logo-loja')
-        if logo_loja:
-            # Verifica se o arquivo é uma imagem
-            if not logo_loja.content_type.startswith('image/'):
-                messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
-                
-                return redirect('cadastra-user-loja')
+        if senha == senha_confirma:
+            
+            if logo_loja:
+                # Verifica se o arquivo é uma imagem
+                if not logo_loja.content_type.startswith('image/'):
+                    messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                    return redirect('cadastra-user-loja')
+                else:
+                    grupo_proprietario = Group.objects.get(name='Proprietario')
+                    if not User.objects.filter(username=nome).exists():
+                        loja = Loja.objects.create(nome=loja_nome, logo=logo_loja)
+                        user = User.objects.create_user(username= nome,email=email, password= senha, loja=loja)
+                        user.groups.add(grupo_proprietario)
+                        user.save()
+                        messages.success(request,'Cadastro concluido')
+                        return redirect('login')
             else:
+                messages.error(request, 'Loja sem logo')
                 return redirect('cadastra-user-loja')
+        else:
+            messages.error(request, 'Senhas não coincidem')
+            return redirect('cadastra-user-loja')
         return redirect('cadastra-user-loja')
     if request.method == 'GET':
         return render(request,'cadastra_user.html')
