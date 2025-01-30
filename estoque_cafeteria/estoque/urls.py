@@ -52,9 +52,11 @@ urlpatterns = [
     path('backup/', views.retornadados, name='backup'),
     path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json'),
 
-    path('cadastra_user_loja/', views.cadastroUserLoja, name='cadastra-user-loja')
-
+    path('cadastra_user_loja/', views.cadastroUserLoja, name='cadastra-user-loja'),
+    path('criaLoja/', views.criaLoja, name='criaLoja'),
+    path('atualizaLoja/', views.atualizaLoja, name='atualizaLoja'),
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 handler404 = views.error_404_view
