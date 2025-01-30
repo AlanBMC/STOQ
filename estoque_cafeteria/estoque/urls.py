@@ -3,6 +3,8 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from django.conf.urls import handler404, handler500
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.login, name='login'),
@@ -51,6 +53,8 @@ urlpatterns = [
     path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json')
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 handler404 = views.error_404_view
 handler500 = views.error_500_view
 handler401 = views.error_401_view
