@@ -22,7 +22,7 @@ admin.site.register(User, UserAdmin)
 # Personalização para o modelo Loja
 @admin.register(Loja)
 class LojaAdmin(admin.ModelAdmin):
-    list_display = ('nome',)
+    list_display = ('nome','logo')
     search_fields = ('nome',)
 
 # Personalização para o modelo Fornecedor
