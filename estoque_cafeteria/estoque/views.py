@@ -100,7 +100,10 @@ def verifica_last_name(request):
 @login_required(login_url='/')
 def dashboard(request):
     show_tour = verifica_last_name(request)
-    return render(request, 'dashboard.html', {'show_tour': show_tour})
+    loja_name = request.user.loja.nome
+    loja_logo = request.user.loja.logo
+    
+    return render(request, 'dashboard.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour})
 
 def login(request):
     """
@@ -161,9 +164,9 @@ def produtoview(request):
     lojas = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas]
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
-    print(is_proprietario)
+    loja_logo = request.user.loja.logo
     hoje = date.today()
-    return render(request, 'produtoview.html', {'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def update_loja_user(request):
@@ -185,16 +188,17 @@ def estoqueview(request):
     '''
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
-    lojas = Loja.objects.all()
+    loja_logo = request.user.loja.logo
     lojas2 = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas2]
+    loja_name = request.user.loja.nome
     #Criar um novo Grupo
     for lo in lojasDoUser:
         print(lo.nome)
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -210,7 +214,9 @@ def configuracaoview(request):
     usuarios =listar_usuarios_da_loja_atual(request)
     is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
     show_tour = verifica_last_name(request)
-    return render(request, 'configuracao.html', {'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    loja_name = request.user.loja.nome
+    loja_logo = request.user.loja.logo
+    return render(request, 'configuracao.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
