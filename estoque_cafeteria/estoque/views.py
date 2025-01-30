@@ -832,9 +832,6 @@ def cria_movimento_de_estoque_em_lote(request):
         return redirect('estoqueview')
     
 
-
-
-
 def error_404_view(request, exception):
     return render(request, '404.html', status=404)
 
@@ -937,81 +934,11 @@ def importar_dados_json(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
-    # Busca todas as lojas
-    lojas = Loja.objects.all()
-
-    # Estrutura para armazenar os dados
-    data = {
-        'lojas': [],
-    }
-
-    for loja in lojas:
-        # Dados da loja
-        loja_data = {
-            'id': loja.id,
-            'nome': loja.nome,
-            'usuarios': [],
-            'fornecedores': [],
-            'categorias': [],
-            'produtos': [],
-            'movimentos_estoque': [],
-        }
-
-        # Busca os usuários associados à loja
-        usuarios_loja = UserLoja.objects.filter(loja=loja).select_related('user')
-        for user_loja in usuarios_loja:
-            loja_data['usuarios'].append({
-                'id': user_loja.user.id,
-                'username': user_loja.user.username,
-                'email': user_loja.user.email,
-            })
-
-        # Busca os fornecedores da loja
-        fornecedores = Fornecedor.objects.filter(loja=loja)
-        for fornecedor in fornecedores:
-            loja_data['fornecedores'].append({
-                'id': fornecedor.id,
-                'nome': fornecedor.nome,
-                'contato': fornecedor.contato,
-            })
-
-        # Busca as categorias da loja
-        categorias = Categoria.objects.filter(loja=loja)
-        for categoria in categorias:
-            loja_data['categorias'].append({
-                'id': categoria.id,
-                'nome': categoria.nome,
-            })
-
-        # Busca os produtos da loja
-        produtos = Produto.objects.filter(loja=loja).select_related('fornecedor', 'categoria')
-        for produto in produtos:
-            loja_data['produtos'].append({
-                'id': produto.id,
-                'nome': produto.nome,
-                'quantidade': produto.quantidade,
-                'tipo_quantidade': produto.tipo_quantidade,
-                'codigo_de_barras': produto.codigo_de_barras,
-                'validade': produto.validade,
-                'fornecedor': produto.fornecedor.nome if produto.fornecedor else None,
-                'categoria': produto.categoria.nome if produto.categoria else None,
-                'estoque_minimo': produto.estoque_minimo,
-                'status': produto.status,
-            })
-
-        # Busca os movimentos de estoque da loja
-        movimentos = MovimentoEstoque.objects.filter(loja=loja).select_related('produto', 'responsavel')
-        for movimento in movimentos:
-            loja_data['movimentos_estoque'].append({
-                'id': movimento.id,
-                'produto': movimento.produto.nome,
-                'tipo_movimento': movimento.tipo_movimento,
-                'quantidade': movimento.quantidade,
-                'data_movimento': movimento.data_movimento,
-                'responsavel': movimento.responsavel.username,
-            })
-
-        # Adiciona os dados da loja ao resultado final
-        data['lojas'].append(loja_data)
-
-    return JsonResponse(data,safe=True)
+def cadastroUserLoja(request):
+    if request.method == 'POST':
+        nome =  request.POST.get('nome')
+        senha = request.POST.get('senha')
+        senha_confirma = request.POST.get('senha_confirmar')
+        loja = request.POST.get('loja')
+        logo_loja =  request.POST.file('logo-loja')
+        
