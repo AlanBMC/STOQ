@@ -255,7 +255,8 @@ def cria_usuario(request):
                 user = User.objects.create_user(username= nome, password= '123', loja=loja)
                 user.groups.add(grupo_funcionario)
                 user.save()
-
+                userloja = UserLoja.objects.create(user=user, loja=loja)
+                userloja.save()
                 messages.success(request, f'Usuario {nome} criado com sucesso')
                 return redirect('configuracaoview')
         else:
@@ -960,8 +961,11 @@ def cadastroUserLoja(request):
                     if not User.objects.filter(username=nome).exists():
                         loja = Loja.objects.create(nome=loja_nome, logo=logo_loja)
                         user = User.objects.create_user(username= nome,email=email, password= senha, loja=loja)
+
                         user.groups.add(grupo_proprietario)
                         user.save()
+                        userloja = UserLoja.objects.create(user=user, loja=loja)
+                        userloja.save()
                         messages.success(request,'Cadastro concluido')
                         return redirect('login')
             else:
@@ -974,3 +978,49 @@ def cadastroUserLoja(request):
     if request.method == 'GET':
         return render(request,'cadastra_user.html')
 
+@login_required(login_url='/')
+def criaLoja(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        logo_loja = request.FILES.get('logo')
+        if logo_loja:
+            # Verifica se o arquivo é uma imagem
+            if not logo_loja.content_type.startswith('image/'):
+                messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                return redirect('produtoview')
+            else:
+                loja = Loja.objects.create(nome=nome, logo=logo_loja)
+                userloja = UserLoja.objects.create(user=request.user, loja=loja)
+                userloja.save()
+                loja.save()
+                messages.success(request, 'loja criada com sucesso')
+                return redirect('produtoview')
+        messages.error(request, 'Insira uma imagem')
+        return redirect('produtoview')
+
+@login_required(login_url='/')
+def atualizaLoja(request):
+    if request.method == 'POST':
+        
+        nome = request.POST.get('nome')
+        logo_loja = request.FILES.get('logo-loja')
+        if logo_loja:
+            # Verifica se o arquivo é uma imagem
+            if not logo_loja.content_type.startswith('image/'):
+                messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                return redirect('produtoview')
+            else:
+                loja =  get_object_or_404(Loja, id= request.user.loja.id)
+                loja.logo = logo_loja
+                if nome:
+                    loja.nome = nome
+                messages.success(request, 'Loja atualiza com sucesso')
+                return redirect('produtoview')
+        else:
+            loja =  get_object_or_404(Loja, id= request.user.loja.id)
+            
+            loja.nome = nome
+            messages.success(request, 'Nome atualizado')
+            return redirect('produtoview')
+
+        
