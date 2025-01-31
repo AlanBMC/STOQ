@@ -159,3 +159,17 @@ tr, thead{
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.466);
 }
+.logo-image {
+    width: 40px; /* Tamanho padrão para mobile */
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover; /* Evita distorção */
+}
+
+/* Ajustes para telas maiores */
+@media (min-width: 768px) {
+    .logo-image {
+        width: 24px;
+        height: 28px;
+    }
+}

@@ -1,7 +1,7 @@
 {
     "id": "http://127.0.0.1:8000/login/",
     "name": "Controle de Estoque",
-    "short_name": "Estoque TheCoffe ザ",
+    "short_name": "STOQ",
     "description": "Aplicação de Controle de Estoque",
     "start_url": "/",
     "display": "standalone",
