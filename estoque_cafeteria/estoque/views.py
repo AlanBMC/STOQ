@@ -15,6 +15,8 @@ from django.db import transaction, connection
 from django.db import connection
 from django.apps import apps
 from django.core.serializers import serialize
+import io
+import zipfile
 
 def obter_dados(request):
     '''
@@ -1041,4 +1043,3 @@ def atualizaLoja(request):
                 messages.success(request, 'Nome atualizado')
                 return redirect('configuracaoview')
         
-            
