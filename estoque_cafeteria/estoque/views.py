@@ -1008,19 +1008,21 @@ def atualizaLoja(request):
             # Verifica se o arquivo é uma imagem
             if not logo_loja.content_type.startswith('image/'):
                 messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
-                return redirect('produtoview')
+                return redirect('configuracaoview')
             else:
                 loja =  get_object_or_404(Loja, id= request.user.loja.id)
                 loja.logo = logo_loja
                 if nome:
                     loja.nome = nome
+                loja.save()
                 messages.success(request, 'Loja atualiza com sucesso')
-                return redirect('produtoview')
+                return redirect('configuracaoview')
         else:
             loja =  get_object_or_404(Loja, id= request.user.loja.id)
             
             loja.nome = nome
+            loja.save()
             messages.success(request, 'Nome atualizado')
-            return redirect('produtoview')
+            return redirect('configuracaoview')
 
         
