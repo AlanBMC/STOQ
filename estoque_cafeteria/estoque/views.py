@@ -218,7 +218,10 @@ def configuracaoview(request):
     show_tour = verifica_last_name(request)
     loja_name = request.user.loja.nome
     loja_logo = request.user.loja.logo
-    return render(request, 'configuracao.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    is_proprietario = request.user.groups.filter(name="Proprietario").exists()
+    print(request.user.username)
+    print(is_proprietario)
+    return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
@@ -1002,6 +1005,10 @@ def criaLoja(request):
 
 @login_required(login_url='/')
 def atualizaLoja(request):
+    if not request.user.has_perm('auth.add_user'):
+        messages.error(request, 'Você não tem permissão para criar ou editar lojas.')
+        return redirect('configuracaoview')  # Redireciona para uma página de erro ou home
+
     if request.method == 'POST':
         box = request.POST.get('checkbox')
         nome = request.POST.get('nome')
