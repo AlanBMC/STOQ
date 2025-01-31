@@ -1001,28 +1001,44 @@ def criaLoja(request):
 @login_required(login_url='/')
 def atualizaLoja(request):
     if request.method == 'POST':
-        
+        box = request.POST.get('checkbox')
         nome = request.POST.get('nome')
         logo_loja = request.FILES.get('logo-loja')
-        if logo_loja:
+        if box:
+            if logo_loja:
             # Verifica se o arquivo é uma imagem
-            if not logo_loja.content_type.startswith('image/'):
-                messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
-                return redirect('configuracaoview')
+                if not logo_loja.content_type.startswith('image/'):
+                    messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                    return redirect('configuracaoview')
+                else:
+                    loja = Loja.objects.create(nome=nome, logo=logo_loja)
+                    userloja = UserLoja.objects.create(user=request.user, loja=loja)
+                    userloja.save()
+                    loja.save()
+                    messages.success(request, 'loja criada com sucesso')
+                    return redirect('configuracaoview')
+            messages.error(request, 'Insira uma imagem')
+            return redirect('configuracaoview')
+        else:
+            if logo_loja:
+                # Verifica se o arquivo é uma imagem
+                if not logo_loja.content_type.startswith('image/'):
+                    messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                    return redirect('configuracaoview')
+                else:
+                    loja =  get_object_or_404(Loja, id= request.user.loja.id)
+                    loja.logo = logo_loja
+                    if nome:
+                        loja.nome = nome
+                    loja.save()
+                    messages.success(request, 'Loja atualiza com sucesso')
+                    return redirect('configuracaoview')
             else:
                 loja =  get_object_or_404(Loja, id= request.user.loja.id)
-                loja.logo = logo_loja
-                if nome:
-                    loja.nome = nome
+                
+                loja.nome = nome
                 loja.save()
-                messages.success(request, 'Loja atualiza com sucesso')
+                messages.success(request, 'Nome atualizado')
                 return redirect('configuracaoview')
-        else:
-            loja =  get_object_or_404(Loja, id= request.user.loja.id)
-            
-            loja.nome = nome
-            loja.save()
-            messages.success(request, 'Nome atualizado')
-            return redirect('configuracaoview')
-
         
+            

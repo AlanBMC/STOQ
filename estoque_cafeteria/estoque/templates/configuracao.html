@@ -65,8 +65,7 @@
         <form action="{%url 'atualizaLoja' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <div class="mb-3">
             <label for="">Criar uma nova loja ?</label>
-            <input id="vue-checkbox-list" type="checkbox" value="" 
-            class="">
+            <input id="vue-checkbox-list" type="checkbox" name="checkbox" value="1" class="">
            
         </div>            
             
@@ -74,11 +73,11 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium">Nome</label>
                 <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500"
-                    required>
+                    >
             </div>
             <input
                 class="block w-full mt-4 mb-4 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                aria-describedby="user_avatar_help" required accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar"
+                aria-describedby="user_avatar_help"  accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar"
                 type="file">
             <button type="submit" class="w-full   py-2 rounded-lg hover:bg-green-600 transition-all">
                 Salvar
