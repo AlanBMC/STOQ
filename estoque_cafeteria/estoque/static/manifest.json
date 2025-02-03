@@ -3,7 +3,7 @@
     "name": "Controle de Estoque",
     "short_name": "STOQ",
     "description": "Aplicação de Controle de Estoque",
-    "start_url": "/",
+    "start_url": "/produtoview",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#333333",

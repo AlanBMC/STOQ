@@ -1013,6 +1013,9 @@ def atualizaLoja(request):
         box = request.POST.get('checkbox')
         nome = request.POST.get('nome')
         logo_loja = request.FILES.get('logo-loja')
+        if Loja.objects.filter(nome=nome).exists():
+            messages.error(request, 'Já existe uma loja com esse nome.')
+            return redirect('configuracaoview')
         if box:
             if logo_loja:
             # Verifica se o arquivo é uma imagem

@@ -28,14 +28,19 @@ SECRET_KEY = 'django-insecure-6#nkm(kgo+)ofvln%sc@cvrwrmxpeid5gz()t+^3qy1xr+77nu
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',  'estoque-cafeteria-v1.onrender.com'# Permite qualquer subdomínio do ngrok
+    '*',  '*.onrender.com'# Permite qualquer subdomínio do ngrok
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://estoque-cafeteria-v1.onrender.com',  # Permite domínios ngrok para requisições POST
+    'https://*.onrender.com',  # Permite domínios ngrok para requisições POST
         'https://*.ngrok-free.app',  # Permite testes locais com ngrok
 
 ]
+
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 dias
+
+# Manter a sessão ativa mesmo se o navegador for fechado
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # Application definition
 
 INSTALLED_APPS = [
