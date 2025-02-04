@@ -3,18 +3,18 @@
     "name": "Controle de Estoque",
     "short_name": "STOQ",
     "description": "Aplicação de Controle de Estoque",
-    "start_url": "/",
+    "start_url": "/produtoview",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#333333",
     "icons": [
       {
-        "src": "/static/images/maskable_icon_x192 (4).png",
+        "src": "/static/images/maskable_icon_x192 (3).png",
         "sizes": "192x192",
-        "type": "image/png"
+        "type": "image/png" 
       },
       {
-        "src": "/static/images/maskable_icon_x512 (5).png",
+        "src": "/static/images/maskable_icon_x512 (3).png",
         "sizes": "512x512",
         "type": "image/png"
       }

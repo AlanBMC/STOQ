@@ -945,6 +945,19 @@ def importar_dados_json(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+@login_required(login_url='/')
+def download_json(request):
+    """
+    Gera e fornece um arquivo JSON para download com os dados retornados por `retornadados`.
+    """
+    if request.user.groups.filter(name='Desenvolvedor').exists():
+        response_data = retornadados(request).content  # Obtém os dados da função retornadados
+        response = HttpResponse(response_data, content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="dados.json"'
+        return response
+    else:
+        messages.error(request, 'Voce precisa ser desenvolvedor')
+        return redirect('produtoview')
 
 def cadastroUserLoja(request):
     if request.method == 'POST':
