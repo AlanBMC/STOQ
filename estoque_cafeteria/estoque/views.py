@@ -195,8 +195,7 @@ def estoqueview(request):
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
     #Criar um novo Grupo
-    for lo in lojasDoUser:
-        print(lo.nome)
+   
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
@@ -219,8 +218,7 @@ def configuracaoview(request):
     loja_name = request.user.loja.nome
     loja_logo = request.user.loja.logo
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
-    print(request.user.username)
-    print(is_proprietario)
+    
     return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
@@ -748,34 +746,68 @@ def cria_movimento_de_estoque_em_lote(request):
             if quantidades[indice] == '':
                 continue
             produto = get_object_or_404(Produto, id=produto_ids[indice], loja=request.user.loja)
-            
-            if movimentos[indice] == 'Saida':
-                if produto.quantidade < float(quantidades[indice]):
-                    mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
-                    continue
-                else:
-                    produto.quantidade -= float(quantidades[indice])
+            if movimentos[indice] == 'Estoque_atual':
+                quantidade_atual =  float(quantidades[indice]) - produto.quantidade 
+                if quantidade_atual > 0:
+                    print('entrada - ',quantidade_atual)
+                    produto.quantidade = float(quantidades[indice])
                     produto.save()
                     MovimentoEstoque.objects.create(
                         produto=produto,
-                        tipo_movimento='saida',
+                        tipo_movimento='entrada',
+                        quantidade=quantidade_atual,
+                        responsavel=request.user,
+                        loja=request.user.loja
+                    )
+                    produtos_alterados.append(f'\n{produto.nome}')
+
+                elif quantidade_atual < 0:
+                    print('saida - ', quantidade_atual)
+                    if produto.quantidade < float(quantidades[indice]):
+                        mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
+                        continue
+                    else:
+                        produto.quantidade += quantidade_atual
+                        produto.save()
+                        
+                        MovimentoEstoque.objects.create(
+                            produto=produto,
+                            tipo_movimento='saida',
+                            quantidade=quantidade_atual * -1 ,
+                            responsavel=request.user,
+                            loja=request.user.loja
+                        )
+                        produtos_alterados.append(produto.nome)
+                
+                
+                if movimentos[indice] == 'Saida':
+                    if produto.quantidade < float(quantidades[indice]):
+                        mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
+                        continue
+                    else:
+                        produto.quantidade -= float(quantidades[indice])
+                        produto.save()
+                        MovimentoEstoque.objects.create(
+                            produto=produto,
+                            tipo_movimento='saida',
+                            quantidade=float(quantidades[indice]),
+                            responsavel=request.user,
+                            loja=request.user.loja
+                        )
+                        produtos_alterados.append(produto.nome)
+                
+                elif movimentos[indice] == 'Entrada':
+
+                    produto.quantidade += float(quantidades[indice])
+                    produto.save()
+                    MovimentoEstoque.objects.create(
+                        produto=produto,
+                        tipo_movimento='entrada',
                         quantidade=float(quantidades[indice]),
                         responsavel=request.user,
                         loja=request.user.loja
                     )
-                    produtos_alterados.append(produto.nome)
-            elif movimentos[indice] == 'Entrada':
-
-                produto.quantidade += float(quantidades[indice])
-                produto.save()
-                MovimentoEstoque.objects.create(
-                    produto=produto,
-                    tipo_movimento='entrada',
-                    quantidade=float(quantidades[indice]),
-                    responsavel=request.user,
-                    loja=request.user.loja
-                )
-                produtos_alterados.append(f'\n{produto.nome}')
+                    produtos_alterados.append(f'\n{produto.nome}')
 
 
             elif movimentos[indice] == 'Transferencia':
