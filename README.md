@@ -56,7 +56,10 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 - **Endpoints**: `/listar_categorias`, `/criar_categoria`, `/editar_categoria`, `/excluir_categoria`
 - **Descrição**: Manipula o CRUD de categorias.
-
+<div style="display: flex;"> 
+   <img src="imagem1.png" alt="Imagem 1" width="50px" style="margin-right: 10px;"> 
+   <img src="imagem2.png" alt="Imagem 2" width="50px"> 
+</div>
 #### Gestão de Fornecedores
 
 - **Endpoints**: `/listar_fornecedores`, `/criar_fornecedor`, `/editar_fornecedor`, `/excluir_fornecedor`
