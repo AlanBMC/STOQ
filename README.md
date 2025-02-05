@@ -183,7 +183,7 @@ O design do sistema é responsivo e otimizado para dispositivos móveis e deskto
 |  |  |
 |:-------------:|:------------------------------------------------------------:|
 |  <img src="alan.jpg" width="150px"></br> **Alan Bruno Morais Costa** | 
-Me chamo Alan, sou estudante de Ciências da Computação na Universidade Federal de Mato Grosso (UFMT) e estou participando de um curso oferecido pela Cyber-edux. Neste repositório, apresento o Cardy, um sistema inovador de gerenciamento de tarefas e estudos projetado para melhorar a organização e eficiência de estudantes e profissionais.  |
+Meu nome é Alan, sou estudante de Ciências da Computação na Universidade Federal de Mato Grosso (UFMT). Atualmente, estou focado em aprimorar minhas habilidades em desenvolvimento de software, com ênfase em boas práticas de programação, arquitetura de sistemas e tecnologias modernas.   |
 
 - **Email:** alanbrunomoraescosta18@hotmail.com
 - **LinkedIn:** [Alan's LinkedIn](https://www.linkedin.com/in/alan-morais-4861322b0)
