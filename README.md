@@ -8,13 +8,16 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 ### Funcionalidades Gerais
 
-- **Autenticação de Usuários**: Suporte a login, logout e gerenciamento de sessões.
+- **Autenticação de Usuários**: Suporte a login, logout e gerenciamento de sessões, group do django.
 - **Gestão de Produtos**: Criação, edição, exclusão e listagem de produtos.
 - **Gestão de Categorias**: Criação, edição, exclusão e listagem de categorias de produtos.
 - **Gestão de Fornecedores**: Criação, edição, exclusão e listagem de fornecedores.
 - **Movimentação de Estoque**: Registro de entrada, saída e transferência de produtos.
 - **Notificações**: Alertas automáticos para produtos com estoque baixo ou próximos do vencimento.
+- **Transitar entre lojas**: O usuário pode criar lojas (filias) e trasitar entre elas, cada uma com seus proprios funcionarios e produtos.
+- **Backup**: O sistema tem uma rota para backup `<localhost>/api/backup/download/dados`
 
+  
 ### Progressive Web App (PWA)
 
 - Instalação do sistema como aplicativo em dispositivos móveis e desktops.
@@ -34,6 +37,7 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 4. **Produto**: Detalhamento de produtos (nome, quantidade, validade, etc.).
 5. **MovimentoEstoque**: Registro de movimentações de entrada, saída e transferência.
 6. **User**: Usuario do proprio Django
+7. **UserLoja**: Relação entre Loja e Usuario
    
 ### Views Principais
 
@@ -52,11 +56,16 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 - **Endpoints**: `/login`, `/logout`
 - **Descrição**: Gerencia autenticação e encerramento de sessões.
+<div style="display: flex;"> 
+   <img src="mobile-login.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-login.png" alt="Imagem 2" width="600px"> 
+</div>
 
 #### Gestão de Produtos
 
 - **Endpoints**: `/produtoview`, `/criar_produto`, `/editar_produto`, `/excluir_produto`
 - **Descrição**: Manipula o CRUD de produtos.
+
 
 #### Gestão de Categorias
 
@@ -84,17 +93,27 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 </div>
 
 
+#### Cadastro Loja-User
+
+- **Função**: `cadastroUserLoja`
+- **Descrição**: Função para cadastrar um usuário proprietário de uma loja:
+  - Cadastro de Usuario e Loja. O usuario cadastro desta maneira pertece ao grupo de proprietario.
+
+<div style="display: flex;"> 
+   <img src="mobile-alerta.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-alerta.png" alt="Imagem 2" width="617px"> 
+</div>
+
 #### Notificações
 
 - **Função**: `func_notifica_vencimento`
 - **Descrição**: Gera alertas para:
   - Produtos com validade próxima (14, 30 ou 60 dias).
   - Produtos com estoque abaixo do mínimo.
-
-#### Páginas Offline
-
-- **Endpoint**: `/offline`
-- **Descrição**: Renderiza uma página amigável quando o sistema é acessado sem conexão.
+<div style="display: flex;"> 
+   <img src="mobile-alerta.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-alerta.png" alt="Imagem 2" width="617px"> 
+</div>
 
 ## Pré-requisitos
 
@@ -154,7 +173,7 @@ O design do sistema é responsivo e otimizado para dispositivos móveis e deskto
 - **Bootstrap ou Tailwind (se aplicável)**
 - **Templates Django**
 
-*irei colocar imagens aqui*
+
 
 
 
