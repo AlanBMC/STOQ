@@ -42,6 +42,12 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 - **Endpoint**: `/dashboard`
 - **Descrição**: Exibe as principais métricas do estoque e movimentações.
 
+<div style="display: flex;"> 
+   <img src="mobile-dashboard.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-dashboard.png" alt="Imagem 2" width="617px"> 
+</div>
+
+
 #### Login e Logout
 
 - **Endpoints**: `/login`, `/logout`
@@ -56,19 +62,27 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 - **Endpoints**: `/listar_categorias`, `/criar_categoria`, `/editar_categoria`, `/excluir_categoria`
 - **Descrição**: Manipula o CRUD de categorias.
-<div style="display: flex;"> 
-   <img src="imagem1.png" alt="Imagem 1" width="50px" style="margin-right: 10px;"> 
-   <img src="imagem2.png" alt="Imagem 2" width="50px"> 
-</div>
+
 #### Gestão de Fornecedores
 
 - **Endpoints**: `/listar_fornecedores`, `/criar_fornecedor`, `/editar_fornecedor`, `/excluir_fornecedor`
 - **Descrição**: Manipula o CRUD de fornecedores.
+  
+<div style="display: flex;"> 
+   <img src="mobile-produto.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-produto.png" alt="Imagem 2" width="617px"> 
+</div>
 
 #### Movimentação de Estoque
 
 - **Endpoint**: `/cria_movimento_de_estoque_em_lote`
 - **Descrição**: Registra entradas, saídas e transferências de produtos entre lojas.
+
+<div style="display: flex;"> 
+   <img src="mobile-estoque.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-estoque.png" alt="Imagem 2" width="617px"> 
+</div>
+
 
 #### Notificações
 
