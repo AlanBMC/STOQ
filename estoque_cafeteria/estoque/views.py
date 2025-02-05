@@ -1058,9 +1058,7 @@ def atualizaLoja(request):
         box = request.POST.get('checkbox')
         nome = request.POST.get('nome')
         logo_loja = request.FILES.get('logo-loja')
-        if Loja.objects.filter(nome=nome).exists():
-            messages.error(request, 'Já existe uma loja com esse nome.')
-            return redirect('configuracaoview')
+        
         if box:
             if logo_loja:
             # Verifica se o arquivo é uma imagem
@@ -1068,12 +1066,16 @@ def atualizaLoja(request):
                     messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
                     return redirect('configuracaoview')
                 else:
-                    loja = Loja.objects.create(nome=nome, logo=logo_loja)
-                    userloja = UserLoja.objects.create(user=request.user, loja=loja)
-                    userloja.save()
-                    loja.save()
-                    messages.success(request, 'loja criada com sucesso')
-                    return redirect('configuracaoview')
+                    if Loja.objects.filter(nome=nome).exists():
+                        messages.error(request, 'Já existe uma loja com esse nome.')
+                        return redirect('configuracaoview')
+                    else:
+                        loja = Loja.objects.create(nome=nome, logo=logo_loja)
+                        userloja = UserLoja.objects.create(user=request.user, loja=loja)
+                        userloja.save()
+                        loja.save()
+                        messages.success(request, 'loja criada com sucesso')
+                        return redirect('configuracaoview')
             messages.error(request, 'Insira uma imagem')
             return redirect('configuracaoview')
         else:

@@ -7,15 +7,16 @@
     <meta name="theme-color" content="#333333">
     <title>{% block title %}Dashboard{% endblock %}</title>
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <link rel="apple-touch-icon" href="{% static 'images/maskable_icon-_3_ (1).png' %}" style="border-radius: 10px;">
+    <link rel="apple-touch-icon" href="{% static 'images/maskable_icon_x192 (7).png' %}" style="border-radius: 10px;">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">    {%block head %} {%endblock%}
-    <link rel="icon" href="{% static 'images/maskable_icon-_3_ (1).ico' %}" type="image/x-icon">
+    <link rel="icon" class="icone" href="{% static 'images/maskable_icon_x192 (7).png' %}"  type="image/png">
     <link rel="stylesheet" href="{% static 'css/global.css'%}">
 </head>
 <style>
+  
 .logo-image {
     width: 40px; /* Tamanho padrão para mobile */
     height: 40px;
@@ -79,7 +80,7 @@
 
 <style>
   .active {
-        background-color: rgba(18, 63, 7, 0.795);  /* Cor de fundo verde */
+        background-color: rgba(230, 141, 8, 0.795);  /* Cor de fundo verde */
         border-radius: 12px;
         transform: scale(1.05);  /* Aumenta ligeiramente o botão ativo */
         transition: all 0.4s ease-in-out;

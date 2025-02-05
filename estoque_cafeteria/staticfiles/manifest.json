@@ -9,12 +9,12 @@
     "theme_color": "#333333",
     "icons": [
       {
-        "src": "/static/images/maskable_icon_x192 (3).png",
+        "src": "/static/images/maskable_icon_x192 (7).png",
         "sizes": "192x192",
         "type": "image/png" 
       },
       {
-        "src": "/static/images/maskable_icon_x512 (3).png",
+        "src": "/static/images/maskable_icon_x512 (8).png",
         "sizes": "512x512",
         "type": "image/png"
       }

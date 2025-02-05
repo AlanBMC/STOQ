@@ -1,6 +1,6 @@
 {
     "id": "http://127.0.0.1:8000/login/",
-    "name": "Controle de Estoque",
+    "name": "STOQ",
     "short_name": "STOQ",
     "description": "Aplicação de Controle de Estoque",
     "start_url": "/produtoview",
@@ -9,12 +9,12 @@
     "theme_color": "#333333",
     "icons": [
       {
-        "src": "/static/images/maskable_icon_x192 (3).png",
+        "src": "/static/images/maskable_icon_x192 (7).png",
         "sizes": "192x192",
         "type": "image/png" 
       },
       {
-        "src": "/static/images/maskable_icon_x512 (3).png",
+        "src": "/static/images/maskable_icon_x512 (8).png",
         "sizes": "512x512",
         "type": "image/png"
       }
