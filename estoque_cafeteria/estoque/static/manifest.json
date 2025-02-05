@@ -1,20 +1,20 @@
 {
     "id": "http://127.0.0.1:8000/login/",
-    "name": "Controle de Estoque",
-    "short_name": "Estoque TheCoffe ザ",
+    "name": "STOQ",
+    "short_name": "STOQ",
     "description": "Aplicação de Controle de Estoque",
-    "start_url": "/",
+    "start_url": "/produtoview",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#333333",
     "icons": [
       {
-        "src": "/static/images/maskable_icon_x192 (1).png",
+        "src": "/static/images/maskable_icon_x192 (7).png",
         "sizes": "192x192",
-        "type": "image/png"
+        "type": "image/png" 
       },
       {
-        "src": "/static/images/maskable_icon_x512 (1).png",
+        "src": "/static/images/maskable_icon_x512 (8).png",
         "sizes": "512x512",
         "type": "image/png"
       }

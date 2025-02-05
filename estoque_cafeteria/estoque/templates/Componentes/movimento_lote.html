@@ -135,8 +135,7 @@
                             <td id="tipo-movimentoPOP" class="py-2 px-2">
                                 <select name="movimentos" required
                                     class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
-                                    <option value="Saida">Saída</option>
-                                    <option value="Entrada">Entrada</option>
+                                    <option value="Estoque_atual">Estoque Atual</option>
                                     <option value="Transferencia">Transferência</option>
                                 </select>
                             </td>
@@ -147,6 +146,7 @@
                                     {%for loja in lojas %}
                                             {% if loja.id != user.loja.id %}
                                                 <option value="{{ loja.id }}">{{ loja.nome }}</option>
+                                                
                                             {% endif %}
                                     {% endfor %}
                                     

@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {%load static %}
 {%block title%} Configurações {%endblock%}
+
+
 {% block content %}
 <style>
   
@@ -8,7 +10,7 @@
     overflow: hidden;
 }
 </style>
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.js"></script>
 
 <div class=" bg-gray-100 flex flex-col items-center p-6">
 
@@ -45,34 +47,44 @@
                 Criar
             </button>
         </div>
+        
         <div id="editar-loja" class="bg-color-2 p-6 rounded-lg shadow-md flex flex-col items-center">
             <img src="{% static 'images/iconLoja.svg' %}" alt="Editar loja" class="icon-default mb-5 p-2">
-            <h2 class="text-xl  font-semibold mb-2">Editar loja</h2>
+            <h2 class="text-xl  font-semibold mb-2">Editar/Criar loja</h2>
             <button id="EditLojaBtn" class="mt-4  px-4 py-2 rounded-lg hover:bg-green-600 transition-all">
                 Editar
             </button>
         </div>
-
         
+       
     </div>
     
-
 <div id="editLojaModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 class="text-2xl font-semibold mb-4">Editar loja</h2>
+        
         <form action="{%url 'atualizaLoja' %}" method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="">Criar uma nova loja ?</label>
+            <input id="vue-checkbox-list" type="checkbox" name="checkbox" value="1" class="">
+           
+        </div>            
+            
+
             <div class="mb-4">
                 <label class="block text-sm font-medium">Nome</label>
-                <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500"
-                    required>
+                <input type="text" name="nome" class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-green-500" value="{{loja}}">
             </div>
             <input
                 class="block w-full mt-4 mb-4 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                aria-describedby="user_avatar_help" required accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar"
+                aria-describedby="user_avatar_help"  accept=".png, .jpg, .jpeg, .ico" name="logo-loja" id="user_avatar"
                 type="file">
             <button type="submit" class="w-full   py-2 rounded-lg hover:bg-green-600 transition-all">
                 Salvar
             </button>
+
+            
         </form>
         
         <a id="closeCreateLojaModal" class="mt-4 bg-color text-sm hover:underline">

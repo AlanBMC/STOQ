@@ -1,7 +1,7 @@
 # Controle de Estoque com Django e PWA
 
 
-<img src="logo_thecoffe.ico" width="150px"></br> 
+<img src="maskable_icon (1).png"  width="150px"></br> 
 Este projeto implementa um sistema de controle de estoque utilizando Django, com suporte a Progressive Web App (PWA) para garantir uma experiência de aplicativo nativa.
 
 ## Recursos Principais
@@ -22,7 +22,7 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 ### Dashboard
 
 - Visualização de movimentações de estoque por categoria, fornecedor e produto.
-- Exibição de métricas como quantidade total, movimentações e alertas de estoque.
+- Exibição de métricas como quantidade total, movimentações e alertas (Dentro do proprio sistema) de estoque.
 
 ## Estrutura do Projeto
 
@@ -33,7 +33,8 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 3. **Fornecedor**: Registro de fornecedores.
 4. **Produto**: Detalhamento de produtos (nome, quantidade, validade, etc.).
 5. **MovimentoEstoque**: Registro de movimentações de entrada, saída e transferência.
-
+6. **User**: Usuario do proprio Django
+   
 ### Views Principais
 
 #### Dashboard

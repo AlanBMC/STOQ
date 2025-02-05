@@ -15,6 +15,8 @@ from django.db import transaction, connection
 from django.db import connection
 from django.apps import apps
 from django.core.serializers import serialize
+import io
+import zipfile
 
 def obter_dados(request):
     '''
@@ -193,8 +195,7 @@ def estoqueview(request):
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
     #Criar um novo Grupo
-    for lo in lojasDoUser:
-        print(lo.nome)
+   
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
@@ -216,7 +217,9 @@ def configuracaoview(request):
     show_tour = verifica_last_name(request)
     loja_name = request.user.loja.nome
     loja_logo = request.user.loja.logo
-    return render(request, 'configuracao.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    is_proprietario = request.user.groups.filter(name="Proprietario").exists()
+    
+    return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
@@ -743,34 +746,68 @@ def cria_movimento_de_estoque_em_lote(request):
             if quantidades[indice] == '':
                 continue
             produto = get_object_or_404(Produto, id=produto_ids[indice], loja=request.user.loja)
-            
-            if movimentos[indice] == 'Saida':
-                if produto.quantidade < float(quantidades[indice]):
-                    mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
-                    continue
-                else:
-                    produto.quantidade -= float(quantidades[indice])
+            if movimentos[indice] == 'Estoque_atual':
+                quantidade_atual =  float(quantidades[indice]) - produto.quantidade 
+                if quantidade_atual > 0:
+                    print('entrada - ',quantidade_atual)
+                    produto.quantidade = float(quantidades[indice])
                     produto.save()
                     MovimentoEstoque.objects.create(
                         produto=produto,
-                        tipo_movimento='saida',
+                        tipo_movimento='entrada',
+                        quantidade=quantidade_atual,
+                        responsavel=request.user,
+                        loja=request.user.loja
+                    )
+                    produtos_alterados.append(f'\n{produto.nome}')
+
+                elif quantidade_atual < 0:
+                    print('saida - ', quantidade_atual)
+                    if produto.quantidade < float(quantidades[indice]):
+                        mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
+                        continue
+                    else:
+                        produto.quantidade += quantidade_atual
+                        produto.save()
+                        
+                        MovimentoEstoque.objects.create(
+                            produto=produto,
+                            tipo_movimento='saida',
+                            quantidade=quantidade_atual * -1 ,
+                            responsavel=request.user,
+                            loja=request.user.loja
+                        )
+                        produtos_alterados.append(produto.nome)
+                
+                
+                if movimentos[indice] == 'Saida':
+                    if produto.quantidade < float(quantidades[indice]):
+                        mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
+                        continue
+                    else:
+                        produto.quantidade -= float(quantidades[indice])
+                        produto.save()
+                        MovimentoEstoque.objects.create(
+                            produto=produto,
+                            tipo_movimento='saida',
+                            quantidade=float(quantidades[indice]),
+                            responsavel=request.user,
+                            loja=request.user.loja
+                        )
+                        produtos_alterados.append(produto.nome)
+                
+                elif movimentos[indice] == 'Entrada':
+
+                    produto.quantidade += float(quantidades[indice])
+                    produto.save()
+                    MovimentoEstoque.objects.create(
+                        produto=produto,
+                        tipo_movimento='entrada',
                         quantidade=float(quantidades[indice]),
                         responsavel=request.user,
                         loja=request.user.loja
                     )
-                    produtos_alterados.append(produto.nome)
-            elif movimentos[indice] == 'Entrada':
-
-                produto.quantidade += float(quantidades[indice])
-                produto.save()
-                MovimentoEstoque.objects.create(
-                    produto=produto,
-                    tipo_movimento='entrada',
-                    quantidade=float(quantidades[indice]),
-                    responsavel=request.user,
-                    loja=request.user.loja
-                )
-                produtos_alterados.append(f'\n{produto.nome}')
+                    produtos_alterados.append(f'\n{produto.nome}')
 
 
             elif movimentos[indice] == 'Transferencia':
@@ -940,6 +977,19 @@ def importar_dados_json(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+@login_required(login_url='/')
+def download_json(request):
+    """
+    Gera e fornece um arquivo JSON para download com os dados retornados por `retornadados`.
+    """
+    if request.user.groups.filter(name='Desenvolvedor').exists():
+        response_data = retornadados(request).content  # Obtém os dados da função retornadados
+        response = HttpResponse(response_data, content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="dados.json"'
+        return response
+    else:
+        messages.error(request, 'Voce precisa ser desenvolvedor')
+        return redirect('produtoview')
 
 def cadastroUserLoja(request):
     if request.method == 'POST':
@@ -1000,27 +1050,53 @@ def criaLoja(request):
 
 @login_required(login_url='/')
 def atualizaLoja(request):
+    if not request.user.has_perm('auth.add_user'):
+        messages.error(request, 'Você não tem permissão para criar ou editar lojas.')
+        return redirect('configuracaoview')  # Redireciona para uma página de erro ou home
+
     if request.method == 'POST':
-        
+        box = request.POST.get('checkbox')
         nome = request.POST.get('nome')
         logo_loja = request.FILES.get('logo-loja')
-        if logo_loja:
+        
+        if box:
+            if logo_loja:
             # Verifica se o arquivo é uma imagem
-            if not logo_loja.content_type.startswith('image/'):
-                messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
-                return redirect('produtoview')
+                if not logo_loja.content_type.startswith('image/'):
+                    messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                    return redirect('configuracaoview')
+                else:
+                    if Loja.objects.filter(nome=nome).exists():
+                        messages.error(request, 'Já existe uma loja com esse nome.')
+                        return redirect('configuracaoview')
+                    else:
+                        loja = Loja.objects.create(nome=nome, logo=logo_loja)
+                        userloja = UserLoja.objects.create(user=request.user, loja=loja)
+                        userloja.save()
+                        loja.save()
+                        messages.success(request, 'loja criada com sucesso')
+                        return redirect('configuracaoview')
+            messages.error(request, 'Insira uma imagem')
+            return redirect('configuracaoview')
+        else:
+            if logo_loja:
+                # Verifica se o arquivo é uma imagem
+                if not logo_loja.content_type.startswith('image/'):
+                    messages.error(request, 'O arquivo enviado não é uma imagem ou um arquivo valido')
+                    return redirect('configuracaoview')
+                else:
+                    loja =  get_object_or_404(Loja, id= request.user.loja.id)
+                    loja.logo = logo_loja
+                    if nome:
+                        loja.nome = nome
+                    loja.save()
+                    messages.success(request, 'Loja atualiza com sucesso')
+                    return redirect('configuracaoview')
             else:
                 loja =  get_object_or_404(Loja, id= request.user.loja.id)
-                loja.logo = logo_loja
-                if nome:
-                    loja.nome = nome
-                messages.success(request, 'Loja atualiza com sucesso')
-                return redirect('produtoview')
-        else:
-            loja =  get_object_or_404(Loja, id= request.user.loja.id)
-            
-            loja.nome = nome
-            messages.success(request, 'Nome atualizado')
-            return redirect('produtoview')
-
+                
+                loja.nome = nome
+                loja.save()
+                messages.success(request, 'Nome atualizado')
+                return redirect('configuracaoview')
         
