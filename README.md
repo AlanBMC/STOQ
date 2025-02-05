@@ -100,8 +100,8 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
   - Cadastro de Usuario e Loja. O usuario cadastro desta maneira pertece ao grupo de proprietario.
 
 <div style="display: flex;"> 
-   <img src="mobile-alerta.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
-   <img src="desktop-tablet-alerta.png" alt="Imagem 2" width="617px"> 
+   <img src="mobile-cadastro.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
+   <img src="desktop-tablet-cadastro.png" alt="Imagem 2" width="617px"> 
 </div>
 
 #### Notificações
