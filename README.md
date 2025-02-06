@@ -6,16 +6,37 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 ## Recursos Principais
 
-### Funcionalidades Gerais
+##  Requisitos Funcionais  
 
-- **Autenticação de Usuários**: Suporte a login, logout e gerenciamento de sessões, group do django.
-- **Gestão de Produtos**: Criação, edição, exclusão e listagem de produtos.
-- **Gestão de Categorias**: Criação, edição, exclusão e listagem de categorias de produtos.
-- **Gestão de Fornecedores**: Criação, edição, exclusão e listagem de fornecedores.
-- **Movimentação de Estoque**: Registro de entrada, saída e transferência de produtos.
-- **Notificações**: Alertas automáticos para produtos com estoque baixo ou próximos do vencimento.
-- **Transitar entre lojas**: O usuário pode criar lojas (filias) e trasitar entre elas, cada uma com seus proprios funcionarios e produtos.
-- **Backup**: O sistema tem uma rota para backup `<localhost>/api/backup/download/dados`
+- **Cadastro de produtos** – Permite o registro e gerenciamento de produtos no estoque.  
+- **Controle de validade** – Monitora a data de vencimento dos produtos.  
+- **Relatórios personalizados** – Geração de relatórios sob demanda para análise e acompanhamento.  
+- **Transferência de produtos** – Permite a movimentação de itens entre lojas e depósitos.  
+- **Código de barras** – Suporte para leitura e geração de códigos de barras.  
+- **Controle de acesso** – Gerenciamento de usuários com autenticação via **Login e Groups** do Django.  
+- **Alertas inteligentes** – Notificações automáticas para validade e quantidade de produtos no estoque.  
+- **Gestão de categorias** – Criação, edição e exclusão de categorias de produtos.  
+- **Gestão de fornecedores** – Registro e gerenciamento de fornecedores.  
+- **Movimentação de estoque** – Registro de entrada, saída e transferência de produtos.  
+- **Transição entre lojas** – Usuários podem criar filiais e alternar entre elas, cada uma com seus próprios funcionários e produtos.  
+- **Backup do sistema** – Endpoint específico para realizar backup dos dados: `<localhost>/api/backup/download/dados`.  
+
+##  Requisitos Não Funcionais  
+
+- **Camada de controle** – Restrições de usuários para garantir a integridade do sistema.  
+- **Controle de rota** – Apenas usuários autenticados podem acessar determinadas páginas. A autenticação nativa do Django garante segurança e proteção de rotas sensíveis.  
+- **Desempenho otimizado** – Utilização do **SQLite** como banco de dados devido à facilidade de implementação e ao baixo fluxo de acessos (diário ou semanal, dependendo do estabelecimento).  
+- **Progressive Web App (PWA)** – Implementado para oferecer uma experiência mais fluida e próxima de um aplicativo nativo.  
+
+
+
+##  Tecnologias Utilizadas  
+
+O sistema foi desenvolvido utilizando:  
+
+- **Django** (Backend)  
+- **HTML, CSS, Tailwind CSS, JavaScript** (Frontend)  
+
 
   
 ### Progressive Web App (PWA)
@@ -115,54 +136,60 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
    <img src="desktop-tablet-alerta.png" alt="Imagem 2" width="617px"> 
 </div>
 
-## Pré-requisitos
 
-- **Python 3.8+**
-- **Django 4.x**
-- **SQLite**
-- **Django PWA**
 
-## Instalação
 
-1. Clone o repositório:
+
+## 🚀 Instalação  
+
+1. **Clone o repositório**:  
 
    ```bash
    git clone <url-do-repositorio>
    cd <nome-do-projeto>
    ```
 
-2. Crie um ambiente virtual e ative-o:
+2. **Crie um ambiente virtual e ative-o**:  
 
    ```bash
    python -m venv venv
    source venv/bin/activate  # No Windows: venv\Scripts\activate
    ```
 
-3. Instale as dependências:
+3. **Instale as dependências**:  
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Aplique as migrações:
+4. **Aplique as migrações do banco de dados**:  
 
    ```bash
    python manage.py migrate
    ```
 
-5. Inicie o servidor de desenvolvimento:
+5. **Crie um superusuário para acessar o admin**:  
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+   - Insira um **nome de usuário**, **email** (opcional) e **senha** quando solicitado.
+
+6. **Inicie o servidor de desenvolvimento**:  
 
    ```bash
    python manage.py runserver
    ```
 
-6. Acesse o sistema em [http://localhost:8000](http://localhost:8000).
+7. **Acesse o painel administrativo do Django**:  
 
-## Modelagem Lógica
+   - Abra o navegador e vá para: [`http://127.0.0.1:8000/admin/`](http://127.0.0.1:8000/admin/)  
+   - Faça login com as credenciais do **superusuário** criado.  
 
-Abaixo está o diagrama de modelagem lógica do sistema:
 
-*irei colocar imagens aqui*
+
+
 
 ## Design
 
@@ -170,7 +197,7 @@ O design do sistema é responsivo e otimizado para dispositivos móveis e deskto
 
 - **HTML5**
 - **CSS3**
-- **Bootstrap ou Tailwind (se aplicável)**
+- **Tailwind**
 - **Templates Django**
 
 
