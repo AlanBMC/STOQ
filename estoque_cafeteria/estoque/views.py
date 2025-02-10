@@ -430,23 +430,20 @@ def criar_produto(request):
         nome = request.POST.get('nome')
         quantidade = request.POST.get('quantidade')
         tipo_quantidade = request.POST.get('tipo_quantidade')
-        codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         estoque_min = request.POST.get('estoque_min')
+        
         # Verifica se o produto já existe na mesma loja
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
             messages.error(request, 'Produto com esse nome já existe.')
             return redirect('produtoview')
-        elif Produto.objects.filter(codigo_de_barras=codigo_de_barras, loja=request.user.loja).exists():
-            messages.error(request, 'Produto com este codigo de barras ja existe.')
-            return redirect('produtoview')
+      
         # Criação do novo produto
         Produto.objects.create(
             nome=nome,
             quantidade=quantidade,
             tipo_quantidade=tipo_quantidade,
-            codigo_de_barras=codigo_de_barras,
             validade=validade,
             categoria_id=categoria_id,
             estoque_minimo=estoque_min,
@@ -480,7 +477,6 @@ def editar_produto(request):
         nome = request.POST.get('nome')
         quantidade = request.POST.get('quantidade')
         tipo_quantidade = request.POST.get('tipo_quantidade')
-        codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         estoquemin = request.POST.get('estoque_min')
@@ -488,7 +484,7 @@ def editar_produto(request):
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
             return redirect('estoqueview')
-        elif Produto.objects.filter(codigo_de_barras=codigo_de_barras, loja=request.user.loja).exclude(pk=produto_id).exists():
+        elif Produto.objects.filter(loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Produto com este código de barras já existe.')
             return redirect('estoqueview')
 
@@ -500,7 +496,6 @@ def editar_produto(request):
         produto.nome = nome
         produto.quantidade = quantidade
         produto.tipo_quantidade = tipo_quantidade
-        produto.codigo_de_barras = codigo_de_barras
         if validade:
             produto.validade = validade
         if estoquemin:
@@ -711,9 +706,7 @@ def cria_movimento_de_estoque_em_lote(request):
                     continue
 
                 # Verificar se o produto já existe na loja de destino
-                produto_destino = Produto.objects.filter(
-                    codigo_de_barras=produto.codigo_de_barras, loja=loja_destino
-                ).first()
+                produto_destino = Produto.objects.filter(nome=produto.nome, loja=loja_destino).first()
 
                 if not produto_destino:
                     # Criar categoria, se necessário
@@ -723,7 +716,6 @@ def cria_movimento_de_estoque_em_lote(request):
                         nome=produto.nome,
                         quantidade=0,  # Inicialmente zero, pois será atualizado depois
                         tipo_quantidade=produto.tipo_quantidade,
-                        codigo_de_barras=produto.codigo_de_barras,
                         validade=produto.validade,
                         categoria=categoria,
                         estoque_minimo=produto.estoque_minimo,
@@ -782,8 +774,8 @@ def retornadados(request):
     users_loja = UserLoja.objects.select_related('user', 'loja').values('user__username', 'loja__nome')
     categorias = Categoria.objects.select_related('loja').values('nome', 'loja__nome')
     produtos = Produto.objects.select_related( 'categoria', 'loja').values(
-        'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras', 'validade'
-        , 'categoria__nome', 'estoque_minimo', 'loja__nome', 'status'
+        'nome', 'quantidade', 'tipo_quantidade', 'validade'
+        , 'categoria__nome', 'estoque_minimo', 'loja__nome', 
     )
     movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
         'produto__nome', 'tipo_movimento', 'quantidade', 'data_movimento', 'responsavel__username', 'loja__nome'
@@ -825,7 +817,7 @@ def importar_dados_json(request):
             categoria = Categoria.objects.filter(nome=produto_data.get('categoria__nome')).first()
             Produto.objects.get_or_create(
                 nome=produto_data.get('nome'),
-                codigo_de_barras=produto_data.get('codigo_de_barras'),
+              
                 defaults={
                     'quantidade': produto_data.get('quantidade'),
                     'tipo_quantidade': produto_data.get('tipo_quantidade'),
