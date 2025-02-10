@@ -136,7 +136,6 @@ def produtoview(request):
         HttpResponse: A página de visualização de produtos renderizada.
     """
     
-    show_tour = verifica_last_name(request)
     categorias =  listar_categorias(request)
     loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
@@ -173,8 +172,16 @@ def estoqueview(request):
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
     
-    movimento = MovimentoEstoque.objects.filter(loja = request.user.loja)
-    print(movimento)
+    
+    latest_movimento_subquery = MovimentoEstoque.objects.filter(
+        produto=OuterRef('id'), loja=request.user.loja
+    ).order_by('-data_movimento').values('tipo_movimento', 'data_movimento')[:1]
+
+    # Adicionando a última movimentação como um campo anotado nos produtos
+    produtos = produtos.annotate(
+        ultimo_movimento_tipo=Subquery(latest_movimento_subquery.values('tipo_movimento')[:1]),
+        ultimo_movimento_data=Subquery(latest_movimento_subquery.values('data_movimento')[:1])
+    )    
     hoje = date.today()
     
     return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
