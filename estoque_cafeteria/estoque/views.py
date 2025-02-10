@@ -433,7 +433,17 @@ def criar_produto(request):
         codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
-        estoque_min = request.POST.get('estoque_min')
+        #estoque_min = request.POST.get('estoque_min')
+        if tipo_quantidade == 'UN':
+            estoque_min = 3
+        elif tipo_quantidade == 'L':
+            estoque_min = 1
+        elif tipo_quantidade == 'KG':
+            estoque_min = 1
+        elif tipo_quantidade == 'G':
+            estoque_min = 1
+        elif tipo_quantidade == 'PCT':
+            estoque_min = 1
         # Verifica se o produto já existe na mesma loja
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
             messages.error(request, 'Produto com esse nome já existe.')
