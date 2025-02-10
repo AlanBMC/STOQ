@@ -209,6 +209,9 @@
         </form>
     </div>
 </div>
+
+
+
 {%if is_proprietario %}
 <div id="modalLoja" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg w-auto">
@@ -292,6 +295,8 @@ window.onclick = function(event) {
     let modalFornecedor = document.getElementById('modalFornecedor');
     let modalCategoria = document.getElementById('modalCategoria');
     let modalLoja = document.getElementById('modalLoja');
+    let modalTurn = document.getElementById('ModalTrun');
+
     if (event.target == modalFornecedor) {
         modalFornecedor.classList.add('hidden');
     }
@@ -301,21 +306,22 @@ window.onclick = function(event) {
     if (event.target == modalLoja) {
         modalLoja.classList.add('hidden');
     }
+    if (event.target == modalTurn) {
+        modalTurn.classList.add('hidden');
+    }
 }
 </script>
 <script>
        const driver = window.driver.js.driver;
 
-const driverObj = driver({
-    showProgress: true,
-    steps: [
-    {element: "#notificationBtn",popover: {title: "Notificação",description: "Aqui você pode ver as notificações do sistema"}},
-    {element: "#botaosair",popover: {title: "Sair",description: "Aqui você pode sair do sistema"}},
-
-   
+    const driverObj = driver({
+        showProgress: true,
+        steps: [
+        {element: "#notificationBtn",popover: {title: "Notificação",description: "Aqui você pode ver as notificações do sistema"}},
+        {element: "#botaosair",popover: {title: "Sair",description: "Aqui você pode sair do sistema"}},  
+        ]
         
-    ]
-});
+    });
 driverObj.drive();
 </script>
 {% endblock %}

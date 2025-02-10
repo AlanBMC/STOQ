@@ -70,34 +70,23 @@ def obter_dados(request):
         "contagemproduto": contagemporproduto
     })
 
-def tour_site(request):
-    """
-    Verifica se o tour deve ser mostrado para o usuário com base no último login.
-    """
-    
-    
-    user = request.user
-    if user.last_name == '':
-        user.last_name = 'tour 1'
-        user.save()
-        return True
-    elif user.last_name == 'tour 1': 
-        user.last_name = 'tour 2'
-        user.save()
-        return True
-    else:
-        user.last_name = 'tour 3'
-        user.save()
-        return False
 
+    
+
+    
 def verifica_last_name(request):
     user =  request.user
-    if user.last_name == 'tour 1':
+    if user.last_name == '':
         return True
     elif user.last_name == 'tour 2':
         return True
     else:
         return False
+
+def retira_tour(request):
+    if request.method == 'POST':
+
+        return redirect('produtoview')
 
 @login_required(login_url='/')
 def dashboard(request):
@@ -105,7 +94,7 @@ def dashboard(request):
     loja_name = request.user.loja.nome
     loja_logo = request.user.loja.logo
     
-    return render(request, 'dashboard.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour})
+    return render(request, 'dashboard.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False})
 
 def login(request):
     """
@@ -138,7 +127,7 @@ def login(request):
         user = authenticate(username=nome, password=senha)
         if user:
             login_django(request, user)
-            tour_site(request)
+            
             func_notifica_vencimento(request)
             return redirect('produtoview')
         else:
@@ -168,7 +157,7 @@ def produtoview(request):
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     loja_logo = request.user.loja.logo
     hoje = date.today()
-    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def update_loja_user(request):
@@ -199,7 +188,7 @@ def estoqueview(request):
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -219,7 +208,7 @@ def configuracaoview(request):
     loja_logo = request.user.loja.logo
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     
-    return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': False,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
@@ -992,6 +981,25 @@ def download_json(request):
         return redirect('produtoview')
 
 def cadastroUserLoja(request):
+    """
+    Função para cadastrar um usuário proprietário de uma loja.
+    Args:
+        request (HttpRequest): Objeto HttpRequest que contém os dados da requisição.
+    Returns:
+        HttpResponse: Redireciona para a página de login em caso de sucesso ou para a página de cadastro em caso de erro.
+    Fluxo:
+        - Se o método da requisição for POST:
+            - Obtém os dados do formulário (nome, email, senha, confirmação de senha, nome da loja e logo da loja).
+            - Verifica se a senha e a confirmação de senha coincidem.
+            - Verifica se o arquivo enviado é uma imagem.
+            - Verifica se o nome de usuário já existe.
+            - Cria a loja e o usuário, associa o usuário ao grupo 'Proprietario' e salva os dados.
+            - Exibe uma mensagem de sucesso e redireciona para a página de login.
+            - Em caso de erro, exibe uma mensagem de erro e redireciona para a página de cadastro.
+        - Se o método da requisição for GET:
+            - Renderiza a página de cadastro de usuário.
+    """
+
     if request.method == 'POST':
         nome =  request.POST.get('nome')
         email = request.POST.get('email')
