@@ -210,24 +210,7 @@
     </div>
 </div>
 
-{% if show_tour %}
-<div id="ModalTrun" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-auto">
-        <h2 class="text-lg font-semibold mb-4">Quer continuar o turn ?</h2>
-        <form id="formCategoria" action="" method="POST"> {% csrf_token %}
-            <div class="mb-4">
-                <label class="block text-sm font-medium">Iremos encerrar o turn para todas as abas. Mas fique tranquilo
-                    tudo é intuito.
-                </label>
-                
-            </div>
-            <button type="submit" class="w-full  py-2 rounded-lg ">
-                Salvar
-            </button>
-        </form>
-    </div>
-</div>
-{% endif %}
+
 
 {%if is_proprietario %}
 <div id="modalLoja" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">

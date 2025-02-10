@@ -83,6 +83,11 @@ def verifica_last_name(request):
     else:
         return False
 
+def retira_tour(request):
+    if request.method == 'POST':
+        
+        return redirect('produtoview')
+
 @login_required(login_url='/')
 def dashboard(request):
     show_tour = verifica_last_name(request)
