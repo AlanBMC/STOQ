@@ -85,7 +85,7 @@ def verifica_last_name(request):
 
 def retira_tour(request):
     if request.method == 'POST':
-        
+
         return redirect('produtoview')
 
 @login_required(login_url='/')
@@ -94,7 +94,7 @@ def dashboard(request):
     loja_name = request.user.loja.nome
     loja_logo = request.user.loja.logo
     
-    return render(request, 'dashboard.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour})
+    return render(request, 'dashboard.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False})
 
 def login(request):
     """
@@ -157,7 +157,7 @@ def produtoview(request):
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     loja_logo = request.user.loja.logo
     hoje = date.today()
-    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': show_tour, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
 
 @login_required(login_url='/')
 def update_loja_user(request):
@@ -188,7 +188,7 @@ def estoqueview(request):
     fornecedores = listar_fornecedores(request)
     hoje = date.today()
     show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -208,7 +208,7 @@ def configuracaoview(request):
     loja_logo = request.user.loja.logo
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     
-    return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': show_tour,'usuarios': usuarios, 'is_proprietario': is_proprietario})
+    return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': False,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
 @login_required(login_url='/')
