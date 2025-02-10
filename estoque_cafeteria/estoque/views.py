@@ -156,7 +156,9 @@ def update_loja_user(request):
         usuario.save()
         messages.success(request, 'salvo')
         return redirect('produtoview')
+    
 
+from django.db.models import OuterRef, Subquery
 @login_required(login_url='/')
 def estoqueview(request):
     '''
@@ -170,8 +172,11 @@ def estoqueview(request):
     lojas2 = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
-    #Criar um novo Grupo
-   
+    movimento = MovimentoEstoque.objects.filter(loja=request.user.loja)
+    latest_movimento_subquery = MovimentoEstoque.objects.filter(
+        produto=OuterRef('id'), loja=request.user.loja
+    ).order_by('-data_movimento').values('tipo_movimento')[:1]
+    produtos = produtos.annotate(ultimo_movimento=Subquery(latest_movimento_subquery))
     
     hoje = date.today()
     
