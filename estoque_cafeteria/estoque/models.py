@@ -18,14 +18,7 @@ class UserLoja(models.Model):
     
 User.add_to_class('loja', models.ForeignKey(Loja, on_delete=models.SET_NULL, null=True, blank=True))
 
-class Fornecedor(models.Model):
-    nome = models.CharField(max_length=100)
-    contato = models.CharField(max_length=100)
-    loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
 
-
-    def __str__(self):
-        return self.nome
 
 # Categoria de Produto
 class Categoria(models.Model):
@@ -55,7 +48,6 @@ class Produto(models.Model):
     tipo_quantidade = models.CharField(max_length=20, choices=TIPO_QUANTIDADE_CHOICES)
     codigo_de_barras = models.CharField(max_length=50)
     validade = models.DateField(null=True, blank=True)
-    fornecedor = models.ForeignKey(Fornecedor, on_delete=SET_NULL, null=True, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=SET_NULL, null=True, blank=True)
     estoque_minimo = models.FloatField(default=0)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)

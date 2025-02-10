@@ -4,19 +4,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
-from .models import Loja,Categoria,Fornecedor, Produto, MovimentoEstoque, UserLoja  
+from .models import Loja,Categoria, Produto, MovimentoEstoque, UserLoja  
 from django.contrib.auth import logout,authenticate, update_session_auth_hash
 from django.contrib.auth import login as login_django
-from datetime import date, timedelta,datetime
+from datetime import date, timedelta
 from django.http import HttpResponseNotAllowed, HttpResponse
-from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
-from django.db import transaction, connection
-from django.db import connection
-from django.apps import apps
-from django.core.serializers import serialize
-import io
-import zipfile
+
+
 
 def obter_dados(request):
     '''
@@ -25,7 +20,6 @@ def obter_dados(request):
     # Pegar todas as categorias
     loja = Loja.objects.get(id=request.user.loja.id)
     categorias = Categoria.objects.filter(loja=loja)
-    fornecedores = Fornecedor.objects.filter(loja=loja)
     produtos = Produto.objects.filter(loja=loja)
     movimentodeestoque = MovimentoEstoque.objects.filter(loja=loja)
 
@@ -41,12 +35,7 @@ def obter_dados(request):
         
         for categoria in categorias
     }
-    total_mov_fornecedor = {
-        fornecedor.nome: sum(
-            1 for mov in movimentodeestoque if mov.produto.fornecedor == fornecedor
-        )
-        for fornecedor in fornecedores
-    }
+    
 
     contagemporproduto = {
         produto.nome: {
@@ -65,7 +54,6 @@ def obter_dados(request):
     # Retornar como JSON
     return JsonResponse({
         "total_mov_categoria": total_mov_categoria,
-        "total_mov_fornecedor": total_mov_fornecedor,
         "total_mov_produto": total_mov_produto,
         "contagemproduto": contagemporproduto
     })
@@ -143,21 +131,20 @@ def login(request):
 def produtoview(request):
   
     """
-      Renderiza a página de visualização de produtos com a lista de categorias, fornecedores, nome da loja e a data de hoje.
+      Renderiza a página de visualização de produtos com a lista de categorias, nome da loja e a data de hoje.
         request (HttpRequest): O objeto de requisição HTTP.
         HttpResponse: A página de visualização de produtos renderizada.
     """
     
     show_tour = verifica_last_name(request)
     categorias =  listar_categorias(request)
-    fornecedores = listar_fornecedores(request)
     loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas]
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     loja_logo = request.user.loja.logo
     hoje = date.today()
-    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias, 'fornecedores': fornecedores, 'today': hoje})
+    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias,  'today': hoje})
 
 @login_required(login_url='/')
 def update_loja_user(request):
@@ -173,9 +160,9 @@ def update_loja_user(request):
 @login_required(login_url='/')
 def estoqueview(request):
     '''
-    Renderiza a página de estoque com a lista de produtos, categorias, fornecedores e a data de hoje.
+    Renderiza a página de estoque com a lista de produtos, categorias e a data de hoje.
     Argumentos: request (HttpRequest): O objeto de requisição HTTP.
-    Retorna: HttpResponse: estoque.html com os seguites parâmetros: categorias, fornecedores, produtos e today.
+    Retorna: HttpResponse: estoque.html com os seguites parâmetros: categorias , produtos e today.
     '''
     produtos =  listar_produtos(request)
     categorias =  listar_categorias(request)
@@ -185,10 +172,10 @@ def estoqueview(request):
     loja_name = request.user.loja.nome
     #Criar um novo Grupo
    
-    fornecedores = listar_fornecedores(request)
+    
     hoje = date.today()
-    show_tour = verifica_last_name(request)
-    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias, 'fornecedores': fornecedores,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    
+    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
@@ -409,95 +396,11 @@ def listar_categorias(request):
     categorias = Categoria.objects.filter(loja=request.user.loja)
     return categorias
 
-@login_required(login_url='/')
-def listar_fornecedores(request):
-    """
-    Funcionalidade: Lista os fornecedores da loja do usuário.
-    Argumento: request - objeto de requisição HTTP.
-    Retorno: QuerySet de fornecedores filtrados pela loja do usuário.
-    """
-
-    fornecedores = Fornecedor.objects.filter(loja=request.user.loja)
-    return fornecedores
-
-@login_required(login_url='/')
-def criar_fornecedor(request):
-    """
-    Funcionalidade: Cria um novo fornecedor se o método for POST e não houver duplicidade.
-    Argumento: request - objeto HttpRequest contendo dados da requisição.
-    Retorno: Redireciona para 'produtoview' com mensagem de sucesso ou erro.
-    """
-
-    if request.method == 'POST':
-        nome = request.POST.get('nome')
-        contato = request.POST.get('contato')
-        
-        # Verifica duplicidade para a loja do usuário logado
-        if Fornecedor.objects.filter(nome=nome, loja=request.user.loja).exists():
-            messages.error(request, 'Fornecedor com esse nome já existe.')
-            return redirect('produtoview')
-        
-        # Criação do novo fornecedor
-        Fornecedor.objects.create(nome=nome, contato=contato, loja=request.user.loja)
-        messages.success(request, 'Fornecedor criado com sucesso.')
-        return redirect('produtoview')
-
-    return redirect('produtoview')
 
 
-@login_required(login_url='/')
-def editar_fornecedor(request, pk):
-    """
-    Edita um fornecedor existente.
-    Args:
-        request (HttpRequest): O objeto de solicitação HTTP.
-        pk (int): O ID primário do fornecedor a ser editado.
-    Returns:
-        HttpResponse: Redireciona para a visualização do produto.
-    """
-    
-    fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
-    
-    if request.method == 'POST':
-        nome = request.POST.get('nome')
-        contato = request.POST.get('contato')
-        
-        # Evita duplicação ao editar (exclui o próprio fornecedor da verificação)
-        if Fornecedor.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=pk).exists():
-            messages.error(request, 'Já existe um fornecedor com esse nome.')
-            return redirect('produtoview')
 
-        fornecedor.nome = nome
-        fornecedor.contato = contato
-        fornecedor.save()
-        messages.success(request, 'Fornecedor atualizado com sucesso.')
-        return redirect('produtoview')
 
-    return redirect('produtoview')
 
-@login_required(login_url='/')
-def excluir_fornecedor(request, pk):
-    """
-    Exclui um fornecedor específico.
-    Funcionalidade:
-    - Obtém o fornecedor pelo ID (pk) e verifica se pertence à loja do usuário.
-    - Se o método da requisição for POST, exclui o fornecedor e redireciona para a visualização de produtos com uma mensagem de sucesso.
-    - Se o método não for POST, apenas redireciona para a visualização de produtos.
-    Argumentos:
-    - request: Objeto HttpRequest contendo os dados da requisição.
-    - pk: ID do fornecedor a ser excluído.
-    Retorno:
-    - Redireciona para a visualização de produtos.
-    """
-
-    fornecedor = get_object_or_404(Fornecedor, pk=pk, loja=request.user.loja)
-    
-    if request.method == 'POST':
-        fornecedor.delete()
-        messages.success(request, 'Fornecedor excluído com sucesso.')
-        return redirect('produtoview')
-
-    return redirect('produtoview')
 
 
 @login_required(login_url='/')
@@ -529,7 +432,6 @@ def criar_produto(request):
         tipo_quantidade = request.POST.get('tipo_quantidade')
         codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
-        fornecedor_id = request.POST.get('Fornecedor')
         categoria_id = request.POST.get('Categoria')
         estoque_min = request.POST.get('estoque_min')
         # Verifica se o produto já existe na mesma loja
@@ -546,7 +448,6 @@ def criar_produto(request):
             tipo_quantidade=tipo_quantidade,
             codigo_de_barras=codigo_de_barras,
             validade=validade,
-            fornecedor_id=fornecedor_id,
             categoria_id=categoria_id,
             estoque_minimo=estoque_min,
             loja=request.user.loja
@@ -581,7 +482,6 @@ def editar_produto(request):
         tipo_quantidade = request.POST.get('tipo_quantidade')
         codigo_de_barras = request.POST.get('codigo_de_barras')
         validade = request.POST.get('validade')
-        fornecedor_id = request.POST.get('Fornecedor')
         categoria_id = request.POST.get('Categoria')
         estoquemin = request.POST.get('estoque_min')
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
@@ -606,7 +506,6 @@ def editar_produto(request):
         if estoquemin:
             
             produto.estoque_minimo = estoquemin
-        produto.fornecedor_id = fornecedor_id
         produto.categoria_id = categoria_id
         produto.save()
 
@@ -817,9 +716,8 @@ def cria_movimento_de_estoque_em_lote(request):
                 ).first()
 
                 if not produto_destino:
-                    # Criar categoria e fornecedor, se necessário
+                    # Criar categoria, se necessário
                     categoria, _ = Categoria.objects.get_or_create(nome=produto.categoria.nome, loja=loja_destino)
-                    fornecedor, _ = Fornecedor.objects.get_or_create(nome=produto.fornecedor.nome, loja=loja_destino)
                     # Criar o produto na loja de destino
                     produto_destino = Produto.objects.create(
                         nome=produto.nome,
@@ -827,7 +725,6 @@ def cria_movimento_de_estoque_em_lote(request):
                         tipo_quantidade=produto.tipo_quantidade,
                         codigo_de_barras=produto.codigo_de_barras,
                         validade=produto.validade,
-                        fornecedor=fornecedor,
                         categoria=categoria,
                         estoque_minimo=produto.estoque_minimo,
                         loja=loja_destino
@@ -883,11 +780,10 @@ def retornadados(request):
     """
     lojas = Loja.objects.all().values()
     users_loja = UserLoja.objects.select_related('user', 'loja').values('user__username', 'loja__nome')
-    fornecedores = Fornecedor.objects.select_related('loja').values('nome', 'contato', 'loja__nome')
     categorias = Categoria.objects.select_related('loja').values('nome', 'loja__nome')
-    produtos = Produto.objects.select_related('fornecedor', 'categoria', 'loja').values(
-        'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras', 'validade',
-        'fornecedor__nome', 'categoria__nome', 'estoque_minimo', 'loja__nome', 'status'
+    produtos = Produto.objects.select_related( 'categoria', 'loja').values(
+        'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras', 'validade'
+        , 'categoria__nome', 'estoque_minimo', 'loja__nome', 'status'
     )
     movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
         'produto__nome', 'tipo_movimento', 'quantidade', 'data_movimento', 'responsavel__username', 'loja__nome'
@@ -895,7 +791,6 @@ def retornadados(request):
     data = {
         'lojas': list(lojas),
         'users_loja': list(users_loja),
-        'fornecedores': list(fornecedores),
         'categorias': list(categorias),
         'produtos': list(produtos),
         'movimentos_estoque': list(movimentos),
@@ -919,14 +814,7 @@ def importar_dados_json(request):
             user, _ = User.objects.get_or_create(username=user_loja.get('user__username'))
             loja = Loja.objects.get(nome=user_loja.get('loja__nome'))
             UserLoja.objects.get_or_create(user=user, loja=loja)
-        # Criando Fornecedores
-        for fornecedor_data in data.get('fornecedores', []):
-            loja = Loja.objects.get(nome=fornecedor_data.get('loja__nome'))
-            Fornecedor.objects.get_or_create(
-                nome=fornecedor_data.get('nome'),
-                contato=fornecedor_data.get('contato'),
-                loja=loja
-            )
+   
         # Criando Categorias
         for categoria_data in data.get('categorias', []):
             loja = Loja.objects.get(nome=categoria_data.get('loja__nome'))
@@ -934,7 +822,6 @@ def importar_dados_json(request):
         # Criando Produtos
         for produto_data in data.get('produtos', []):
             loja = Loja.objects.get(nome=produto_data.get('loja__nome'))
-            fornecedor = Fornecedor.objects.filter(nome=produto_data.get('fornecedor__nome')).first()
             categoria = Categoria.objects.filter(nome=produto_data.get('categoria__nome')).first()
             Produto.objects.get_or_create(
                 nome=produto_data.get('nome'),
@@ -943,7 +830,7 @@ def importar_dados_json(request):
                     'quantidade': produto_data.get('quantidade'),
                     'tipo_quantidade': produto_data.get('tipo_quantidade'),
                     'validade': produto_data.get('validade'),
-                    'fornecedor': fornecedor,
+                 
                     'categoria': categoria,
                     'estoque_minimo': produto_data.get('estoque_minimo'),
                     'loja': loja,
@@ -969,7 +856,7 @@ def importar_dados_json(request):
 @login_required(login_url='/')
 def download_json(request):
     """
-    Gera e fornece um arquivo JSON para download com os dados retornados por `retornadados`.
+    Gera  um arquivo JSON para download com os dados retornados por `retornadados`.
     """
     if request.user.groups.filter(name='Desenvolvedor').exists():
         response_data = retornadados(request).content  # Obtém os dados da função retornadados
