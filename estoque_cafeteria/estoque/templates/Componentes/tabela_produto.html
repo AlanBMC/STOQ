@@ -168,60 +168,87 @@
 
 
 
-<!-- Modal (inicialmente oculto) -->
-<div id="productModalMovimento" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+
+
+<div id="ModalProdutoConsulta" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
-        <a id="closeModalBtnMovimento" onclick="fechaModalMovimento()" class="absolute  top-3 right-3 text-color-4 text-xl" style="cursor: pointer;">&times;</a>
+        <a id="closeModalBtnViewProdut" class="absolute top-3 right-3 text-color-4 text-xl" >&times;</a>
         
-        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Adicionar Movimentação</h2>
-        
+        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Visualizar Produto</h2>
         <form method="post" action="">
             {% csrf_token %}
             
             <div class="mb-4">
-                <label for="nome" class="block color-5 text-sm font-semibold mb-2" id="">Nome do Produto</label>
-                <label id="nomeProdutoMovimento"></label>
-                <input type="hidden" id="produto_id" name="produto_id" >
+                <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                <input type="text" id="nomeProduto" name="nome" required
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
 
-            <div class="w-1/2">
-                <label for="Tipo de movimento" class="block text-color-4 text-sm font-semibold mb-2">Tipo de movimento</label>
-                <select id="tipo_movimento" name="tipo_movimento" required
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
 
-                    <option value="Saida">Saida</option>
-                    <option value="Entrada">Entrada</option>
-                    <option value="Transferencia">Transferência</option>
-                </select>
-            </div>
-            <div class="flex space-x-4" style="margin: 5px;">
-              
-                <div class="mb-4">
-                    <label for="quantidade" class="block color-5 text-sm font-semibold mb-2">Quantidade</label>
-                    <input type="number" id="quantidade" name="quantidade" required step="0.001" min="0"
+            <div class="flex space-x-4">
+                <!-- Campo de Quantidade -->
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
+                    <input type="number" id="quantidadeProduto" name="quantidade" required step="1"
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
+            
+                <!-- Campo de Tipo de Quantidade -->
                 <div class="w-1/2">
-                    <label for="Status produto" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
-                    <select id="status" name="status" required
+                    <label for="tipo_quantidade" class="block text-color-4 text-sm font-semibold mb-2">Tipo de Quantidade</label>
+                    <select id="tipo_quantidade" name="tipo_quantidade" required
                             class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
 
-                        <option value="Em estoque">Em estoque</option>
-                        <option value="Em uso">Em uso</option>
-                        
+                        <option value="UN">Unidade</option>
+                        <option value="L">Litro</option>
+                        <option value="KG">Quilograma</option>
+                        <option value="G">Grama</option>
+                        <option value="PCT">Pacote</option>
                     </select>
                 </div>
             </div>
-           
+            <div class="flex space-x-4" style="margin: 5px;">
+                <div class="mb-4">
+                    <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
+                    <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validadeEdit" name="validade" 
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
+                    <input type="number" id="estoqueMin" name="estoque_min" 
+                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                </div>
+    
+            </div>
 
+            <div class="flex space-x-4" style="margin: 5px;">
+                <input type="hidden" name="produto_id" id="produtoId">
+               
+                <!-- Categoria -->
+                <div class="w-1/2">
+                    <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="Categoria" name="Categoria" required
+                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                            {%for categoria in categorias %}
+                            <option value="{{categoria.id}}">{{categoria.nome}}</option>
+                            {% endfor %}
+                        </select>
+                       
+                    </div>
+                </div>
+            </div>
+            
             <button type="submit"
                 class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
-                <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
+                </i> Salvar
             </button>
         </form>
     </div>
 </div>
 
+
+<
 
 <form id="delete-form-produto" method="post" style="display: none;">
     {% csrf_token %}
@@ -238,6 +265,9 @@
         }
     }
 
+    function abrirModalProdutoConsulta(){
+
+    }
     // Função que abre o modal e preenche com os dados do produto
     function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
@@ -272,7 +302,11 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     });
-
+document.getElementById('closeModalBtnViewProdut').addEventListener('click', () => {
+        const modal = document.getElementById('ModalProdutoConsulta');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    });
     // Fecha o modal ao clicar fora do conteúdo
     window.addEventListener('click', (e) => {
         const modal = document.getElementById('productModalEdit');
@@ -282,7 +316,7 @@
         }
     });
     window.addEventListener('click', (e) => {
-        const modal = document.getElementById('productModalMovimento');
+        const modal = document.getElementById('ModalProdutoConsulta');
         if (e.target === modal) {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
