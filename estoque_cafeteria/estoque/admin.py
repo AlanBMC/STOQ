@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Loja, Fornecedor, Categoria, Produto, MovimentoEstoque, UserLoja
+from .models import Loja, Categoria, Produto, MovimentoEstoque, UserLoja
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -25,12 +25,7 @@ class LojaAdmin(admin.ModelAdmin):
     list_display = ('nome','logo')
     search_fields = ('nome',)
 
-# Personalização para o modelo Fornecedor
-@admin.register(Fornecedor)
-class FornecedorAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'contato', 'loja')
-    search_fields = ('nome', 'contato')
-    list_filter = ('loja',)
+
 
 # Personalização para o modelo Categoria
 @admin.register(Categoria)
@@ -44,7 +39,7 @@ class CategoriaAdmin(admin.ModelAdmin):
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'quantidade', 'tipo_quantidade', 'validade', 'estoque_minimo', 'status', 'loja')
     search_fields = ('nome', 'codigo_de_barras')
-    list_filter = ('tipo_quantidade', 'status', 'loja', 'categoria', 'fornecedor')
+    list_filter = ('tipo_quantidade', 'status', 'loja', 'categoria')
     list_editable = ('quantidade', 'estoque_minimo', 'status')
 
 # Personalização para o modelo MovimentoEstoque

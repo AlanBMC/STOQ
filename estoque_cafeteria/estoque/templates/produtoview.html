@@ -37,12 +37,7 @@
     <button id="openModalBtn" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Produto
     </button>
-    <button onclick="abrirModalFornecedor()" style="
-    padding-right: 25px;
-    padding-left: 25px;
-" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
-        <i class="fas fa-plus mr-2"></i> Criar Fornecedor
-    </button>
+   
     <button onclick="abrirModalCategoria()" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
         <i class="fas fa-plus mr-2"></i> Criar Categoria
     </button>
@@ -134,19 +129,7 @@
             </div>
             <div class="flex space-x-4" style="margin: 5px;">
     
-                <!-- Fornecedor -->
-                <div class="w-1/2">
-                    <label for="Fornecedor" class="block text-color-4 text-sm font-semibold mb-2">Fornecedor</label>
-                    <div class="flex items-center space-x-2">
-                        <select id="Fornecedor" name="Fornecedor" required
-                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-                                {%for fornecedore in fornecedores %}
-                                <option value="{{fornecedore.id}}">{{fornecedore.nome}}</option>
-                                {% endfor %}
-                        </select>
-                        
-                    </div>
-                </div>
+                
                 
                 <!-- Categoria -->
                 <div class="w-1/2">
@@ -171,32 +154,24 @@
 </div>
 
 
-<!-- Modal Fornecedor -->
-<div id="modalFornecedor" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-auto">
-        <h2 class="text-lg font-semibold mb-4">Adicionar Fornecedor</h2>
-        <form id="formFornecedor" action="{%url 'criar_fornecedor' %}" method="POST"> {% csrf_token %}
-            <div class="mb-4">
-                <label class="block text-sm font-medium">Nome do Fornecedor</label>
-                <input type="text" name="nome" required
-                       class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium">Telefone</label>
-                <input type="tel" name="contato" required
-                       class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <button type="submit" class="w-full  py-2 rounded-lg ">
-                Salvar
-            </button>
-        </form>
-    </div>
-</div>
+
 
 <!-- Modal Categoria -->
 <div id="modalCategoria" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-6 rounded-lg w-auto">
         <h2 class="text-lg font-semibold mb-4">Adicionar Categoria</h2>
+        <div class="w-full p-5 mb-2">
+            <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
+            <div class="flex items-center space-x-2">
+                <select id="Categoria" name="Categoria" required
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                    {%for categoria in categorias %}
+                    <option value="{{categoria.id}}">{{categoria.nome}}</option>
+                    {% endfor %}
+                </select>
+        
+            </div>
+        </div>
         <form id="formCategoria" action="{% url 'criar_categoria' %}" method="POST"> {% csrf_token %}
             <div class="mb-4">
                 <label class="block text-sm font-medium">Nome da Categoria</label>
