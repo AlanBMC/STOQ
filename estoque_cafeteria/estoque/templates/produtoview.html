@@ -95,8 +95,8 @@
 
            
             
-            <div class="flex space-x-4" style="margin: 5px;">
-                <div class="mb-4" id="validadepop">
+            <div class="flex space-x-4 mt-3" >
+                <div class="w-1/2" id="validadepop">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
                     <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validade" name="validade" required
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
@@ -117,7 +117,7 @@
                     <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
                     <div class="flex items-center space-x-2">
                         <select id="Categoria" name="Categoria" required
-                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                                class="w-full p-3  border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                             {%for categoria in categorias %}
                             <option value="{{categoria.id}}">{{categoria.nome}}</option>
                             {% endfor %}
@@ -141,7 +141,7 @@
 <div id="modalCategoria" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-6 rounded-lg w-auto">
         <h2 class="text-lg font-semibold mb-4">Adicionar Categoria</h2>
-        <div class="w-full p-5 mb-2">
+        <div class="w-full p-3 mb-2">
             <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
             <div class="flex items-center space-x-2">
                 <select id="Categoria" name="Categoria" required
