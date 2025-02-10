@@ -59,10 +59,9 @@
                         <div class="flex space-x-3 items-center">
                             <a type="button" id="botao-edita-produto" class="no-border text-blue-500 p-1"
                                 onclick="abrirModalEditarProduto('{{produto.id}}',
-                                '{{produto.nome}}','{{produto.status}}',
+                                '{{produto.nome}}',
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
-                                '{{produto.validade}}','{{produto.codigo_de_barras}}',
-                                '{{produto.fornecedor_id}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
+                                '{{produto.validade}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a type="button" id="botao-excluir-produto" class="no-border text-red-500 p-1"
@@ -240,18 +239,14 @@
     }
 
     // Função que abre o modal e preenche com os dados do produto
-    function abrirModalEditarProduto( produto_id, nome, 
-    status, quantidade, tipo_quantidade, validade, codigo_de_barras, fornecedor_id, categoria_id, estoqueminimo) {
+    function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
         const nomeField = document.getElementById('nomeProduto');
         const produto_idField = document.getElementById('produtoId');
         const quantidadeField = document.getElementById('quantidadeProduto');
         const tipo_quantidadeField = document.getElementById('tipo_quantidade');
         const validadeField = document.getElementById('validadeEdit');
-        const codigo_de_barrasField = document.getElementById('codigo_de_barras');
-        const fornecedor_idField = document.getElementById('Fornecedor');
         const categoria_idField = document.getElementById('Categoria');
-        const statusField = document.getElementById('statusEdit');
 
         const estoquemin = document.getElementById('estoqueMin');
         // Preenche os campos do modal com os valores passados
@@ -265,33 +260,8 @@
                 break;
             }
         }
-        for (let i = 0; i < statusField.options.length; i++) {
-            if (statusField.options[i].value === status) {
-                statusField.options[i].selected = true;
-                break;
-            }
-        }
-        
-
-        estoquemin.value = estoqueminimo;
-
-        codigo_de_barrasField.value = codigo_de_barras;
-        for (let i = 0; i < categoria_idField.options.length; i++) {
-            if (categoria_idField.options[i].value === categoria_id) {
-                categoria_idField.options[i].selected = true;
-                break;
-            }
-        }
-
-        for (let i = 0; i < fornecedor_idField.options.length; i++) {
-            if (fornecedor_idField.options[i].value === fornecedor_id) {
-                fornecedor_idField.options[i].selected = true;
-                break;
-            }
-        }
        
-
-
+        estoquemin.value = estoqueminimo;
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
@@ -320,7 +290,7 @@
     });
 
 
-    function abreModalAddMovimento(nomeProduto, produtoId, quantidade, status){
+    function abreModalAddMovimento(nomeProduto, produtoId, quantidade){
     const modal = document.getElementById('productModalMovimento');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
@@ -340,14 +310,8 @@
         const quant = document.getElementById('quantidade');
         quant.value = quantidade;
 
-        const statusField = document.getElementById('status');
-        quant.value = quantidade;
-        for (let i = 0; i < statusField.options.length; i++) {
-                if (statusField.options[i].value === status) {
-                    statusField.options[i].selected = true;
-                    break;
-                }
-            }
+       
+        
 
    
     }

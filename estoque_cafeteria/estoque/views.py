@@ -172,12 +172,9 @@ def estoqueview(request):
     lojas2 = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
-    movimento = MovimentoEstoque.objects.filter(loja=request.user.loja)
-    latest_movimento_subquery = MovimentoEstoque.objects.filter(
-        produto=OuterRef('id'), loja=request.user.loja
-    ).order_by('-data_movimento').values('tipo_movimento')[:1]
-    produtos = produtos.annotate(ultimo_movimento=Subquery(latest_movimento_subquery))
     
+    movimento = MovimentoEstoque.objects.filter(loja = request.user.loja)
+    print(movimento)
     hoje = date.today()
     
     return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
