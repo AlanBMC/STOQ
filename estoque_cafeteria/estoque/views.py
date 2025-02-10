@@ -156,7 +156,9 @@ def update_loja_user(request):
         usuario.save()
         messages.success(request, 'salvo')
         return redirect('produtoview')
+    
 
+from django.db.models import OuterRef, Subquery
 @login_required(login_url='/')
 def estoqueview(request):
     '''
@@ -170,9 +172,9 @@ def estoqueview(request):
     lojas2 = UserLoja.objects.filter(user=request.user)
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
-    #Criar um novo Grupo
-   
     
+    movimento = MovimentoEstoque.objects.filter(loja = request.user.loja)
+    print(movimento)
     hoje = date.today()
     
     return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})

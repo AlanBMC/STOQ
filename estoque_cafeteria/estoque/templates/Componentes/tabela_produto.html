@@ -13,7 +13,7 @@
                 <tr class="hidden md:table-row shadow-lg border-color-2"
                     style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);">
                     <th class="py-2 px-4">Produto</th>
-                    <th class="py-2 px-4">Status</th>
+                    <th class="py-2 px-4">Última Mov.</th>
                     <th class="py-2 px-4">Quantidade</th>
                     <th class="py-2 px-4">Categoria</th>
                     <th class="py-2 px-4">Validade</th>
@@ -30,17 +30,18 @@
                         <span>{{produto.nome}}</span>
                         
                     </td>
-                    
                     <td class="py-3 px-4 flex md:table-cell">
-                        <span class="md:hidden font-semibold w-1/3">Status:</span>
-                        <span class="{% if produto.status == 'em_estoque' %}text-green-500{% else %}text-yellow-500{% endif %}">
-                            {% if produto.status == 'em_estoque' %}
-                            Em estoque
+                        <span class="md:hidden font-semibold w-1/3">Última Mov:</span>
+                        <span>
+                            {% if produto.ultimo_movimento %}
+                            {{ produto.ultimo_movimento }}
                             {% else %}
-                            Em uso
+                            Nenhuma movimentação
                             {% endif %}
                         </span>
                     </td>
+
+                   
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Quantidade:</span>
                         <span style="padding-left: 20px;">{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
@@ -53,17 +54,14 @@
                         <span class="md:hidden font-semibold w-1/3">Validade:</span>
                         <span>{{produto.validade}}</span>
                     </td>
-                    <td style="display: none">
-                        <span> {{produto.codigo_de_barras}}</span>
-                    </td>
+              
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
                         <div class="flex space-x-3 items-center">
                             <a type="button" id="botao-edita-produto" class="no-border text-blue-500 p-1"
                                 onclick="abrirModalEditarProduto('{{produto.id}}',
-                                '{{produto.nome}}','{{produto.status}}',
+                                '{{produto.nome}}',
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
-                                '{{produto.validade}}','{{produto.codigo_de_barras}}',
-                                '{{produto.fornecedor_id}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
+                                '{{produto.validade}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a type="button" id="botao-excluir-produto" class="no-border text-red-500 p-1"
@@ -122,26 +120,7 @@
             </div>
             
 
-            <div class="flex space-x-4" style="margin: 5px;">
-                <!-- Campo de Quantidade -->
-                <div class="w-1/2">
-                    <label for="codigo_de_barras" class="block text-color-4 text-sm font-semibold mb-2">Codigo de barras</label>
-                    <input type="number"  id="codigo_de_barras" name="codigo_de_barras"  step="0.01"
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-                </div>
-            
-                <!-- Campo de Tipo de Quantidade -->
-                <div class="w-1/2">
-                    <label for="Status produto" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
-                    <select id="statusEdit" name="status" required
-                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-
-                        <option value="Em estoque">Em estoque</option>
-                        <option value="Em uso">Em uso</option>
-                        
-                    </select>
-                </div>
-            </div>
+     
           
             
             <div class="flex space-x-4" style="margin: 5px;">
@@ -160,20 +139,7 @@
 
             <div class="flex space-x-4" style="margin: 5px;">
                 <input type="hidden" name="produto_id" id="produtoId">
-                <!-- Fornecedor -->
-                <div class="w-1/2">
-                    <label for="Fornecedor" class="block text-color-4 text-sm font-semibold mb-2">Fornecedor</label>
-                    <div class="flex items-center space-x-2">
-                        <select id="Fornecedor" name="Fornecedor" required
-                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-                                {%for fornecedore in fornecedores %}
-                                <option value="{{fornecedore.id}}">{{fornecedore.nome}}</option>
-                                {% endfor %}
-                        </select>
-                        
-                    </div>
-                </div>
-                
+               
                 <!-- Categoria -->
                 <div class="w-1/2">
                     <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
@@ -273,18 +239,14 @@
     }
 
     // Função que abre o modal e preenche com os dados do produto
-    function abrirModalEditarProduto( produto_id, nome, 
-    status, quantidade, tipo_quantidade, validade, codigo_de_barras, fornecedor_id, categoria_id, estoqueminimo) {
+    function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
         const nomeField = document.getElementById('nomeProduto');
         const produto_idField = document.getElementById('produtoId');
         const quantidadeField = document.getElementById('quantidadeProduto');
         const tipo_quantidadeField = document.getElementById('tipo_quantidade');
         const validadeField = document.getElementById('validadeEdit');
-        const codigo_de_barrasField = document.getElementById('codigo_de_barras');
-        const fornecedor_idField = document.getElementById('Fornecedor');
         const categoria_idField = document.getElementById('Categoria');
-        const statusField = document.getElementById('statusEdit');
 
         const estoquemin = document.getElementById('estoqueMin');
         // Preenche os campos do modal com os valores passados
@@ -298,33 +260,8 @@
                 break;
             }
         }
-        for (let i = 0; i < statusField.options.length; i++) {
-            if (statusField.options[i].value === status) {
-                statusField.options[i].selected = true;
-                break;
-            }
-        }
-        
-
-        estoquemin.value = estoqueminimo;
-
-        codigo_de_barrasField.value = codigo_de_barras;
-        for (let i = 0; i < categoria_idField.options.length; i++) {
-            if (categoria_idField.options[i].value === categoria_id) {
-                categoria_idField.options[i].selected = true;
-                break;
-            }
-        }
-
-        for (let i = 0; i < fornecedor_idField.options.length; i++) {
-            if (fornecedor_idField.options[i].value === fornecedor_id) {
-                fornecedor_idField.options[i].selected = true;
-                break;
-            }
-        }
        
-
-
+        estoquemin.value = estoqueminimo;
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
@@ -353,7 +290,7 @@
     });
 
 
-    function abreModalAddMovimento(nomeProduto, produtoId, quantidade, status){
+    function abreModalAddMovimento(nomeProduto, produtoId, quantidade){
     const modal = document.getElementById('productModalMovimento');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
@@ -373,14 +310,8 @@
         const quant = document.getElementById('quantidade');
         quant.value = quantidade;
 
-        const statusField = document.getElementById('status');
-        quant.value = quantidade;
-        for (let i = 0; i < statusField.options.length; i++) {
-                if (statusField.options[i].value === status) {
-                    statusField.options[i].selected = true;
-                    break;
-                }
-            }
+       
+        
 
    
     }
