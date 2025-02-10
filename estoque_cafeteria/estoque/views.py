@@ -70,29 +70,13 @@ def obter_dados(request):
         "contagemproduto": contagemporproduto
     })
 
-def tour_site(request):
-    """
-    Verifica se o tour deve ser mostrado para o usuário com base no último login.
-    """
-    
-    
-    user = request.user
-    if user.last_name == '':
-        user.last_name = 'tour 1'
-        user.save()
-        return True
-    elif user.last_name == 'tour 1': 
-        user.last_name = 'tour 2'
-        user.save()
-        return True
-    else:
-        user.last_name = 'tour 3'
-        user.save()
-        return False
 
+    
+
+    
 def verifica_last_name(request):
     user =  request.user
-    if user.last_name == 'tour 1':
+    if user.last_name == '':
         return True
     elif user.last_name == 'tour 2':
         return True
@@ -138,7 +122,7 @@ def login(request):
         user = authenticate(username=nome, password=senha)
         if user:
             login_django(request, user)
-            tour_site(request)
+            
             func_notifica_vencimento(request)
             return redirect('produtoview')
         else:
