@@ -992,6 +992,25 @@ def download_json(request):
         return redirect('produtoview')
 
 def cadastroUserLoja(request):
+    """
+    Função para cadastrar um usuário proprietário de uma loja.
+    Args:
+        request (HttpRequest): Objeto HttpRequest que contém os dados da requisição.
+    Returns:
+        HttpResponse: Redireciona para a página de login em caso de sucesso ou para a página de cadastro em caso de erro.
+    Fluxo:
+        - Se o método da requisição for POST:
+            - Obtém os dados do formulário (nome, email, senha, confirmação de senha, nome da loja e logo da loja).
+            - Verifica se a senha e a confirmação de senha coincidem.
+            - Verifica se o arquivo enviado é uma imagem.
+            - Verifica se o nome de usuário já existe.
+            - Cria a loja e o usuário, associa o usuário ao grupo 'Proprietario' e salva os dados.
+            - Exibe uma mensagem de sucesso e redireciona para a página de login.
+            - Em caso de erro, exibe uma mensagem de erro e redireciona para a página de cadastro.
+        - Se o método da requisição for GET:
+            - Renderiza a página de cadastro de usuário.
+    """
+
     if request.method == 'POST':
         nome =  request.POST.get('nome')
         email = request.POST.get('email')
