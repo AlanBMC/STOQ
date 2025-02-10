@@ -13,7 +13,7 @@
                 <tr class="hidden md:table-row shadow-lg border-color-2"
                     style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);">
                     <th class="py-2 px-4">Produto</th>
-                    <th class="py-2 px-4">Status</th>
+                    
                     <th class="py-2 px-4">Quantidade</th>
                     <th class="py-2 px-4">Categoria</th>
                     <th class="py-2 px-4">Validade</th>
@@ -31,16 +31,7 @@
                         
                     </td>
                     
-                    <td class="py-3 px-4 flex md:table-cell">
-                        <span class="md:hidden font-semibold w-1/3">Status:</span>
-                        <span class="{% if produto.status == 'em_estoque' %}text-green-500{% else %}text-yellow-500{% endif %}">
-                            {% if produto.status == 'em_estoque' %}
-                            Em estoque
-                            {% else %}
-                            Em uso
-                            {% endif %}
-                        </span>
-                    </td>
+                   
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Quantidade:</span>
                         <span style="padding-left: 20px;">{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
