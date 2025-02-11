@@ -170,10 +170,6 @@ def estoqueview(request):
     lojasDoUser = [user.loja for user in lojas2]
     loja_name = request.user.loja.nome
     
-<<<<<<< HEAD
-    movimento = MovimentoEstoque.objects.filter(loja = request.user.loja)
-    
-=======
     
     latest_movimento_subquery = MovimentoEstoque.objects.filter(
         produto=OuterRef('id'), loja=request.user.loja
@@ -184,10 +180,9 @@ def estoqueview(request):
         ultimo_movimento_tipo=Subquery(latest_movimento_subquery.values('tipo_movimento')[:1]),
         ultimo_movimento_data=Subquery(latest_movimento_subquery.values('data_movimento')[:1])
     )    
->>>>>>> main
     hoje = date.today()
     
-    return render(request, 'estoque.html', {'movimento': movimento,'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
