@@ -65,9 +65,23 @@
             </div>
     </div>
 
+<style>
+    /* Efeito de fade-in (transição suave) */
+.main-content{
+    opacity: 0;
+    transform: translateY(20px); /* Move um pouco para baixo antes de aparecer */
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
 
+/* Classe para mostrar o conteúdo suavemente */
+.main-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+</style>
 <!-- Main Content -->
-<div class="flex-1  p-6 mt-16">
+<div id="main-content" class="flex-1  p-6 mt-16 main-content">
     {%include 'componentes/alerta_global.html' %}
 
     {% block content %}
@@ -79,27 +93,35 @@
 
 
 <style>
-  .active {
-        background-color: rgba(230, 141, 8, 0.795);  /* Cor de fundo verde */
-        border-radius: 12px;
-        transform: scale(1.05);  /* Aumenta ligeiramente o botão ativo */
-        transition: all 0.4s ease-in-out;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Efeito de elevação */
-        padding: 5px;
-    }
-
-    .active i {
-        font-size: 1.3rem;  /* Aumenta o tamanho do ícone */
-        transition: font-size 0.8s ease-in-out;
-    }
-
-    
-    .nav-item:active {
-    transform: scale(0.95);
+  .nav-item {
+    position: relative;
+    transition: all 0.4s ease-in-out; /* Transição suave para todos os efeitos */
+    padding: 10px;
+    border-radius: 12px;
 }
-    .nav-item:hover {
-        transform: scale(1.08);  /* Leve aumento ao passar o mouse */
-    }
+
+.nav-item:hover {
+    transform: scale(1.08); /* Efeito ao passar o mouse */
+}
+
+.nav-item:active {
+    transform: scale(0.95); /* Efeito de clique */
+}
+
+.active {
+    background-color: rgba(230, 141, 8, 0.795); /* Cor de fundo quando ativo */
+    border-radius: 12px;
+    transform: scale(1.05); /* Aumenta ligeiramente o botão ativo */
+    transition: background-color 0.6s ease-in-out, transform 0.4s ease-in-out; /* Suaviza a transição da cor e do tamanho */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Efeito de elevação */
+    padding: 8px;
+}
+
+.active i {
+    font-size: 1.4rem; /* Aumenta o ícone no botão ativo */
+    transition: font-size 0.4s ease-in-out;
+}
+
 </style>
 
 <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-color-1 rounded-lg shadow-2xl w-11/12 max-w-md">
@@ -136,7 +158,17 @@
 
 
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            const content = document.querySelector(".main-content");
+            if (content) {
+                content.classList.add("show");
+            }
+        }, 100); // Pequeno delay de 100ms antes de iniciar a transição
+    });
 
+    </script>
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register("{% static 'sw.js' %}")
