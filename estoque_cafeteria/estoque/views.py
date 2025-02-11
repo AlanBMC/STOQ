@@ -174,10 +174,10 @@ def estoqueview(request):
     loja_name = request.user.loja.nome
     
     movimento = MovimentoEstoque.objects.filter(loja = request.user.loja)
-    print(movimento)
+    
     hoje = date.today()
     
-    return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
+    return render(request, 'estoque.html', {'movimento': movimento,'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
 
 def offline(request):
     return render(request, 'offline.html')
