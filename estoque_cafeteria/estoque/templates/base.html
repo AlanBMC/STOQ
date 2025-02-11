@@ -137,21 +137,21 @@
     <div class="flex justify-around py-4">
         <!-- Configurações -->
         <a href="{% url 'configuracaoview' %}"  data-url="{% url 'configuracaoview' %}"
-           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'configuracaoview' %} active {% endif %}">
+           class="nav-item text-color-3 flex flex-col items-center">
             <i class="fas fa-home text-xl"></i>
             <p>Configurações</p>
         </a>
         
         <!-- Produto -->
         <a href="{% url 'produtoview' %}" data-url="{% url 'produtoview' %}"
-           class="nav-item text-color-3 flex flex-col items-center  {% if request.resolver_match.url_name == 'produtoview' %} active {% endif %}">
+           class="nav-item text-color-3 flex flex-col items-center  ">
             <i class="fas fa-user text-xl"></i>
             <p>Produto</p>
         </a>
 
         <!-- Estoque -->
         <a href="{% url 'estoqueview' %}"  data-url="{% url 'estoqueview' %}"
-           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'estoqueview' %} active {% endif %}">
+           class="nav-item text-color-3 flex flex-col items-center ">
             <i class="fas fa-shopping-cart text-xl"></i>
             <p>Estoque</p>
         </a>
@@ -162,17 +162,24 @@
 
 
 <script>
-   document.addEventListener("DOMContentLoaded", function () {
+ document.addEventListener("DOMContentLoaded", function () {
         const mainContent = document.getElementById("main-content");
         const menuLinks = document.querySelectorAll(".nav-item");
 
-        // Aplica a classe .show corretamente no botão ativo
-        const activeLink = document.querySelector(".nav-item.active");
-        if (activeLink) {
-            setTimeout(() => activeLink.classList.add("show"), 100);
+        // Garante que o botão correto tenha a classe .active ao carregar a página
+        function updateActiveButton(url) {
+            menuLinks.forEach(link => {
+                link.classList.remove("active", "show");
+                if (link.getAttribute("data-url") === url) {
+                    link.classList.add("active");
+                    setTimeout(() => link.classList.add("show"), 100);
+                }
+            });
         }
 
-        // Adiciona um evento de clique para cada link do menu
+        // Ao carregar a página, define o botão correto como ativo
+        updateActiveButton(window.location.pathname);
+
         menuLinks.forEach(link => {
             link.addEventListener("click", function (event) {
                 event.preventDefault(); // Evita o recarregamento da página
@@ -185,22 +192,25 @@
                     .then(html => {
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, "text/html");
-                        const newContent = doc.getElementById("main-content").innerHTML;
+                        mainContent.innerHTML = doc.getElementById("main-content").innerHTML;
 
-                        // Atualiza o conteúdo principal sem recarregar a página
-                        mainContent.innerHTML = newContent;
-                        mainContent.classList.remove("show"); // Remove a classe para resetar a animação
-                        setTimeout(() => mainContent.classList.add("show"), 50); // Adiciona a classe para reanimar
-
-                        // Atualiza os botões ativos no menu
-                        menuLinks.forEach(l => {
-                            l.classList.remove("active", "show");
+                        // Recarregar scripts após atualização do conteúdo
+                        const scriptTags = doc.querySelectorAll("script");
+                        scriptTags.forEach(script => {
+                            const newScript = document.createElement("script");
+                            if (script.src) {
+                                newScript.src = script.src;
+                                newScript.async = true;
+                            } else {
+                                newScript.textContent = script.textContent;
+                            }
+                            document.body.appendChild(newScript);
                         });
 
-                        this.classList.add("active");
-                        setTimeout(() => this.classList.add("show"), 100); // Aplica o efeito suavemente
+                        history.pushState(null, "", url);
                     })
                     .catch(error => console.error("Erro ao carregar página:", error));
+
             });
         });
 
@@ -212,9 +222,11 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, "text/html");
                     mainContent.innerHTML = doc.getElementById("main-content").innerHTML;
+                    updateActiveButton(window.location.pathname);
                 });
         });
     });
+
 
 </script>
 
