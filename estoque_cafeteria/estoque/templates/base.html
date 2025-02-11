@@ -257,13 +257,37 @@
 
 </script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(() => {
-            const content = document.querySelector(".main-content");
-            if (content) {
-                content.classList.add("show");
-            }
-        }, 100); // Pequeno delay de 100ms antes de iniciar a transição
+    document.addEventListener("DOMContentLoaded", function () {
+        function applyTransitionEffect() {
+            setTimeout(() => {
+                const mainContent = document.getElementById("main-content");
+                if (mainContent) {
+                    mainContent.classList.add("show");
+                }
+
+                const activeElement = document.querySelector(".active");
+                if (activeElement) {
+                    activeElement.classList.add("show"); // Garante a transição suave do botão ativo
+                }
+            }, 100);
+        }
+
+        // Aplica o efeito ao carregar a página pela primeira vez
+        applyTransitionEffect();
+
+        // Observa mudanças no conteúdo principal (main-content) sem interferir nos modais
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === "childList") {
+                    applyTransitionEffect();
+                }
+            });
+        });
+
+        observer.observe(document.getElementById("main-content"), { childList: true, subtree: true });
+
+        // Garante que os modais carregados via AJAX continuem funcionando
+        
     });
 
 </script>
