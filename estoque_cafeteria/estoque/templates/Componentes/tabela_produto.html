@@ -23,8 +23,15 @@
      
             <tbody>
                 {% for produto in produtos %}
-                <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0"
-                    style="margin-top: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
+
+                <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0 cursor-pointer hover:bg-blue-100 transition"
+                onclick="abrirModalProdutoConsulta(
+                                '{{produto.nome}}',
+                                '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
+                                '{{produto.validade}}','{{produto.categoria.nome}}',
+                                 '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}')"
+                    style="margin-top: 5px; 
+                    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Produto:</span>
                         <span>{{produto.nome}}</span>
@@ -64,6 +71,7 @@
                                 '{{produto.validade}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            
                             <a type="button" id="botao-excluir-produto" class="no-border text-red-500 p-1"
                                 onclick="confirmarExclusao('{{ produto.id }}')">
                                 <i class="fas fa-trash"></i>
@@ -164,12 +172,6 @@
 </div>
 
 
-
-
-
-
-
-
 <div id="ModalProdutoConsulta" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
         <a id="closeModalBtnViewProdut" class="absolute top-3 right-3 text-color-4 text-xl" >&times;</a>
@@ -177,78 +179,55 @@
         <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Visualizar Produto</h2>
         <form method="post" action="">
             {% csrf_token %}
-            
-            <div class="mb-4">
-                <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
-                <input type="text" id="nomeProduto" name="nome" required
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+            <div class="flex space-x-4">
+
+                <div class="w-1/2">
+                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                    <span id="nomeProdutoview"></span>
+                </div>
+
+                <div class="w-1/2">
+                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Ultimo Mov.</label>
+                    <span id="ultimoMov"></span>
+                </div>
             </div>
 
 
             <div class="flex space-x-4">
-                <!-- Campo de Quantidade -->
                 <div class="w-1/2">
                     <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
-                    <input type="number" id="quantidadeProduto" name="quantidade" required step="1"
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                     <span id="quantidadeProdutoview"></span> - <span id="tipo_quantidadeview"></span>
                 </div>
-            
-                <!-- Campo de Tipo de Quantidade -->
                 <div class="w-1/2">
-                    <label for="tipo_quantidade" class="block text-color-4 text-sm font-semibold mb-2">Tipo de Quantidade</label>
-                    <select id="tipo_quantidade" name="tipo_quantidade" required
-                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-
-                        <option value="UN">Unidade</option>
-                        <option value="L">Litro</option>
-                        <option value="KG">Quilograma</option>
-                        <option value="G">Grama</option>
-                        <option value="PCT">Pacote</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex space-x-4" style="margin: 5px;">
-                <div class="mb-4">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
-                    <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validadeEdit" name="validade" 
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                        <span id="validadeEditview"></span>
                 </div>
-                <div class="w-1/2">
-                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
-                    <input type="number" id="estoqueMin" name="estoque_min" 
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-                </div>
-    
+               
             </div>
 
-            <div class="flex space-x-4" style="margin: 5px;">
-                <input type="hidden" name="produto_id" id="produtoId">
-               
-                <!-- Categoria -->
+            <div class="flex space-x-4" >
+                
+
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quant. min em estoque</label>
+                        <span id="estoqueMinview"></span>
+                </div>
                 <div class="w-1/2">
                     <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
                     <div class="flex items-center space-x-2">
-                        <select id="Categoria" name="Categoria" required
-                                class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-                            {%for categoria in categorias %}
-                            <option value="{{categoria.id}}">{{categoria.nome}}</option>
-                            {% endfor %}
-                        </select>
-                       
+                        <span id="categoriaview"></span>
                     </div>
                 </div>
             </div>
+
             
-            <button type="submit"
-                class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
-                </i> Salvar
-            </button>
+           
         </form>
     </div>
 </div>
 
 
-<
+
 
 <form id="delete-form-produto" method="post" style="display: none;">
     {% csrf_token %}
@@ -265,9 +244,27 @@
         }
     }
 
-    function abrirModalProdutoConsulta(){
-
+    function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId, estoqueminimo, ultimoMovimento) {
+        const modal = document.getElementById('ModalProdutoConsulta');
+        const nomeField = document.getElementById('nomeProdutoview');
+        const quantidadeField = document.getElementById('quantidadeProdutoview');
+        const tipo_quantidadeField = document.getElementById('tipo_quantidadeview');
+        const validadeField = document.getElementById('validadeEditview');
+        const categoria = document.getElementById('categoriaview');
+        const estoquemin = document.getElementById('estoqueMinview');
+        const ultimomov = document.getElementById('ultimoMov');
+        console.log(validade)
+        ultimomov.textContent = ultimoMovimento
+        categoria.textContent = categoriaId
+        validadeField.textContent = validade
+        nomeField.textContent = nome;
+        quantidadeField.textContent = quantidade;
+        tipo_quantidadeField.textContent = tipo_quantidade;
+        estoquemin.textContent = estoqueminimo;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
     }
+
     // Função que abre o modal e preenche com os dados do produto
     function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
@@ -302,7 +299,7 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     });
-document.getElementById('closeModalBtnViewProdut').addEventListener('click', () => {
+    document.getElementById('closeModalBtnViewProdut').addEventListener('click', () => {
         const modal = document.getElementById('ModalProdutoConsulta');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
