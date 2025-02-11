@@ -108,56 +108,126 @@
     transform: scale(0.95); /* Efeito de clique */
 }
 
+
 .active {
-    background-color: rgba(230, 141, 8, 0.795); /* Cor de fundo quando ativo */
+    background-color: rgba(238, 144, 3, 0.3); /* Tom mais claro */
     border-radius: 12px;
-    transform: scale(1.05); /* Aumenta ligeiramente o botão ativo */
-    transition: background-color 0.6s ease-in-out, transform 0.4s ease-in-out; /* Suaviza a transição da cor e do tamanho */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Efeito de elevação */
+    transform: scale(1.05);
+    transition: background-color 0.6s ease-in-out, transform 0.4s ease-in-out, opacity 0.6s ease-in-out;
+    box-shadow: -2px 2px 17px 2px rgba(0, 0, 0, 0.5);
     padding: 8px;
+    opacity: 1.3; /* Começa semi-visível */
 }
 
-.active i {
-    font-size: 1.4rem; /* Aumenta o ícone no botão ativo */
-    transition: font-size 0.4s ease-in-out;
+/* Após carregamento, a cor aparece completamente */
+.active.show {
+    background-color: rgba(230, 141, 8, 0.9); /* Cor final mais intensa */
+    opacity: 1;
 }
+
+/* Efeito hover */
+.nav-item:hover {
+    transform: scale(1.03);
+}
+
 
 </style>
 
 <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-color-1 rounded-lg shadow-2xl w-11/12 max-w-md">
     <div class="flex justify-around py-4">
         <!-- Configurações -->
-        <a href="{% url 'configuracaoview' %}" 
+        <a href="{% url 'configuracaoview' %}"  data-url="{% url 'configuracaoview' %}"
            class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'configuracaoview' %} active {% endif %}">
             <i class="fas fa-home text-xl"></i>
             <p>Configurações</p>
         </a>
         
         <!-- Produto -->
-        <a href="{% url 'produtoview' %}" 
-           class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'produtoview' %} active {% endif %}">
+        <a href="{% url 'produtoview' %}" data-url="{% url 'produtoview' %}"
+           class="nav-item text-color-3 flex flex-col items-center  {% if request.resolver_match.url_name == 'produtoview' %} active {% endif %}">
             <i class="fas fa-user text-xl"></i>
             <p>Produto</p>
         </a>
 
         <!-- Estoque -->
-        <a href="{% url 'estoqueview' %}" 
+        <a href="{% url 'estoqueview' %}"  data-url="{% url 'estoqueview' %}"
            class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'estoqueview' %} active {% endif %}">
             <i class="fas fa-shopping-cart text-xl"></i>
             <p>Estoque</p>
         </a>
 
-        <a href="{% url 'dashboard' %}" 
-        class="nav-item text-color-3 flex flex-col items-center {% if request.resolver_match.url_name == 'dashboard' %} active {% endif %}">
-        
-        <i class="fa-duotone fa-solid fa-chart-line text-xl"></i>
-         <p>dashboard</p>
-     </a>
+       
     </div>
-    
-
-
 </div>
+
+
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+        const mainContent = document.getElementById("main-content");
+        const menuLinks = document.querySelectorAll(".nav-item");
+
+        // Aplica a classe .show corretamente no botão ativo
+        const activeLink = document.querySelector(".nav-item.active");
+        if (activeLink) {
+            setTimeout(() => activeLink.classList.add("show"), 100);
+        }
+
+        // Adiciona um evento de clique para cada link do menu
+        menuLinks.forEach(link => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault(); // Evita o recarregamento da página
+
+                const url = this.getAttribute("data-url"); // Obtém a URL do link
+
+                // Faz a requisição AJAX para carregar a nova página
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+                        const newContent = doc.getElementById("main-content").innerHTML;
+
+                        // Atualiza o conteúdo principal sem recarregar a página
+                        mainContent.innerHTML = newContent;
+                        mainContent.classList.remove("show"); // Remove a classe para resetar a animação
+                        setTimeout(() => mainContent.classList.add("show"), 50); // Adiciona a classe para reanimar
+
+                        // Atualiza os botões ativos no menu
+                        menuLinks.forEach(l => {
+                            l.classList.remove("active", "show");
+                        });
+
+                        this.classList.add("active");
+                        setTimeout(() => this.classList.add("show"), 100); // Aplica o efeito suavemente
+                    })
+                    .catch(error => console.error("Erro ao carregar página:", error));
+            });
+        });
+
+        // Permite voltar na navegação com AJAX
+        window.addEventListener("popstate", function () {
+            fetch(location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, "text/html");
+                    mainContent.innerHTML = doc.getElementById("main-content").innerHTML;
+                });
+        });
+    });
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            const activeElement = document.querySelector(".active");
+            if (activeElement) {
+                activeElement.classList.add("show"); // Adiciona a classe para fazer a cor aparecer suavemente
+            }
+        }, 100); // Pequeno delay para suavizar
+    });
+</script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
@@ -168,7 +238,7 @@
         }, 100); // Pequeno delay de 100ms antes de iniciar a transição
     });
 
-    </script>
+</script>
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register("{% static 'sw.js' %}")
