@@ -66,7 +66,7 @@
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
                         <div class="flex space-x-3 items-center">
                             <a type="button" id="botao-edita-produto" class="no-border text-blue-500 p-1"
-                                onclick="abrirModalEditarProduto('{{produto.id}}',
+                                onclick="event.stopPropagation(); abrirModalEditarProduto('{{produto.id}}',
                                 '{{produto.nome}}',
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
                                 '{{produto.validade}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
@@ -74,7 +74,7 @@
                             </a>
                             
                             <a type="button" id="botao-excluir-produto" class="no-border text-red-500 p-1"
-                                onclick="confirmarExclusao('{{ produto.id }}')">
+                                onclick="event.stopPropagation();  confirmarExclusao('{{ produto.id }}')">
                                 <i class="fas fa-trash"></i>
                             </a>
                             
@@ -251,8 +251,11 @@
         const categoria = document.getElementById('categoriaview');
         const estoquemin = document.getElementById('estoqueMinview');
         const ultimomov = document.getElementById('ultimoMov');
-        console.log(validade)
-        ultimomov.textContent = ultimoMovimentodata
+        if (ultimoMovimentodata == 'None'){
+            ultimoMovimentodata = 'Sem movimento'
+        }
+        ultimomov.textContent = ultimoMovimentodata;
+
         categoria.textContent = categoriaId
         validadeField.textContent = validade
         nomeField.textContent = nome;
@@ -262,10 +265,12 @@
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
+    
 
     // Função que abre o modal e preenche com os dados do produto
     function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
+        const modalViewProduto = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProduto');
         const produto_idField = document.getElementById('produtoId');
         const quantidadeField = document.getElementById('quantidadeProduto');
@@ -287,6 +292,7 @@
         }
        
         estoquemin.value = estoqueminimo;
+        modalViewProduto.classList.add('hidden')
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
