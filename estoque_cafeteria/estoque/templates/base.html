@@ -67,15 +67,15 @@
 
 <style>
     /* Efeito de fade-in (transição suave) */
-.main-content{
+.main-content {
     opacity: 0;
-    transform: translateY(20px); /* Move um pouco para baixo antes de aparecer */
-    transition: opacity 1s ease-out, transform 1s ease-out;
+    transform: translateY(10px);
+    transition: opacity 1.5s ease-out, transform 1.5s ease-out;
 }
 
-/* Classe para mostrar o conteúdo suavemente */
+/* Quando a animação acontece */
 .main-content.show {
-    opacity: 1;
+    opacity: 2;
     transform: translateY(0);
 }
 
@@ -246,7 +246,7 @@
 </script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+   document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
             const activeElement = document.querySelector(".active");
             if (activeElement) {
@@ -254,15 +254,39 @@
             }
         }, 100); // Pequeno delay para suavizar
     });
+
 </script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(() => {
-            const content = document.querySelector(".main-content");
-            if (content) {
-                content.classList.add("show");
-            }
-        }, 100); // Pequeno delay de 100ms antes de iniciar a transição
+    document.addEventListener("DOMContentLoaded", function () {
+        function applyTransitionEffect() {
+            setTimeout(() => {
+                const mainContent = document.getElementById("main-content");
+                if (mainContent) {
+                    mainContent.classList.add("show");
+                }
+
+                const activeElement = document.querySelector(".active");
+                if (activeElement) {
+                    activeElement.classList.add("show"); // Garante a transição suave do botão ativo
+                }
+            }, 100);
+        }
+
+        // Aplica o efeito ao carregar a página pela primeira vez
+        applyTransitionEffect();
+
+        // Observa mudanças no conteúdo principal (main-content) sem interferir nos modais
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === "childList") {
+                    applyTransitionEffect();
+                }
+            });
+        });
+
+        observer.observe(document.getElementById("main-content"), { childList: true, subtree: true });
+
+        
     });
 
 </script>

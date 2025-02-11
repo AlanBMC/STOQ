@@ -60,7 +60,8 @@
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Validade:</span>
-                        <span>{{produto.validade}}</span>
+                    <span>{{ produto.validade|date:"d/m/Y" }}</span>
+
                     </td>
               
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
@@ -200,7 +201,7 @@
                 </div>
                 <div class="w-1/2">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
-                        <span id="validadeEditview"></span>
+                        <span id="validadeEditview" class="data-format"></span>
                 </div>
                
             </div>
@@ -254,10 +255,10 @@
         if (ultimoMovimentodata == 'None'){
             ultimoMovimentodata = 'Sem movimento'
         }
-        ultimomov.textContent = ultimoMovimentodata;
+        ultimomov.textContent = ultimoMovimentodata
 
         categoria.textContent = categoriaId
-        validadeField.textContent = validade
+        validadeField.textContent = formatarData(validade)
         nomeField.textContent = nome;
         quantidadeField.textContent = quantidade;
         tipo_quantidadeField.textContent = tipo_quantidade;
@@ -265,7 +266,18 @@
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
-    
+    function formatarData(dataISO) {
+            if (!dataISO || dataISO === "None") return "Sem validade"; // Retorna texto padrão se não houver data
+
+            let dataObj = new Date(dataISO);
+            if (isNaN(dataObj.getTime())) return "Data inválida"; // Verifica se a data é válida
+
+            let dia = String(dataObj.getDate()).padStart(2, '0');
+            let mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+            let ano = dataObj.getFullYear();
+
+            return `${dia}/${mes}/${ano}`;
+        }
 
     // Função que abre o modal e preenche com os dados do produto
     function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
