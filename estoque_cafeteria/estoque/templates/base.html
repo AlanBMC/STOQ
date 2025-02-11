@@ -67,15 +67,15 @@
 
 <style>
     /* Efeito de fade-in (transição suave) */
-.main-content{
+.main-content {
     opacity: 0;
-    transform: translateY(20px); /* Move um pouco para baixo antes de aparecer */
-    transition: opacity 1s ease-out, transform 1s ease-out;
+    transform: translateY(10px);
+    transition: opacity 1.5s ease-out, transform 1.5s ease-out;
 }
 
-/* Classe para mostrar o conteúdo suavemente */
+/* Quando a animação acontece */
 .main-content.show {
-    opacity: 1;
+    opacity: 2;
     transform: translateY(0);
 }
 
@@ -246,7 +246,7 @@
 </script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+   document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
             const activeElement = document.querySelector(".active");
             if (activeElement) {
@@ -254,6 +254,7 @@
             }
         }, 100); // Pequeno delay para suavizar
     });
+
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
