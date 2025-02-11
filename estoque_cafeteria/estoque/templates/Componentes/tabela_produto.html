@@ -60,7 +60,8 @@
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Validade:</span>
-                        <span>{{produto.validade}}</span>
+                    <span>{{ produto.validade|date:"d/m/Y" }}</span>
+
                     </td>
               
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
@@ -200,7 +201,7 @@
                 </div>
                 <div class="w-1/2">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
-                        <span id="validadeEditview"></span>
+                        <span id="validadeEditview" class="data-format"></span>
                 </div>
                
             </div>
@@ -231,7 +232,25 @@
     {% csrf_token %}
     <input type="hidden" name="produto_id" id="produto-id">
 </form>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const dataElements = document.querySelectorAll(".data-format");
 
+            dataElements.forEach(element => {
+                let dataISO = element.textContent.trim(); // Obtém o texto da data
+                if (dataISO) {
+                    let dataObj = new Date(dataISO);
+                    if (!isNaN(dataObj.getTime())) { // Verifica se a data é válida
+                        let dia = String(dataObj.getDate()).padStart(2, '0');
+                        let mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+                        let ano = dataObj.getFullYear();
+                        element.textContent = `${dia}/${mes}/${ano}`;
+                    }
+                }
+            });
+        });
+
+</script>
 <script>
    function confirmarExclusao(produtoId) {
         if (confirm(`Tem certeza que deseja excluir o produto?`)) {
