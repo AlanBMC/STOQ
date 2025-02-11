@@ -26,6 +26,10 @@
 
                 Movimento</button>
         </div>
+
+
+
+
       </div>
       <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -40,13 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
         linhasProdutos.forEach(linha => {
             const nomeProduto = linha.querySelector("td:nth-child(1) span:nth-child(2)").textContent.toLowerCase();
             const categoriaProduto = linha.querySelector("td:nth-child(4) span:nth-child(2)").textContent.toLowerCase();
-            const codigoProduto = linha.querySelector("td:nth-child(6) span:nth-child(1)").textContent.toLowerCase();
            
             const correspondeNome = nomeProduto.includes(textoBusca);
             const correspondeCategoria = categoriaSelecionada === "" || categoriaProduto.includes(categoriaSelecionada);
-            const correspondeCodigo = codigoProduto.includes(textoBusca); // Adicionando a verificação do código
             
-            if ((correspondeNome || correspondeCodigo) && correspondeCategoria) {
+            if (correspondeNome && correspondeCategoria) {
                 linha.style.display = "table-row";
             } else {
                 linha.style.display = "none";

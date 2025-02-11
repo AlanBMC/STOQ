@@ -23,28 +23,36 @@
      
             <tbody>
                 {% for produto in produtos %}
-                <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0"
-                    style="margin-top: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
+
+                <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0 cursor-pointer hover:bg-blue-100 transition"
+                onclick="abrirModalProdutoConsulta(
+                                '{{produto.nome}}',
+                                '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
+                                '{{produto.validade}}','{{produto.categoria.nome}}',
+                                '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}',
+                                '{{ produto.ultimo_movimento_tipo }}')"
+                    style="margin-top: 5px; 
+                    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Produto:</span>
                         <span>{{produto.nome}}</span>
                         
                     </td>
-                    <td class="py-3 px-4 flex md:table-cell">
+                    <td class="py-3 px-3 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Última Mov:</span>
-                        <span>
-                            {% if produto.ultimo_movimento %}
-                            {{ produto.ultimo_movimento }}
-                            {% else %}
+                        <span  >
+                            {% if produto.ultimo_movimento_tipo %}
+                            {{ produto.ultimo_movimento_tipo }} - {{ produto.ultimo_movimento_data|date:"d/m/Y H:i" }}
+                        {% else %}
                             Nenhuma movimentação
-                            {% endif %}
+                        {% endif %}
                         </span>
                     </td>
 
                    
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Quantidade:</span>
-                        <span style="padding-left: 20px;">{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
+                        <span style="padding-left: 0px;">{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Categoria:</span>
@@ -58,14 +66,15 @@
                     <td class="py-3 px-4 flex md:table-cell space-x-3">
                         <div class="flex space-x-3 items-center">
                             <a type="button" id="botao-edita-produto" class="no-border text-blue-500 p-1"
-                                onclick="abrirModalEditarProduto('{{produto.id}}',
+                                onclick="event.stopPropagation(); abrirModalEditarProduto('{{produto.id}}',
                                 '{{produto.nome}}',
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
                                 '{{produto.validade}}','{{produto.categoria_id}}', '{{produto.estoque_minimo}}')">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            
                             <a type="button" id="botao-excluir-produto" class="no-border text-red-500 p-1"
-                                onclick="confirmarExclusao('{{ produto.id }}')">
+                                onclick="event.stopPropagation();  confirmarExclusao('{{ produto.id }}')">
                                 <i class="fas fa-trash"></i>
                             </a>
                             
@@ -164,63 +173,58 @@
 </div>
 
 
-
-
-
-
-<!-- Modal (inicialmente oculto) -->
-<div id="productModalMovimento" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+<div id="ModalProdutoConsulta" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
-        <a id="closeModalBtnMovimento" onclick="fechaModalMovimento()" class="absolute  top-3 right-3 text-color-4 text-xl" style="cursor: pointer;">&times;</a>
+        <a id="closeModalBtnViewProdut" class="absolute top-3 right-3 text-color-4 text-xl" >&times;</a>
         
-        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Adicionar Movimentação</h2>
-        
+        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Visualizar Produto</h2>
         <form method="post" action="">
             {% csrf_token %}
-            
-            <div class="mb-4">
-                <label for="nome" class="block color-5 text-sm font-semibold mb-2" id="">Nome do Produto</label>
-                <label id="nomeProdutoMovimento"></label>
-                <input type="hidden" id="produto_id" name="produto_id" >
+            <div class="flex space-x-4">
+
+                <div class="w-1/2">
+                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                    <span id="nomeProdutoview"></span>
+                </div>
+
+                <div class="w-1/2">
+                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Ultimo Mov.</label>
+                    <span id="ultimoMov"></span>
+                </div>
             </div>
 
-            <div class="w-1/2">
-                <label for="Tipo de movimento" class="block text-color-4 text-sm font-semibold mb-2">Tipo de movimento</label>
-                <select id="tipo_movimento" name="tipo_movimento" required
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-
-                    <option value="Saida">Saida</option>
-                    <option value="Entrada">Entrada</option>
-                    <option value="Transferencia">Transferência</option>
-                </select>
-            </div>
-            <div class="flex space-x-4" style="margin: 5px;">
-              
-                <div class="mb-4">
-                    <label for="quantidade" class="block color-5 text-sm font-semibold mb-2">Quantidade</label>
-                    <input type="number" id="quantidade" name="quantidade" required step="0.001" min="0"
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+            <div class="flex space-x-4">
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
+                     <span id="quantidadeProdutoview"></span> - <span id="tipo_quantidadeview"></span>
                 </div>
                 <div class="w-1/2">
-                    <label for="Status produto" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
-                    <select id="status" name="status" required
-                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                    <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
+                        <span id="validadeEditview"></span>
+                </div>
+               
+            </div>
 
-                        <option value="Em estoque">Em estoque</option>
-                        <option value="Em uso">Em uso</option>
-                        
-                    </select>
+            <div class="flex space-x-4" >
+                
+
+                <div class="w-1/2">
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quant. min em estoque</label>
+                        <span id="estoqueMinview"></span>
+                </div>
+                <div class="w-1/2">
+                    <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
+                    <div class="flex items-center space-x-2">
+                        <span id="categoriaview"></span>
+                    </div>
                 </div>
             </div>
-           
 
-            <button type="submit"
-                class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
-                <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
-            </button>
         </form>
     </div>
 </div>
+
+
 
 
 <form id="delete-form-produto" method="post" style="display: none;">
@@ -238,9 +242,35 @@
         }
     }
 
+    function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId, estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo) {
+        const modal = document.getElementById('ModalProdutoConsulta');
+        const nomeField = document.getElementById('nomeProdutoview');
+        const quantidadeField = document.getElementById('quantidadeProdutoview');
+        const tipo_quantidadeField = document.getElementById('tipo_quantidadeview');
+        const validadeField = document.getElementById('validadeEditview');
+        const categoria = document.getElementById('categoriaview');
+        const estoquemin = document.getElementById('estoqueMinview');
+        const ultimomov = document.getElementById('ultimoMov');
+        if (ultimoMovimentodata == 'None'){
+            ultimoMovimentodata = 'Sem movimento'
+        }
+        ultimomov.textContent = ultimoMovimentodata;
+
+        categoria.textContent = categoriaId
+        validadeField.textContent = validade
+        nomeField.textContent = nome;
+        quantidadeField.textContent = quantidade;
+        tipo_quantidadeField.textContent = tipo_quantidade;
+        estoquemin.textContent = estoqueminimo;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    
+
     // Função que abre o modal e preenche com os dados do produto
     function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
+        const modalViewProduto = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProduto');
         const produto_idField = document.getElementById('produtoId');
         const quantidadeField = document.getElementById('quantidadeProduto');
@@ -262,6 +292,7 @@
         }
        
         estoquemin.value = estoqueminimo;
+        modalViewProduto.classList.add('hidden')
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
@@ -272,7 +303,11 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     });
-
+    document.getElementById('closeModalBtnViewProdut').addEventListener('click', () => {
+        const modal = document.getElementById('ModalProdutoConsulta');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    });
     // Fecha o modal ao clicar fora do conteúdo
     window.addEventListener('click', (e) => {
         const modal = document.getElementById('productModalEdit');
@@ -282,7 +317,7 @@
         }
     });
     window.addEventListener('click', (e) => {
-        const modal = document.getElementById('productModalMovimento');
+        const modal = document.getElementById('ModalProdutoConsulta');
         if (e.target === modal) {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
