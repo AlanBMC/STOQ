@@ -29,7 +29,8 @@
                                 '{{produto.nome}}',
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
                                 '{{produto.validade}}','{{produto.categoria.nome}}',
-                                 '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}')"
+                                '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}',
+                                '{{ produto.ultimo_movimento_tipo }}')"
                     style="margin-top: 5px; 
                     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                     <td class="py-3 px-4 flex md:table-cell">
@@ -39,7 +40,7 @@
                     </td>
                     <td class="py-3 px-3 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Última Mov:</span>
-                        <span class="">
+                        <span  >
                             {% if produto.ultimo_movimento_tipo %}
                             {{ produto.ultimo_movimento_tipo }} - {{ produto.ultimo_movimento_data|date:"d/m/Y H:i" }}
                         {% else %}
@@ -192,7 +193,6 @@
                 </div>
             </div>
 
-
             <div class="flex space-x-4">
                 <div class="w-1/2">
                     <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
@@ -220,8 +220,6 @@
                 </div>
             </div>
 
-            
-           
         </form>
     </div>
 </div>
@@ -244,7 +242,7 @@
         }
     }
 
-    function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId, estoqueminimo, ultimoMovimento) {
+    function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId, estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo) {
         const modal = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProdutoview');
         const quantidadeField = document.getElementById('quantidadeProdutoview');
@@ -254,7 +252,7 @@
         const estoquemin = document.getElementById('estoqueMinview');
         const ultimomov = document.getElementById('ultimoMov');
         console.log(validade)
-        ultimomov.textContent = ultimoMovimento
+        ultimomov.textContent = ultimoMovimentodata
         categoria.textContent = categoriaId
         validadeField.textContent = validade
         nomeField.textContent = nome;

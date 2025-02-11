@@ -58,9 +58,6 @@ def obter_dados(request):
         "contagemproduto": contagemporproduto
     })
 
-
-    
-
     
 def verifica_last_name(request):
     user =  request.user
@@ -142,6 +139,7 @@ def produtoview(request):
     lojasDoUser = [user.loja for user in lojas]
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     loja_logo = request.user.loja.logo
+    func_notifica_vencimento(request)
     hoje = date.today()
     return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias,  'today': hoje})
 
@@ -176,7 +174,7 @@ def estoqueview(request):
     latest_movimento_subquery = MovimentoEstoque.objects.filter(
         produto=OuterRef('id'), loja=request.user.loja
     ).order_by('-data_movimento').values('tipo_movimento', 'data_movimento')[:1]
-
+    func_notifica_vencimento(request)
     # Adicionando a última movimentação como um campo anotado nos produtos
     produtos = produtos.annotate(
         ultimo_movimento_tipo=Subquery(latest_movimento_subquery.values('tipo_movimento')[:1]),
@@ -199,11 +197,11 @@ def configuracaoview(request):
     '''
     usuarios =listar_usuarios_da_loja_atual(request)
     is_proprietario = request.user.groups.filter(name='Proprietario').exists()   
-    show_tour = verifica_last_name(request)
+    
     loja_name = request.user.loja.nome
     loja_logo = request.user.loja.logo
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
-    
+    func_notifica_vencimento(request)
     return render(request, 'configuracao.html', {'is_proprietario':is_proprietario,'logo': loja_logo,'loja': loja_name,'show_tour': False,'usuarios': usuarios, 'is_proprietario': is_proprietario})
 
 
@@ -442,7 +440,7 @@ def criar_produto(request):
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         estoque_min = request.POST.get('estoque_min')
-        
+        func_notifica_vencimento(request)
         # Verifica se o produto já existe na mesma loja
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
             messages.error(request, 'Produto com esse nome já existe.')
@@ -633,7 +631,7 @@ def cria_movimento_de_estoque_em_lote(request):
         loja_destino_id = request.POST.getlist('loja_destino_id')  # ID da loja que receberá os produtos
         produtos_alterados = []
         mensagem = []
-
+        func_notifica_vencimento(request)
         for indice in range(0, len(quantidades)):
             if quantidades[indice] == '':
                 continue
