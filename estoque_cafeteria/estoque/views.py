@@ -155,7 +155,7 @@ def update_loja_user(request):
         return redirect('produtoview')
     
 
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, Sum, Count, Case, IntegerField, When
 @login_required(login_url='/')
 def estoqueview(request):
     '''
@@ -173,13 +173,42 @@ def estoqueview(request):
     
     latest_movimento_subquery = MovimentoEstoque.objects.filter(
         produto=OuterRef('id'), loja=request.user.loja
-    ).order_by('-data_movimento').values('tipo_movimento', 'data_movimento')[:1]
+    ).order_by('-data_movimento').values('tipo_movimento', 'data_movimento', 'responsavel__username', 'quantidade')[:1]
     func_notifica_vencimento(request)
     # Adicionando a última movimentação como um campo anotado nos produtos
     produtos = produtos.annotate(
         ultimo_movimento_tipo=Subquery(latest_movimento_subquery.values('tipo_movimento')[:1]),
-        ultimo_movimento_data=Subquery(latest_movimento_subquery.values('data_movimento')[:1])
-    )    
+        ultimo_movimento_data=Subquery(latest_movimento_subquery.values('data_movimento')[:1]),
+        ultimo_movimento_responsavel=Subquery(latest_movimento_subquery.values('responsavel__username')[:1]),
+        ultimo_movimento_quantidade=Subquery(latest_movimento_subquery.values('quantidade')[:1]),
+
+        # Contagem de entradas
+        total_entradas=Count(
+            'movimentoestoque',
+            filter=Case(
+                When(movimentoestoque__tipo_movimento="entrada", then=1),
+                output_field=IntegerField(),
+            )
+        ),
+
+        # Contagem de saídas
+        total_saidas=Count(
+            'movimentoestoque',
+            filter=Case(
+                When(movimentoestoque__tipo_movimento="saida", then=1),
+                output_field=IntegerField(),
+            )
+        ),
+
+        # Contagem de transferências
+        total_transferencias=Count(
+            'movimentoestoque',
+            filter=Case(
+                When(movimentoestoque__tipo_movimento="transferencia", then=1),
+                output_field=IntegerField(),
+            )
+        )
+    )
     hoje = date.today()
     
     return render(request, 'estoque.html', {'logo': loja_logo,'loja': loja_name,'show_tour': False,'categorias': categorias,'produtos': produtos, 'today': hoje,'lojas':lojasDoUser})
@@ -402,13 +431,6 @@ def listar_categorias(request):
 
     categorias = Categoria.objects.filter(loja=request.user.loja)
     return categorias
-
-
-
-
-
-
-
 
 @login_required(login_url='/')
 def listar_produtos(request):
