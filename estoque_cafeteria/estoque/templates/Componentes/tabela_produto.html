@@ -30,7 +30,8 @@
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
                                 '{{produto.validade}}','{{produto.categoria.nome}}',
                                 '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}',
-                                '{{ produto.ultimo_movimento_tipo }}')"
+                                '{{ produto.ultimo_movimento_tipo }}', '{{ produto.ultimo_movimento_responsavel.nome }}',
+                                '{{ produto.ultimo_movimento_quantidade }}')"
                     style="margin-top: 5px; 
                     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                     <td class="py-3 px-4 flex md:table-cell">
@@ -243,7 +244,8 @@
         }
     }
 
-    function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId, estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo) {
+    function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId,
+     estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo, ultimoMovimentoresponsavel, ultimoMovimentoquantidade) {
         const modal = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProdutoview');
         const quantidadeField = document.getElementById('quantidadeProdutoview');
@@ -255,6 +257,7 @@
         if (ultimoMovimentodata == 'None'){
             ultimoMovimentodata = 'Sem movimento'
         }
+        console.log(ultimoMovimentotipo, ultimoMovimentoresponsavel, ultimoMovimentoquantidade)
         ultimomov.textContent = formatarData(ultimoMovimentodata)
 
         categoria.textContent = categoriaId

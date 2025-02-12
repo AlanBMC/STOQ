@@ -173,12 +173,14 @@ def estoqueview(request):
     
     latest_movimento_subquery = MovimentoEstoque.objects.filter(
         produto=OuterRef('id'), loja=request.user.loja
-    ).order_by('-data_movimento').values('tipo_movimento', 'data_movimento')[:1]
+    ).order_by('-data_movimento').values('tipo_movimento', 'data_movimento', 'responsavel', 'quantidade')[:1]
     func_notifica_vencimento(request)
     # Adicionando a última movimentação como um campo anotado nos produtos
     produtos = produtos.annotate(
         ultimo_movimento_tipo=Subquery(latest_movimento_subquery.values('tipo_movimento')[:1]),
-        ultimo_movimento_data=Subquery(latest_movimento_subquery.values('data_movimento')[:1])
+        ultimo_movimento_data=Subquery(latest_movimento_subquery.values('data_movimento')[:1]),
+        ultimo_movimento_responsavel=Subquery(latest_movimento_subquery.values('responsavel')[:1]),
+        ultimo_movimento_quantidade=Subquery(latest_movimento_subquery.values('quantidade')[:1])
     )    
     hoje = date.today()
     
