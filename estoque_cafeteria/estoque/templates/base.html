@@ -65,23 +65,20 @@
             </div>
     </div>
 
+
 <style>
-    /* Efeito de fade-in (transição suave) */
-.main-content {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 1.5s ease-out, transform 1.5s ease-out;
-}
+@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+        }
 
-/* Quando a animação acontece */
-.main-content.show {
-    opacity: 2;
-    transform: translateY(0);
+.animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
 }
-
 </style>
+
 <!-- Main Content -->
-<div id="main-content" class="flex-1  p-6 mt-16 main-content">
+<div id="main-content" class="flex-1  p-6 mt-16 main-content animate-fade-in">
     {%include 'componentes/alerta_global.html' %}
 
     {% block content %}
@@ -161,6 +158,7 @@
        
     </div>
 </div>
+
 
 
 <script>
@@ -245,51 +243,8 @@
 
 </script>
 
-<script>
-   document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(() => {
-            const activeElement = document.querySelector(".active");
-            if (activeElement) {
-                activeElement.classList.add("show"); // Adiciona a classe para fazer a cor aparecer suavemente
-            }
-        }, 100); // Pequeno delay para suavizar
-    });
 
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        function applyTransitionEffect() {
-            setTimeout(() => {
-                const mainContent = document.getElementById("main-content");
-                if (mainContent) {
-                    mainContent.classList.add("show");
-                }
 
-                const activeElement = document.querySelector(".active");
-                if (activeElement) {
-                    activeElement.classList.add("show"); // Garante a transição suave do botão ativo
-                }
-            }, 100);
-        }
-
-        // Aplica o efeito ao carregar a página pela primeira vez
-        applyTransitionEffect();
-
-        // Observa mudanças no conteúdo principal (main-content) sem interferir nos modais
-        const observer = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-                if (mutation.type === "childList") {
-                    applyTransitionEffect();
-                }
-            });
-        });
-
-        observer.observe(document.getElementById("main-content"), { childList: true, subtree: true });
-
-        
-    });
-
-</script>
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register("{% static 'sw.js' %}")
