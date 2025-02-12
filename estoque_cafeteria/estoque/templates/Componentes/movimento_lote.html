@@ -183,19 +183,7 @@
         const modal = document.getElementById('batchMovementModal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-        const driver = window.driver.js.driver;
-        const driverObj = driver({
-            showProgress: true,
-            steps: [
-                {element: "#searchProductInput",popover: {title: "Procurar produto",description: "Pesquise pelo nome do produto para acelerar a busca"}},
-                {element: "#quantidadePOP",popover: {title: "Definir quantidade",description: "Defina a quantidade que deseja movimentar"}},
-                {element: "#tipo-movimentoPOP",popover: {title: "Definir o tipo de movimento",description: "Defina se o movimento é uma entrada (Produtos comprados), Saída (Produtos vendidos) ou Transferência (Produtos que saem de uma loja e vão para outra)"}},
-                {element: "#lojaPOP",popover: {title: "Selecionar loja",description: "Esta funcionalidade so funciona se o tipo de movimento for Transferência, após seelecionar a loja(as) destino(os), clique em confirmar movimentação"}},
-
-                
-            ]
-        });
-        driverObj.drive();
+      
     }
 
     function filterProducts() {
