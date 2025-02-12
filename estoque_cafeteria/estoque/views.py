@@ -952,7 +952,9 @@ def atualizaLoja(request):
         box = request.POST.get('checkbox')
         nome = request.POST.get('nome')
         logo_loja = request.FILES.get('logo-loja')
-        
+        if nome == '':
+            messages.error(request, 'Coloque um nome valido.')
+            return redirect('configuracaoview')
         if box:
             if logo_loja:
             # Verifica se o arquivo é uma imagem
