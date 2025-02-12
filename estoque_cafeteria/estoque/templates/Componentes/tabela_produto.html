@@ -31,7 +31,8 @@
                                 '{{produto.validade}}','{{produto.categoria.nome}}',
                                 '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}',
                                 '{{ produto.ultimo_movimento_tipo }}', '{{ produto.ultimo_movimento_responsavel }}',
-                                '{{ produto.ultimo_movimento_quantidade }}')"
+                                '{{ produto.ultimo_movimento_quantidade }}', '{{ produto.total_transferencias }}',
+                                '{{ produto.total_entradas }}','{{ produto.total_saidas }}')"
                     style="margin-top: 5px; 
                     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                     <td class="py-3 px-4 flex md:table-cell">
@@ -262,7 +263,8 @@
     }
 
     function abrirModalProdutoConsulta( nome, quantidade, tipo_quantidade, validade, categoriaId,
-     estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo, ultimoMovimentoresponsavel, ultimoMovimentoquantidade) {
+     estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo, ultimoMovimentoresponsavel, ultimoMovimentoquantidade,
+    totaltransferencias, totalentradas,totalsaidas) {
         const modal = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProdutoview');
         const quantidadeField = document.getElementById('quantidadeProdutoview');
@@ -274,7 +276,7 @@
         const tipomov = document.getElementById('tipomovview');
         const responsavelmov = document.getElementById('movresponsavelview');
         const quantidademov = document.getElementById('quantidademovview');
-
+        console.log(totaltransferencias, totalentradas, totalsaidas)
         if (ultimoMovimentodata == 'None'){
             ultimoMovimentodata = 'Sem movimento'
         }
