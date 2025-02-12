@@ -30,7 +30,7 @@
                                 '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
                                 '{{produto.validade}}','{{produto.categoria.nome}}',
                                 '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}',
-                                '{{ produto.ultimo_movimento_tipo }}', '{{ produto.ultimo_movimento_responsavel.nome }}',
+                                '{{ produto.ultimo_movimento_tipo }}', '{{ produto.ultimo_movimento_responsavel }}',
                                 '{{ produto.ultimo_movimento_quantidade }}')"
                     style="margin-top: 5px; 
                     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
@@ -176,43 +176,58 @@
 
 
 <div id="ModalProdutoConsulta" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 hidden z-50">
-    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" style="width: 400px;">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" style="width: 500px;">
         <a id="closeModalBtnViewProdut" class="absolute top-3 right-3 text-color-4 text-xl" >&times;</a>
         
         <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Visualizar Produto</h2>
         <form method="post" action="">
             {% csrf_token %}
-            <div class="flex space-x-4">
+            <div class="flex space-x-4 mt-6">
 
-                <div class="w-1/2">
-                    <span class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</span>
-                    <span id="nomeProdutoview" ></span>
-                </div>
-
-                <div class="w-1/2">
-                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Ultimo Mov.</label>
-                    <span id="ultimoMov"></span>
-                </div>
+                    <div class="w-1/2">
+                        <span class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</span>
+                        <span id="nomeProdutoview" ></span>
+                    </div>
+                    <div class="w-1/2">
+                        <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade Atual</label>
+                        <span id="quantidadeProdutoview"></span> - <span id="tipo_quantidadeview"></span>
+                    </div>
+                    <div class="w-1/2">
+                        <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Ultimo Mov.</label>
+                        <span id="ultimoMov"></span>
+                    </div>
             </div>
 
-            <div class="flex space-x-4">
+<div class="flex space-x-4 mt-6">
+
+
+    <div class="w-1/2">
+        <label for="movresponsavelview" class="block text-color-4 text-sm font-semibold mb-2">Responsável pelo movimento</label>
+        <span id="movresponsavelview"></span>
+    </div>
+    <div class="w-1/2">
+        <label for="quantidadeMovView" class="block text-color-4 text-sm font-semibold mb-2">Quantidade Movimentada</label>
+        <div class="flex items-center space-x-2">
+            <span id="quantidademovview"></span>
+        </div>
+    </div>
+    <div class="w-1/2">
+        <label for="quantidadeMovView" class="block text-color-4 text-sm font-semibold mb-2">Tipo Movimento</label>
+        <div class="flex items-center space-x-2">
+            <span id="tipomovview"></span>
+        </div>
+    </div>
+</div>
+
+            <div class="flex space-x-4 mt-6">
                 <div class="w-1/2">
-                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
-                     <span id="quantidadeProdutoview"></span> - <span id="tipo_quantidadeview"></span>
+                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quant. min. em estoque</label>
+                    <span id="estoqueMinview"></span>
                 </div>
+                
                 <div class="w-1/2">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
                         <span id="validadeEditview" class="data-format"></span>
-                </div>
-               
-            </div>
-
-            <div class="flex space-x-4" >
-                
-
-                <div class="w-1/2">
-                    <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quant. min em estoque</label>
-                        <span id="estoqueMinview"></span>
                 </div>
                 <div class="w-1/2">
                     <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
@@ -221,6 +236,8 @@
                     </div>
                 </div>
             </div>
+
+          
 
         </form>
     </div>
@@ -254,12 +271,17 @@
         const categoria = document.getElementById('categoriaview');
         const estoquemin = document.getElementById('estoqueMinview');
         const ultimomov = document.getElementById('ultimoMov');
+        const tipomov = document.getElementById('tipomovview');
+        const responsavelmov = document.getElementById('movresponsavelview');
+        const quantidademov = document.getElementById('quantidademovview');
+
         if (ultimoMovimentodata == 'None'){
             ultimoMovimentodata = 'Sem movimento'
         }
-        console.log(ultimoMovimentotipo, ultimoMovimentoresponsavel, ultimoMovimentoquantidade)
+        tipomov.textContent = ultimoMovimentotipo
         ultimomov.textContent = formatarData(ultimoMovimentodata)
-
+        quantidademov.textContent = ultimoMovimentoquantidade;
+        responsavelmov.textContent = ultimoMovimentoresponsavel
         categoria.textContent = categoriaId
         validadeField.textContent = formatarData(validade)
         nomeField.textContent = nome;
