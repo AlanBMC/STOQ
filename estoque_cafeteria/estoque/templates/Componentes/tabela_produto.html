@@ -175,7 +175,7 @@
 
 
 <div id="ModalProdutoConsulta" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 hidden z-50">
-    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" style="width: 400px;">
         <a id="closeModalBtnViewProdut" class="absolute top-3 right-3 text-color-4 text-xl" >&times;</a>
         
         <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Visualizar Produto</h2>
@@ -255,7 +255,7 @@
         if (ultimoMovimentodata == 'None'){
             ultimoMovimentodata = 'Sem movimento'
         }
-        ultimomov.textContent = ultimoMovimentodata
+        ultimomov.textContent = formatarData(ultimoMovimentodata)
 
         categoria.textContent = categoriaId
         validadeField.textContent = formatarData(validade)
@@ -266,12 +266,41 @@
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
-    function formatarData(dataISO) {
-            if (!dataISO || dataISO === "None") return "Sem validade"; // Retorna texto padrão se não houver data
+    function formatarData(dataTexto) {
+            if (!dataTexto || dataTexto === "None") return "Sem validade"; // Se for None, retorna "Sem validade"
 
-            let dataObj = new Date(dataISO);
-            if (isNaN(dataObj.getTime())) return "Data inválida"; // Verifica se a data é válida
+            // Tenta converter a data diretamente
+            let dataObj = new Date(dataTexto);
 
+            // Se for inválido, tenta converter manualmente
+            if (isNaN(dataObj.getTime())) {
+                try {
+                    let partes = dataTexto.split(", "); // Divide a string (ex: "Feb. 11, 2025, 1:32 p.m.")
+                    console.log(partes[2])
+                    let dataParte = partes[0].trim(); // Pega a parte "Feb. 11, 2025"
+                    let ano = partes[1]; // Pega o ano (ex: "2025")-
+                    let dia = dataParte.split(" ")[1].replace(".", ""); // Remove o ponto do dia (ex: "11")
+                    let hora = partes[2]
+                    let mesTexto = dataParte.split(" ")[0]; // Obtém o nome do mês (ex: "Feb.")
+
+                    // Conversão do nome do mês para número
+                    const meses = {
+                        "Jan.": "01", "Feb.": "02", "Mar.": "03", "Apr.": "04",
+                        "May.": "05", "Jun.": "06", "Jul.": "07", "Aug.": "08",
+                        "Sep.": "09", "Oct.": "10", "Nov.": "11", "Dec.": "12"
+                    };
+
+                    let mes = meses[mesTexto]; // Obtém o número do mês correspondente
+
+                    if (!mes) return "Data inválida"; // Se não encontrar o mês, retorna erro
+
+                    return `${dia}/${mes}/${ano} - ${hora}`;
+                } catch (error) {
+                    return "Data inválida"; // Retorna erro se não conseguir converter
+                }
+            }
+
+            // Caso a conversão do Date() funcione corretamente
             let dia = String(dataObj.getDate()).padStart(2, '0');
             let mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
             let ano = dataObj.getFullYear();
@@ -372,6 +401,7 @@
 
     
 </script>
+
 <script>
         const driver = window.driver.js.driver;
 
