@@ -1,10 +1,11 @@
 <style>
     #batchMovementModal .modal-content {
         max-width: 700px; /* Reduz a largura máxima */
-        max-height: calc(100vh - 20px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
+        max-height: calc(70vh - 20px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
         margin: 10px 0; /* Adiciona margem de 10px no topo e no fundo */
         display: flex;
-        z-index: 1000;
+       
+        
 
         flex-direction: column;
         padding: 0; /* Remover padding geral */
@@ -12,12 +13,17 @@
         overflow: hidden; /* Evitar rolagem no modal principal */
         position: relative; /* Necessário para posicionar o botão de fechar */
     }
- 
+    #batchMovementModal .modal-content {
+    z-index: 1001 !important; /* Certifica que o conteúdo do modal também fica acima */
+}
+#batchMovementModal {
+    z-index: 1000 !important; /* Mantém o modal acima de tudo */
+}
     /* Estilos para tablet */
     @media (max-width: 768px) {
         #batchMovementModal .modal-content {
             max-width: 90%;
-            max-height: calc(100vh - 20px);
+            max-height: calc(80vh - 20px);
         }
 
         #batchMovementModal h2 {
@@ -93,8 +99,10 @@
     }
 </style>
 
-<div id="batchMovementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="modal-content max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative  ">
+<div id="batchMovementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50" style="bottom: 100px;">
+    <div class="modal-content max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative  "
+    
+    >
         <a id="closeBatchModalBtn" onclick="closeBatchMovementModal()" class="absolute top-3 right-3 text-gray-800 text-xl" style="cursor: pointer;">&times;</a>
 
         <div class="sticky-header">
@@ -107,7 +115,7 @@
         </div>
         <form method="post" action="{% url 'cria_movimento_de_estoque_em_lote' %}" class="mt-4">
             {% csrf_token %}
-        <div class="modal-body m-5"  >
+        <div class="modal-body m-5"  style="    height: 200px;">
             <!-- Tabela de Produtos -->
             <div class="table-wrapper overflow-x-hidden" style="border-bottom-width: 0px;height: 410px;">
                 <table class="w-full text-left table-auto">
