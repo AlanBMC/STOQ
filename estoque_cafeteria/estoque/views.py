@@ -132,7 +132,7 @@ def produtoview(request):
         request (HttpRequest): O objeto de requisição HTTP.
         HttpResponse: A página de visualização de produtos renderizada.
     """
-    
+    produtos = listar_produtos_em_estoque(request)
     categorias =  listar_categorias(request)
     loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
@@ -443,8 +443,23 @@ def listar_produtos(request):
     QuerySet: Conjunto de produtos filtrados pela loja do usuário.
     """
 
-    produtos = Produto.objects.filter(loja=request.user.loja)
+    produtos = Produto.objects.filter(loja=request.user.loja, status="em_uso")
     return produtos
+
+@login_required(login_url='/')
+def listar_produtos_em_estoque(request):
+    """
+    Funcionalidade:
+    Lista os produtos disponíveis na loja do usuário logado.
+    Argumento:
+    request (HttpRequest): Objeto de requisição HTTP que contém informações sobre a solicitação.
+    Retorno:
+    QuerySet: Conjunto de produtos filtrados pela loja do usuário.
+    """
+
+    produtos = Produto.objects.filter(loja=request.user.loja, status="em_estoque")
+    return produtos
+
 
 
 @login_required(login_url='/')
@@ -462,6 +477,7 @@ def criar_produto(request):
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         estoque_min = request.POST.get('estoque_min')
+        status = request.POST.get('status')
         func_notifica_vencimento(request)
         # Verifica se o produto já existe na mesma loja
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exists():
@@ -476,7 +492,8 @@ def criar_produto(request):
             validade=validade,
             categoria_id=categoria_id,
             estoque_minimo=estoque_min,
-            loja=request.user.loja
+            loja=request.user.loja,
+            status= status
         )
         messages.success(request, 'Produto criado com sucesso.')
         return redirect('produtoview')
@@ -509,6 +526,7 @@ def editar_produto(request):
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         estoquemin = request.POST.get('estoque_min')
+        #receber status do produto
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')

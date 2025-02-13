@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Cadastros{% endblock %}
- 
+
 {% block content %}
 <style>
     /* Estilo padrão para os botões */
@@ -29,6 +29,7 @@
         }
     }
 </style>
+
 
 
 
@@ -123,6 +124,17 @@
                             {% endfor %}
                         </select>
                        
+                        
+                    </div>
+
+                </div>
+                <div class="w-1/2">
+                    <label for="status" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
+                    <div class="flex items-center space-x-2">
+                        <select name="status" id="status">
+                            <option value="em_estoque"> Em estoque</option>
+                            <option value="em_uso">A venda </option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -131,6 +143,9 @@
                 <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
             </button>
         </form>
+
+
+        
     </div>
 </div>
 
