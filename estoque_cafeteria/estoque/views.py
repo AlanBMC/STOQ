@@ -513,9 +513,8 @@ def editar_produto(request):
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
             return redirect('estoqueview')
-        elif Produto.objects.filter(loja=request.user.loja).exclude(pk=produto_id).exists():
-            messages.error(request, 'Produto com este código de barras já existe.')
-            return redirect('estoqueview')
+       
+            
 
         if 'notificacoes' in request.session:
             del request.session['notificacoes']

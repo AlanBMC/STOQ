@@ -162,83 +162,29 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const mainContent = document.getElementById("main-content");
-        const menuLinks = document.querySelectorAll(".nav-item");
+  document.addEventListener("DOMContentLoaded", function () {
+    const menuLinks = document.querySelectorAll(".nav-item");
 
-        function updateActiveButton(url) {
-            menuLinks.forEach(link => {
-                link.classList.remove("active", "show");
-                if (link.getAttribute("data-url") === url) {
-                    link.classList.add("active");
-                    setTimeout(() => link.classList.add("show"), 100);
-                }
-            });
-        }
-
-        // Atualiza o botão correto como ativo ao carregar
-        updateActiveButton(window.location.pathname);
-
+    function updateActiveButton(url) {
         menuLinks.forEach(link => {
-            link.addEventListener("click", function (event) {
-                event.preventDefault(); // Evita o recarregamento da página
-
-                const url = this.getAttribute("data-url"); // Obtém a URL do link
-
-                // Faz a requisição AJAX para carregar a nova página
-                fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, "text/html");
-                        const newContent = doc.getElementById("main-content").innerHTML;
-
-                        // Remove scripts antigos antes de adicionar novos
-                        document.querySelectorAll("script.dynamic-script").forEach(script => script.remove());
-
-                        // Atualiza o conteúdo principal sem recarregar a página
-                        mainContent.innerHTML = newContent;
-                        mainContent.classList.remove("show");
-                        setTimeout(() => mainContent.classList.add("show"), 50);
-
-                        // Atualiza a URL no navegador sem recarregar
-                        history.pushState(null, "", url);
-
-                        // Atualiza o botão ativo corretamente
-                        updateActiveButton(url);
-
-                        // Adiciona novos scripts sem duplicação
-                        const scriptTags = doc.querySelectorAll("script");
-                        scriptTags.forEach(script => {
-                            const newScript = document.createElement("script");
-                            newScript.classList.add("dynamic-script"); // Marca como dinâmico para remoção futura
-                            if (script.src) {
-                                newScript.src = script.src;
-                                newScript.async = true;
-                            } else {
-                                newScript.textContent = script.textContent;
-                            }
-                            document.body.appendChild(newScript);
-                        });
-
-                    })
-                    .catch(error => console.error("Erro ao carregar página:", error));
-            });
+            link.classList.remove("active", "show");
+            if (link.getAttribute("data-url") === url) {
+                link.classList.add("active");
+                setTimeout(() => link.classList.add("show"), 100);
+            }
         });
+    }
 
-        // Permite voltar na navegação com AJAX
-        window.addEventListener("popstate", function () {
-            fetch(location.href)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, "text/html");
-                    mainContent.innerHTML = doc.getElementById("main-content").innerHTML;
-                    updateActiveButton(window.location.pathname);
-                });
+    // Atualiza o botão correto como ativo ao carregar
+    updateActiveButton(window.location.pathname);
+
+    menuLinks.forEach(link => {
+        link.addEventListener("click", function () {
+            // Permite que o navegador carregue a nova página normalmente
+            updateActiveButton(this.getAttribute("data-url"));
         });
     });
-
+});
 
 
 </script>

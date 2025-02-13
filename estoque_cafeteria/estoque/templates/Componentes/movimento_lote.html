@@ -4,10 +4,11 @@
         max-height: calc(100vh - 20px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
         margin: 10px 0; /* Adiciona margem de 10px no topo e no fundo */
         display: flex;
-        
+        z-index: 1000;
 
         flex-direction: column;
         padding: 0; /* Remover padding geral */
+        inset: 0;
         overflow: hidden; /* Evitar rolagem no modal principal */
         position: relative; /* Necessário para posicionar o botão de fechar */
     }
@@ -49,9 +50,7 @@
         #batchMovementModal input {
             padding: 4px; /* Reduz o padding */
         }
-        #batchMovementModal th:nth-child(2)::after {
-        content: "Qtd Atual"; /* Renomeia o cabeçalho */
-    }
+        
         #batchMovementModal th, #batchMovementModal td {
             padding: 3px; /* Reduz o padding */
             font-size: 0.8rem; /* Reduz o tamanho da fonte */
@@ -115,7 +114,7 @@
                     <thead class="sticky top-0 bg-white shadow">
                         <tr class="text-gray-800">
                             <th class="py-2 px-2">Produto</th>
-                            <th class="py-2 px-2">Quantidade Atual</th>
+                            <th class="py-2 px-2">Quant Atual</th>
                             <th id="" class="py-2 px-2">Quantidade</th>
                             <th id="" class="py-2 px-2">Tipo de Movimento</th>
                             <th id="" class="py-2 px-2">Loja</th>
@@ -173,6 +172,16 @@
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const thElement = document.querySelector("#batchMovementModal th:nth-child(2)");
+    if (thElement) {
+        thElement.innerText = "Qtd Atual";
+    } else {
+        console.error("Elemento <th> não encontrado!");
+    }
+});
+
+
     function closeBatchMovementModal() {
         const modal = document.getElementById('batchMovementModal');
         modal.classList.add('hidden');
