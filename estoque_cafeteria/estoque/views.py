@@ -141,7 +141,7 @@ def produtoview(request):
     loja_logo = request.user.loja.logo
     func_notifica_vencimento(request)
     hoje = date.today()
-    return render(request, 'produtoview.html', {'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias,  'today': hoje})
+    return render(request, 'produtoview.html', {'produtos':produtos,'logo': loja_logo,'is_proprietario':is_proprietario,'lojasDoUser': lojasDoUser,'show_tour': False, 'loja': loja_name, 'categorias': categorias,  'today': hoje})
 
 @login_required(login_url='/')
 def update_loja_user(request):
@@ -526,7 +526,8 @@ def editar_produto(request):
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         estoquemin = request.POST.get('estoque_min')
-        #receber status do produto
+        status  = request.POST.get('status')
+        
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
@@ -542,6 +543,7 @@ def editar_produto(request):
         produto.nome = nome
         produto.quantidade = quantidade
         produto.tipo_quantidade = tipo_quantidade
+        produto.status = status
         if validade:
             produto.validade = validade
         if estoquemin:
