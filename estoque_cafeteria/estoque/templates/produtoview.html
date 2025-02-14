@@ -108,7 +108,9 @@ tbody {
             {% for produto in produtos %}
             <tr class="cursor-pointer hover:bg-gray-200 transition-all border divide-black"  style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);"
                 onclick="openEditModal('{{ produto.id }}', '{{ produto.nome }}', 
-                '{{ produto.quantidade }}', '{{ produto.status }}')">
+                '{{ produto.quantidade }}','{{ produto.tipo_quantidade }}',
+                 '{{ produto.validade }}','{{ produto.categoria }}',
+                 '{{ produto.estoque_minimo }}', '{{ produto.status }}')">
                 <td  class="py-2 px-6">{{ produto.id }}</td>
                 <td class="py-2 px-6">{{ produto.nome }}</td>
                 <td class="py-2 px-6">{{ produto.quantidade }}</td>
@@ -129,25 +131,25 @@ tbody {
         <form method="post" action="{% url 'editar_produto' %}">
             {% csrf_token %}
             <input type="hidden" id="editProductId" name="produto_id">
-        
+            <!-- nome e quantidade -->
             <div class="flex space-x-4">
                 <div class="mb-4 w-1/2">
                     <label class="block text-gray-700">Nome:</label>
-                    <input type="text" id="editProductName" name="nome"
+                    <input type="text" required id="editProductName" name="nome"
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="mb-4 w-1/3">
                     <label class="block text-gray-700">Quantidade:</label>
-                    <input type="number" id="editProductQuantity" name="quantidade"
+                    <input type="number" required id="editProductQuantity" step="0.001" min="1" name="quantidade"
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 
             </div>
-        
+        <!-- tipo quantidade e estoque minimo-->
             <div class="flex space-x-4">
                 <div class="mb-4 w-1/2">
                     <label for="tipo_quantidade" class="block text-gray-700">Tipo de Quantidade:</label>
-                    <select id="editProductTipoQuantidade" name="tipo_quantidade"
+                    <select id="editProductTipoQuantidade" name="tipo_quantidade" required
                         class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
                         <option value="UN">Unidade</option>
                         <option value="L">Litro</option>
@@ -159,30 +161,31 @@ tbody {
               
                 <div class="mb-4 w-1/2">
                     <label class="block text-gray-700">Estoque Mínimo:</label>
-                    <input type="number" id="editProductEstoqueMin" name="estoque_min"
+                    <input type="number" id="editProductEstoqueMin" required step="1" min="1"  name="estoque_min"
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
+            <!-- validade  e status -->
             <div class="flex space-x-4">
             <div class="mb-4">
                 <label class="block text-gray-700">Validade:</label>
-                <input type="date" id="editProductValidade" name="validade"
+                <input type="date" min="{{ today|date:'Y-m-d' }}" id="editProductValidade" name="validade"
                     class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
         
             <div class="mb-4">
                 <label class="block text-gray-700">Status:</label>
-                <select id="editProductStatus" name="status"
+                <select id="editProductStatus" name="status" required
                     class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
                     <option value="em_uso">Em Uso</option>
                     <option value="estoque">Em Estoque</option>
-                    <option value="inativo">Inativo</option>
                 </select>
             </div>
         </div>
+        <!-- categoria-->
             <div class="mb-4">
                 <label class="block text-gray-700">Categoria:</label>
-                <select id="editProductCategoria" name="Categoria"
+                <select id="editProductCategoria" name="Categoria" required
                     class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
@@ -371,6 +374,7 @@ function openEditModal(id, nome, quantidade, tipo_quantidade, validade, categori
     document.getElementById("editProductTipoQuantidade").value = tipo_quantidade;
     document.getElementById("editProductValidade").value = validade;
     document.getElementById("editProductCategoria").value = categoria;
+    console.log(estoquemin)
     document.getElementById("editProductEstoqueMin").value = estoquemin;
     document.getElementById("editProductStatus").value = status;
 

@@ -522,10 +522,14 @@ def editar_produto(request):
         
         nome = request.POST.get('nome')
         quantidade = request.POST.get('quantidade')
-        tipo_quantidade = request.POST.get('tipo_quantidade')
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
+        tipo_quantidade = request.POST.get('tipo_quantidade')
+        if tipo_quantidade:
+            tipo_quantidade = produto.tipo_quantidade
         estoquemin = request.POST.get('estoque_min')
+        if estoquemin:
+            estoquemin = produto.estoque_minimo
         status  = request.POST.get('status')
         
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
@@ -553,7 +557,7 @@ def editar_produto(request):
         produto.save()
 
         messages.success(request, 'Produto atualizado com sucesso.')
-        return redirect('estoqueview')
+        return redirect(request.META.get('HTTP_REFERER', 'estoqueview'))
 
     return redirect('estoqueview')
 
