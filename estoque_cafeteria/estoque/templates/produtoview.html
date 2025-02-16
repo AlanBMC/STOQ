@@ -190,23 +190,26 @@ tbody {
                         {% endfor %}
                     </select>
                 </div>
-                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
-                    <label class="block text-sm text-gray-700">Data Criacao:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
-                    <span id="datacriacao"></span>
-                    
+                
+
+             
+            
+            </div>
+            <div class="flex space-x-4 mt-6">
+
+                <div class="w-1/2">
+                    <span class="block text-color-4 text-sm font-semibold mb-2">Data criação:</span>
+                    <span id="datacriacao" ></span>
                 </div>
-                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
-                    <label class="block text-sm text-gray-700">Ultima edição:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
-                    <span id="ultimaedit"></span>
-                    
-                </div><div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
-                    <label class="block text-sm text-gray-700">Editado por:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                <div class="w-1/2">
+                    <label  class="block text-color-4 text-sm font-semibold mb-2">Atualizado em:</label>
+                    <span id="ultimaedit"></span> - <span id="tipo_quantidadeview"></span>
+                </div>
+                <div class="w-1/2">
+                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Editado por:</label>
                     <span id="editadopor"></span>
-                    
                 </div>
             </div>
-            
-            
             
             <!-- Botão de atualizar -->
             <div class="flex justify-end">
@@ -386,8 +389,8 @@ function openEditModal(id, nome, quantidade, tipo_quantidade, validade, categori
     document.getElementById("editProductId").value = id;
     document.getElementById("editProductName").value = nome;
     document.getElementById("editProductQuantity").value = quantidade;
-    document.getElementById("datacriacao").innerText = datacriacao
-    document.getElementById("ultimaedit").innerText = dataatualizao
+    document.getElementById("datacriacao").innerText =formatarData(datacriacao)
+    document.getElementById("ultimaedit").innerText = formatarData(dataatualizao)
     document.getElementById("editadopor").innerText = editadopor 
     const tipoqueantidade = document.getElementById("editProductTipoQuantidade");
     document.getElementById("editProductValidade").value = validade;
@@ -422,6 +425,48 @@ function closeEditModal() {
     document.getElementById("editProductModal").classList.remove("flex");
 }
 
+
+function formatarData(dataTexto) {
+            if (!dataTexto || dataTexto === "None") return "Sem validade"; // Se for None, retorna "Sem validade"
+
+            // Tenta converter a data diretamente
+            let dataObj = new Date(dataTexto);
+
+            // Se for inválido, tenta converter manualmente
+            if (isNaN(dataObj.getTime())) {
+                try {
+                    let partes = dataTexto.split(", "); // Divide a string (ex: "Feb. 11, 2025, 1:32 p.m.")
+                    console.log(partes[2])
+                    let dataParte = partes[0].trim(); // Pega a parte "Feb. 11, 2025"
+                    let ano = partes[1]; // Pega o ano (ex: "2025")-
+                    let dia = dataParte.split(" ")[1].replace(".", ""); // Remove o ponto do dia (ex: "11")
+                    let hora = partes[2]
+                    let mesTexto = dataParte.split(" ")[0]; // Obtém o nome do mês (ex: "Feb.")
+
+                    // Conversão do nome do mês para número
+                    const meses = {
+                        "Jan.": "01", "Feb.": "02", "Mar.": "03", "Apr.": "04",
+                        "May.": "05", "Jun.": "06", "Jul.": "07", "Aug.": "08",
+                        "Sep.": "09", "Oct.": "10", "Nov.": "11", "Dec.": "12"
+                    };
+
+                    let mes = meses[mesTexto]; // Obtém o número do mês correspondente
+
+                    if (!mes) return "Data inválida"; // Se não encontrar o mês, retorna erro
+
+                    return `${dia}/${mes}/${ano} - ${hora}`;
+                } catch (error) {
+                    return "Data inválida"; // Retorna erro se não conseguir converter
+                }
+            }
+
+            // Caso a conversão do Date() funcione corretamente
+            let dia = String(dataObj.getDate()).padStart(2, '0');
+            let mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+            let ano = dataObj.getFullYear();
+
+            return `${dia}/${mes}/${ano}`;
+        }
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("editProductModal");
     const overlay = document.getElementById("modalOverlay");

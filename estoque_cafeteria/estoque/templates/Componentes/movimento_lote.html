@@ -4,9 +4,6 @@
         max-height: calc(70vh - 20px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
         margin: 10px 0; /* Adiciona margem de 10px no topo e no fundo */
         display: flex;
-       
-        
-
         flex-direction: column;
         padding: 0; /* Remover padding geral */
         inset: 0;
@@ -14,11 +11,12 @@
         position: relative; /* Necessário para posicionar o botão de fechar */
     }
     #batchMovementModal .modal-content {
-    z-index: 1001 !important; /* Certifica que o conteúdo do modal também fica acima */
-}
-#batchMovementModal {
-    z-index: 1000 !important; /* Mantém o modal acima de tudo */
-}
+        z-index: 1001 !important; /* Certifica que o conteúdo do modal também fica acima */
+    }
+    #batchMovementModal {
+        z-index: 1000 !important; /* Mantém o modal acima de tudo */
+    }
+
     /* Estilos para tablet */
     @media (max-width: 768px) {
         #batchMovementModal .modal-content {
@@ -50,8 +48,8 @@
         #batchMovementModal h2 {
             font-size: 1rem; /* Reduz o tamanho da fonte */
         }
-        button{
-            margin: 5px
+        button {
+            margin: 5px;
         }
         #batchMovementModal input {
             padding: 4px; /* Reduz o padding */
@@ -97,98 +95,116 @@
         cursor: pointer;
         z-index: 20;
     }
+
+    /* Estilo da tabela */
+    .table-wrapper {
+        height: 500px; /* Altura da tabela com rolagem */
+        overflow-y: auto; /* Rolagem vertical */
+        border-bottom-width: 60px;
+    }
+
+    .table-wrapper table {
+        width: 100%;
+        min-width: 400px;
+        text-align: left;
+        margin-bottom: 80px;
+    }
+
+    .table-wrapper thead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);
+    }
+
+    .table-wrapper th, .table-wrapper td {
+        padding: 12px;
+    }
+
+    .table-wrapper tr {
+        margin-bottom: 5px;
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);
+    }
+
+    .table-wrapper tr:hover {
+        background-color: #f0f8ff; /* Cor de fundo ao passar o mouse */
+    }
 </style>
 
-<div id="batchMovementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50" style="bottom: 100px;">
-    <div class="modal-content max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative  "
-    
-    >
+<div id="batchMovementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="modal-content max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative"
+    style="
+    margin-right: 10px;
+    margin-left: 10px;
+">
         <a id="closeBatchModalBtn" onclick="closeBatchMovementModal()" class="absolute top-3 right-3 text-gray-800 text-xl" style="cursor: pointer;">&times;</a>
-
-        <div class="sticky-header">
-            <h2 class="text-2xl text-gray-800 font-semibold mb-4 m-5">Movimentação em Lote</h2>
-
-            <div class="mb-4 m-5">
-                <input type="text" id="searchProductInput" oninput="filterProducts()" placeholder="Pesquisar produtos..."
-                    class="w-full  p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
-            </div>
-        </div>
-        <form method="post" action="{% url 'cria_movimento_de_estoque_em_lote' %}" class="mt-4">
-            {% csrf_token %}
-        <div class="modal-body m-5"  style="    height: 200px;">
-            <!-- Tabela de Produtos -->
-            <div class="table-wrapper overflow-x-hidden" style="border-bottom-width: 0px;height: 410px;">
-                <table class="w-full text-left table-auto">
-                    <thead class="sticky top-0 bg-white shadow">
-                        <tr class="text-gray-800">
-                            <th class="py-2 px-2">Produto</th>
-                            <th class="py-2 px-2">Quant Atual</th>
-                            <th id="" class="py-2 px-2">Quantidade</th>
-                            <th id="" class="py-2 px-2">Tipo de Movimento</th>
-                            <th id="" class="py-2 px-2">Loja</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productTableBody">
-                        {% for produto in produtos %}
-                        <tr class="hover:bg-gray-100 text-gray-800">
-                            <td class="py-2 px-2">{{ produto.nome }}</td>
-                            <td  class="py-2 px-2">{{ produto.quantidade }}</td>
-                            <td id="quantidadePOP" class="py-2 px-2">
-                                <input type="number" name="quantidades" min="0" step="0.001"
-                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
+        
+        <div class="modal-body" >
+            <h1 style="color: black;" class="m-2 ml-2 justify-center">Movimento de estoque </h1>
+            <form method="post" action="{% url 'cria_movimento_de_estoque_em_lote' %}" class="mt-4">
+                {% csrf_token %}
+                <div class="table-wrapper overflow-x-hidden m-3"  style="border-bottom-width: 0px; height: 410px;">
+                    <table class="w-full text-left table-auto">
+                        <thead class="sticky top-0 bg-white shadow">
+                            <tr class="text-gray-800">
+                                <th class="py-2 w-1/12 px-2">Produto</th>
+                                <th class="py-2 w-1/12 px-2">Quant Atual</th>
+                                <th class="py-2 w-1/12 px-2">Quantidade</th>
+                                <th class="py-2 w-1/12 px-2">Tipo de Movimento</th>
+                                <th class="py-2 w-1/12 px-2">Loja</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            {% for produto in produtos %}
+                            <tr class="hover:bg-gray-100 text-gray-800">
+                                <td class="py-2 truncate w-1/12 px-2">{{ produto.nome }}</td>
+                                <td class="py-2  w-1/12 px-2">{{ produto.quantidade }}</td>
+                                <td class="py-2 px-2">
+                                    <input type="number" name="quantidades" min="0" step="0.001"
+                                        class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
                                     <input type="hidden" name="produto_ids" value="{{ produto.id }}">
-
                                 </td>
-                            <td id="tipo-movimentoPOP" class="py-2 px-2">
-                                <select name="movimentos" required
-                                    class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
-                                    <option value="Estoque_atual">Estoque Atual</option>
-                                    <option value="Transferencia">Transferência</option>
-                                </select>
-                            </td>
-                            <td class="py-2 px-2">
-                                <select id="lojaPOP" name="loja_destino_id" 
-                                    class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
-                                    <option value="">Selecione uma loja parceira</option>
-                                    {%for loja in lojas %}
+                                <td class="py-2 w-1/12 px-2">
+                                    <select name="movimentos" required
+                                        class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
+                                        <option value="Estoque_atual">Estoque Atual</option>
+                                        <option value="Transferencia">Transferência</option>
+                                    </select>
+                                </td>
+                                <td class="py-2 w-1/12 px-2">
+                                    <select id="lojaPOP" name="loja_destino_id"
+                                        class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-800">
+                                        <option value="">Selecione uma loja parceira</option>
+                                        {% for loja in lojas %}
                                             {% if loja.id != user.loja.id %}
                                                 <option value="{{ loja.id }}">{{ loja.nome }}</option>
-                                                
                                             {% endif %}
-                                    {% endfor %}
-                                    
-                                </select>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sticky-footer">
+                    <button type="submit" class=" px-4 py-2 rounded-lg">Confirmar</button>
+                </div>
+            </form>
         </div>
-
-        <!-- Botão de Confirmação -->
-            {% csrf_token %}
-            <div class="sticky-footer m-5" style=" padding-bottom: 10px;" >
-                <button type="submit"
-                
-                class="w-full bg-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
-                    Confirmar Movimentação
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const thElement = document.querySelector("#batchMovementModal th:nth-child(2)");
-    if (thElement) {
-        thElement.innerText = "Qtd Atual";
-    } else {
-        console.error("Elemento <th> não encontrado!");
-    }
-});
-
+        const thElement = document.querySelector("#batchMovementModal th:nth-child(2)");
+        if (thElement) {
+            thElement.innerText = "Qtd Atual";
+        } else {
+            console.error("Elemento <th> não encontrado!");
+        }
+    });
 
     function closeBatchMovementModal() {
         const modal = document.getElementById('batchMovementModal');
@@ -200,7 +216,6 @@
         const modal = document.getElementById('batchMovementModal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-      
     }
 
     function filterProducts() {
@@ -223,5 +238,4 @@
             modal.classList.remove('flex');
         }
     });
-
 </script>
