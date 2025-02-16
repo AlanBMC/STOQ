@@ -92,28 +92,26 @@ tbody {
         onkeyup="buscarProduto()">
 </div>
 
-<div class="overflow-x-auto max-h-96 overflow-y-auto 
- border-gray-300 rounded-lg  border-black rounded-lg bg-white main-tabela"
+<div class="max-h-96 overflow-y-auto border-gray-300 rounded-lg border-black rounded-lg bg-white main-tabela"
   style="background-color: transparent; border: none">
-    <table class="min-w-full bg-white shadow-md rounded-lg" style="background-color: #ffffff; 
+    <table class="w-full bg-white shadow-md rounded-lg" style="background-color: #ffffff; 
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
         <thead class="bg-gray-100 sticky top-0 border rounded-t-lg" style="box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
             <tr class="text-gray-700" style="background-color: #fffffff8;box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
-                <th class="py-3 px-6 text-left">ID</th>
-                <th class="py-3 px-6 text-left">Nome</th>
-                <th class="py-3 px-6 text-left">Quantidade</th>
+                <th class="py-3 px-6 text-left w-4/12">Nome</th>
+                <th class="py-3 px-6 text-left w-2/12">Quantidade</th>
             </tr>
         </thead>
         <tbody id="productTableBody" class="divide-y " style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
             {% for produto in produtos %}
-            <tr class="cursor-pointer hover:bg-gray-200 transition-all border divide-black"  style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);"
+            <tr class="cursor-pointer   hover:bg-gray-200 transition-all border divide-black"  style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);"
                 onclick="openEditModal('{{ produto.id }}', '{{ produto.nome }}', 
                 '{{ produto.quantidade }}','{{ produto.tipo_quantidade }}',
                  '{{ produto.validade }}','{{ produto.categoria }}',
-                 '{{ produto.estoque_minimo }}', '{{ produto.status }}')">
-                <td  class="py-2 px-6">{{ produto.id }}</td>
-                <td class="py-2 px-6">{{ produto.nome }}</td>
-                <td class="py-2 px-6">{{ produto.quantidade }}</td>
+                 '{{ produto.estoque_minimo }}', '{{ produto.status }}',
+                 '{{ produto.data_criacao }}','{{ produto.data_atualizacao }}', '{{ produto.alterado_por }}')">
+                <td class="py-2 px-6 truncate">{{ produto.nome }}</td>
+                <td class="py-2 px-6 truncate">{{ produto.quantidade }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -121,10 +119,10 @@ tbody {
 </div>
 
 <!-- Modal de Edição -->
-<div id="editProductModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50">
+<div id="editProductModal" class="fixed  inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50">
     <div id="modalOverlay" class="fixed inset-0"></div>
     <div class="bg-white rounded-lg shadow-lg p-4
-     max-w-md w-full relative" style="bottom: 50px;"> <!-- Reduzi o padding para p-4 -->
+     max-w-md w-full relative" style="bottom: 50px; margin-left: 10px; margin-right: 10px;"> <!-- Reduzi o padding para p-4 -->
         <button class="absolute top-2 right-2 text-gray-800 text-lg" 
         style="background:transparent; " onclick="closeEditModal()">&times;</button>
         
@@ -180,21 +178,35 @@ tbody {
                     <select id="editProductStatus" name="status" required
                         class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                         <option value="em_uso">Em Uso</option>
-                        <option value="estoque">Em Estoque</option>
+                        <option value="em_estoque">Em Estoque</option>
                     </select>
+                </div>
+                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Categoria:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <select id="editProductCategoria" name="Categoria" required
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Data Criacao:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <span id="datacriacao"></span>
+                    
+                </div>
+                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Ultima edição:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <span id="ultimaedit"></span>
+                    
+                </div><div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Editado por:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <span id="editadopor"></span>
+                    
                 </div>
             </div>
             
-            <!-- categoria -->
-            <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
-                <label class="block text-sm text-gray-700">Categoria:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
-                <select id="editProductCategoria" name="Categoria" required
-                    class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
-                    {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            
             
             <!-- Botão de atualizar -->
             <div class="flex justify-end">
@@ -207,8 +219,9 @@ tbody {
     </div>
 </div>
 <!-- Modal (inicialmente oculto) -->
-<div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" >
+<div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50"
+>
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative"  style="bottom: 50px;">
         <a id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</a>
         
         <h2 class="text-xl color-5 font-semibold mb-3 color-1">Criar Produto</h2>
@@ -369,11 +382,13 @@ function buscarProduto() {
         row.style.display = productName.includes(input) ? "" : "none"; // Mostra/Oculta a linha
     });
 }
-function openEditModal(id, nome, quantidade, tipo_quantidade, validade, categoria, estoquemin, status) {
+function openEditModal(id, nome, quantidade, tipo_quantidade, validade, categoria, estoquemin, status, datacriacao, dataatualizao, editadopor) {
     document.getElementById("editProductId").value = id;
     document.getElementById("editProductName").value = nome;
     document.getElementById("editProductQuantity").value = quantidade;
-    
+    document.getElementById("datacriacao").innerText = datacriacao
+    document.getElementById("ultimaedit").innerText = dataatualizao
+    document.getElementById("editadopor").innerText = editadopor 
     const tipoqueantidade = document.getElementById("editProductTipoQuantidade");
     document.getElementById("editProductValidade").value = validade;
     const categoriaField = document.getElementById("editProductCategoria");

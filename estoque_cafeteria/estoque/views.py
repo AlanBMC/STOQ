@@ -875,7 +875,6 @@ def importar_dados_json(request):
                     'quantidade': produto_data.get('quantidade'),
                     'tipo_quantidade': produto_data.get('tipo_quantidade'),
                     'validade': produto_data.get('validade'),
-                 
                     'categoria': categoria,
                     'estoque_minimo': produto_data.get('estoque_minimo'),
                     'loja': loja,
