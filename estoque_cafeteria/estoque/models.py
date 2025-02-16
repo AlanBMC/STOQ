@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import  SET_NULL
+from django.utils.timezone import now
 
 
 class Loja(models.Model):
@@ -51,7 +52,9 @@ class Produto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=SET_NULL, null=True, blank=True)
     estoque_minimo = models.FloatField(default=0)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
-    
+    alterado_por = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)  # Usuário que fez a última alteração
+    data_criacao = models.DateTimeField(default=now)  # Data de criação
+    data_atualizacao = models.DateTimeField(auto_now=True) 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

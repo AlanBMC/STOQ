@@ -122,35 +122,38 @@ tbody {
 
 <!-- Modal de Edição -->
 <div id="editProductModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50">
-    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative" style="    bottom: 60px;
-">
-        <button class="absolute top-2 right-3 text-gray-800 text-xl" style="background:transparent;"  onclick="closeEditModal()">&times;</button>
+    <div id="modalOverlay" class="fixed inset-0"></div>
+    <div class="bg-white rounded-lg shadow-lg p-4
+     max-w-md w-full relative" style="bottom: 50px;"> <!-- Reduzi o padding para p-4 -->
+        <button class="absolute top-2 right-2 text-gray-800 text-lg" 
+        style="background:transparent; " onclick="closeEditModal()">&times;</button>
         
-        <h2 class="text-2xl text-gray-800 font-semibold mb-4">Editar Produto</h2>
+        <h2 class="text-xl text-gray-800 font-semibold mb-3">Editar Produto</h2> <!-- Reduzi o tamanho da fonte para text-xl -->
 
         <form method="post" action="{% url 'editar_produto' %}">
             {% csrf_token %}
             <input type="hidden" id="editProductId" name="produto_id">
+            
             <!-- nome e quantidade -->
             <div class="flex space-x-4">
-                <div class="mb-4 w-1/2">
-                    <label class="block text-gray-700">Nome:</label>
+                <div class="mb-3 w-1/2"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Nome:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
                     <input type="text" required id="editProductName" name="nome"
-                        class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                 </div>
-                <div class="mb-4 w-1/3">
-                    <label class="block text-gray-700">Quantidade:</label>
+                <div class="mb-3 w-1/3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Quantidade:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
                     <input type="number" required id="editProductQuantity" step="0.001" min="1" name="quantidade"
-                        class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                 </div>
-                
             </div>
-        <!-- tipo quantidade e estoque minimo-->
+            
+            <!-- tipo quantidade e estoque minimo -->
             <div class="flex space-x-4">
-                <div class="mb-4 w-1/2">
-                    <label for="tipo_quantidade" class="block text-gray-700">Tipo de Quantidade:</label>
+                <div class="mb-3 w-1/2"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label for="tipo_quantidade" class="block text-sm text-gray-700">Tipo de Quantidade:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
                     <select id="editProductTipoQuantidade" name="tipo_quantidade" required
-                        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                         <option value="UN">Unidade</option>
                         <option value="L">Litro</option>
                         <option value="KG">Quilograma</option>
@@ -158,63 +161,64 @@ tbody {
                         <option value="PCT">Pacote</option>
                     </select>
                 </div>
-              
-                <div class="mb-4 w-1/2">
-                    <label class="block text-gray-700">Estoque Mínimo:</label>
-                    <input type="number" id="editProductEstoqueMin" required step="1" min="1"  name="estoque_min"
-                        class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                <div class="mb-3 w-1/2"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Estoque Mínimo:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <input type="number" id="produtoEstoqueMin" required step="1" min="1" name="estoque_min"
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                 </div>
             </div>
-            <!-- validade  e status -->
+            
+            <!-- validade e status -->
             <div class="flex space-x-4">
-            <div class="mb-4">
-                <label class="block text-gray-700">Validade:</label>
-                <input type="date" min="{{ today|date:'Y-m-d' }}" id="editProductValidade" name="validade"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Validade:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <input type="date" min="{{ today|date:'Y-m-d' }}" id="editProductValidade" name="validade"
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
+                </div>
+                <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                    <label class="block text-sm text-gray-700">Status:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
+                    <select id="editProductStatus" name="status" required
+                        class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
+                        <option value="em_uso">Em Uso</option>
+                        <option value="estoque">Em Estoque</option>
+                    </select>
+                </div>
             </div>
-        
-            <div class="mb-4">
-                <label class="block text-gray-700">Status:</label>
-                <select id="editProductStatus" name="status" required
-                    class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <option value="em_uso">Em Uso</option>
-                    <option value="estoque">Em Estoque</option>
-                </select>
-            </div>
-        </div>
-        <!-- categoria-->
-            <div class="mb-4">
-                <label class="block text-gray-700">Categoria:</label>
+            
+            <!-- categoria -->
+            <div class="mb-3"> <!-- Reduzi o margin-bottom para mb-3 -->
+                <label class="block text-sm text-gray-700">Categoria:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
                 <select id="editProductCategoria" name="Categoria" required
-                    class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
                     {% endfor %}
                 </select>
             </div>
-        
+            
+            <!-- Botão de atualizar -->
             <div class="flex justify-end">
                 <button type="submit"
-                    class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                    class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition text-sm"> <!-- Reduzi o padding para px-3 py-1 e o tamanho da fonte para text-sm -->
                     Atualizar
                 </button>
             </div>
         </form>
     </div>
 </div>
-
 <!-- Modal (inicialmente oculto) -->
 <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" style="bottom:50px;">
+    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" >
         <a id="closeModalBtn" class="absolute top-3 right-3 text-color-4 text-xl">&times;</a>
         
-        <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Criar Produto</h2>
+        <h2 class="text-xl color-5 font-semibold mb-3 color-1">Criar Produto</h2>
         
         <form method="post" action="{% url 'criar_produto'%}">
             {% csrf_token %}
             
             <div class="mb-4">
-                <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto</label>
+                <label for="nome" 
+                class="block text-color-4 text-sm p-1 font-semibold mb-2">Nome do Produto</label>
                 <input type="text" id="nome" name="nome" required
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
@@ -300,22 +304,20 @@ tbody {
 </div>
 
 
-
-
 <!-- Modal Categoria -->
 <div id="modalCategoria" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-auto">
+    <div class="bg-white p-6 rounded-lg w-auto" style="margin-bottom: 40px;">
         <h2 class="text-lg font-semibold mb-4">Adicionar Categoria</h2>
         <div class="w-full p-3 mb-2">
             <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2 ">
                 <select id="Categoria" name="Categoria" required
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                     {%for categoria in categorias %}
-                    <option value="{{categoria.id}}">{{categoria.nome}}</option>
+                    <option value="{{categoria.id}}">{{categoria.nome}} </option>
                     {% endfor %}
                 </select>
-        
+                
             </div>
         </div>
         <form id="formCategoria" action="{% url 'criar_categoria' %}" method="POST"> {% csrf_token %}
@@ -371,13 +373,31 @@ function openEditModal(id, nome, quantidade, tipo_quantidade, validade, categori
     document.getElementById("editProductId").value = id;
     document.getElementById("editProductName").value = nome;
     document.getElementById("editProductQuantity").value = quantidade;
-    document.getElementById("editProductTipoQuantidade").value = tipo_quantidade;
+    
+    const tipoqueantidade = document.getElementById("editProductTipoQuantidade");
     document.getElementById("editProductValidade").value = validade;
-    document.getElementById("editProductCategoria").value = categoria;
-    console.log(estoquemin)
-    document.getElementById("editProductEstoqueMin").value = estoquemin;
-    document.getElementById("editProductStatus").value = status;
-
+    const categoriaField = document.getElementById("editProductCategoria");
+    console.log(validade)
+    document.getElementById("produtoEstoqueMin").value = estoquemin;
+    const statusfield = document.getElementById("editProductStatus");
+    for (let i = 0; i < tipoqueantidade.options.length; i++) {
+            if (tipoqueantidade.options[i].value === tipo_quantidade) {
+                tipoqueantidade.options[i].selected = true;
+                break;
+            }
+        }
+    for (let i = 0; i < statusfield.options.length; i++) {
+            if (statusfield.options[i].value === status) {
+                statusfield.options[i].selected = true;
+                break;
+            }
+        }
+        for (let i = 0; i < categoriaField.options.length; i++) {
+            if (categoriaField.options[i].value === categoria) {
+                categoriaField.options[i].selected = true;
+                break;
+            }
+        }
     document.getElementById("editProductModal").classList.remove("hidden");
     document.getElementById("editProductModal").classList.add("flex");
 }
@@ -387,7 +407,21 @@ function closeEditModal() {
     document.getElementById("editProductModal").classList.remove("flex");
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("editProductModal");
+    const overlay = document.getElementById("modalOverlay");
 
+    // Função para fechar o modal
+    function closeEditModal() {
+        modal.classList.add("hidden");
+    }
+
+    // Fechar o modal ao clicar no overlay
+    overlay.addEventListener("click", closeEditModal);
+
+    // Fechar o modal ao clicar no botão de fechar
+    document.querySelector("#editProductModal button").addEventListener("click", closeEditModal);
+});
 </script>
 
 <script>

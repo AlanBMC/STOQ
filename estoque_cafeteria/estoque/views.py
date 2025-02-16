@@ -548,6 +548,7 @@ def editar_produto(request):
         produto.quantidade = quantidade
         produto.tipo_quantidade = tipo_quantidade
         produto.status = status
+        produto.alterado_por = request.user
         if validade:
             produto.validade = validade
         if estoquemin:
