@@ -29,9 +29,9 @@ urlpatterns = [
 
     #ROTA CATEGORIA
     path('categorias/', views.listar_categorias, name='listar_categorias'),
-    path('categorias/nova/', views.criar_categoria, name='criar_categoria'),
+    path('criar_categoria/', views.criar_categoria, name='criar_categoria'),
     path('categorias/editar/<int:pk>/', views.editar_categoria, name='editar_categoria'),
-    path('categorias/excluir/<int:pk>/', views.excluir_categoria, name='excluir_categoria'),
+    path('excluir_categoria/', views.excluir_categoria, name='excluir_categoria'),
 
 
 

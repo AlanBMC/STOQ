@@ -37,8 +37,8 @@ class CategoriaAdmin(admin.ModelAdmin):
 # Personalização para o modelo Produto
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'quantidade', 'tipo_quantidade', 'validade', 'estoque_minimo', 'status', 'loja')
-    search_fields = ('nome', 'codigo_de_barras')
+    list_display = ('nome', 'quantidade', 'tipo_quantidade', 'validade', 'estoque_minimo', 'status', 'loja', 'alterado_por', 'categoria')
+    search_fields = ('nome', 'quantidade')
     list_filter = ('tipo_quantidade', 'status', 'loja', 'categoria')
     list_editable = ('quantidade', 'estoque_minimo', 'status')
 

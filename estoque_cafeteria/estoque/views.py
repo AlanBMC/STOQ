@@ -401,24 +401,18 @@ def editar_categoria(request, pk):
 
 
 @login_required(login_url='/')
-def excluir_categoria(request, pk):
-    """
-    Exclui uma categoria específica.
-    Argumentos:
-    - request: Objeto HttpRequest.
-    - pk: ID da categoria a ser excluída.
-    Retorno:
-    - Redireciona para 'produtoview'.
-    """
-
-    categoria = get_object_or_404(Categoria, pk=pk, loja=request.user.loja)
-
+def excluir_categoria(request):
     if request.method == 'POST':
-        categoria.delete()
+        categoria_id = request.POST.get("categoriaId")       
+
+        categoria = get_object_or_404(Categoria, id=categoria_id)
+        print('pq ',categoria_id)
+        #categoria.delete()
         messages.success(request, 'Categoria excluída com sucesso.')
         return redirect('produtoview')
 
     return redirect('produtoview')
+
 
 
 @login_required(login_url='/')
@@ -823,16 +817,35 @@ def retornadados(request):
     """
     Retorna os dados do banco de dados em formato JSON.
     """
-    lojas = Loja.objects.all().values()
-    users_loja = UserLoja.objects.select_related('user', 'loja').values('user__username', 'loja__nome')
-    categorias = Categoria.objects.select_related('loja').values('nome', 'loja__nome')
-    produtos = Produto.objects.select_related( 'categoria', 'loja').values(
-        'nome', 'quantidade', 'tipo_quantidade', 'validade'
-        , 'categoria__nome', 'estoque_minimo', 'loja__nome', 
+    # Consulta todas as lojas
+    lojas = Loja.objects.all().values('id', 'nome', 'logo')
+
+    # Consulta os usuários e suas lojas associadas
+    users_loja = UserLoja.objects.select_related('user', 'loja').values(
+        'user__username', 'user__id', 'loja__nome', 'loja__id'
     )
+
+    # Consulta as categorias e suas lojas associadas
+    categorias = Categoria.objects.select_related('loja').values(
+        'id', 'nome', 'loja__nome', 'loja__id'
+    )
+
+    # Consulta os produtos com todos os campos relevantes
+    produtos = Produto.objects.select_related('categoria', 'loja').values(
+        'id', 'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras',
+        'validade', 'categoria__nome', 'categoria__id', 'estoque_minimo',
+        'loja__nome', 'loja__id', 'alterado_por__username', 'alterado_por__id',
+        'data_criacao', 'data_atualizacao', 'status'
+    )
+
+    # Consulta os movimentos de estoque com todos os campos relevantes
     movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
-        'produto__nome', 'tipo_movimento', 'quantidade', 'data_movimento', 'responsavel__username', 'loja__nome'
+        'id', 'produto__nome', 'produto__id', 'tipo_movimento', 'quantidade',
+        'data_movimento', 'responsavel__username', 'responsavel__id',
+        'loja__nome', 'loja__id'
     )
+
+    # Organiza os dados em um dicionário
     data = {
         'lojas': list(lojas),
         'users_loja': list(users_loja),
@@ -840,6 +853,8 @@ def retornadados(request):
         'produtos': list(produtos),
         'movimentos_estoque': list(movimentos),
     }
+
+    # Retorna os dados em formato JSON
     return JsonResponse(data, safe=False)
 
 @csrf_exempt  # Desabilita a verificação CSRF para facilitar testes com Postman

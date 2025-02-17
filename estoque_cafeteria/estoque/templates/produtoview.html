@@ -320,34 +320,64 @@ tbody {
 </div>
 
 
-<!-- Modal Categoria -->
 <div id="modalCategoria" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-6 rounded-lg w-auto" style="margin-bottom: 40px;">
         <h2 class="text-lg font-semibold mb-4">Adicionar Categoria</h2>
         <div class="w-full p-3 mb-2">
             <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
-            <div class="flex items-center space-x-2 ">
-                <select id="Categoria" name="Categoria" required
+            <div class="flex items-center space-x-2">
+                <select id="CategoriasExcluir" name="Categoria" required
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
-                    {%for categoria in categorias %}
-                    <option value="{{categoria.id}}">{{categoria.nome}} </option>
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}">{{ categoria.nome }} {{ categoria.id }}</option>
                     {% endfor %}
                 </select>
-                
+                <!-- Botão de excluir -->
+                <button id="excluirCategoria" type="button"
+                    class="p-3  bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    Excluir
+                </button>
             </div>
         </div>
-        <form id="formCategoria" action="{% url 'criar_categoria' %}" method="POST"> {% csrf_token %}
+        
+        <!-- Formulário para adicionar categoria -->
+        <form id="formCategoria" action="{% url 'criar_categoria' %}" method="POST"> 
+            {% csrf_token %}
             <div class="mb-4">
                 <label class="block text-sm font-medium">Nome da Categoria</label>
                 <input type="text" name="nomeCategoria" required
                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <button type="submit" class="w-full  py-2 rounded-lg ">
+            <button type="submit"
+                class="w-full py-2 rounded-lg  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Salvar
             </button>
         </form>
+
+        <!-- Formulário para excluir categoria -->
+        <form id="formExcluirCategoria" action="{% url 'excluir_categoria' %}" method="POST" class="hidden">
+            {% csrf_token %}
+            <input type="hidden" name="categoriaId" id="categoriaId">
+        </form>
     </div>
 </div>
+
+<script>
+document.getElementById("excluirCategoria").addEventListener("click", function() {
+    let select = document.getElementById("CategoriasExcluir");
+    let categoriaId = select.options[select.selectedIndex].value; 
+    console.log(categoriaId)
+    if (categoriaId) {
+        if (confirm("Tem certeza que deseja excluir esta categoria?" + categoriaId)) {
+            document.getElementById("categoriaId").value = categoriaId;
+            document.getElementById("formExcluirCategoria").submit();
+        }
+    } else {
+        alert("Selecione uma categoria para excluir.");
+    }
+});
+</script>
+
 
 
 
@@ -374,6 +404,10 @@ tbody {
     </div>
 </div>
 {%endif%}
+
+
+
+
 
 <script>
 function buscarProduto() {
