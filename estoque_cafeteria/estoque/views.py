@@ -864,28 +864,38 @@ def importar_dados_json(request):
     """
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
+    
     try:
         data = json.loads(request.body)
-        # Criando Lojas
+
+        # Criando Lojas (Agora com 'endereco' e 'telefone')
         for loja_data in data.get('lojas', []):
-            loja, _ = Loja.objects.get_or_create(id=loja_data.get('id'), defaults={'nome': loja_data.get('nome')})
+            loja, _ = Loja.objects.get_or_create(
+                id=loja_data.get('id'), 
+                defaults={
+                    'nome': loja_data.get('nome'),
+                    'endereco': loja_data.get('endereco'),
+                    'telefone': loja_data.get('telefone')
+                }
+            )
+
         # Criando Usuários e Associando às Lojas
         for user_loja in data.get('users_loja', []):
             user, _ = User.objects.get_or_create(username=user_loja.get('user__username'))
             loja = Loja.objects.get(nome=user_loja.get('loja__nome'))
             UserLoja.objects.get_or_create(user=user, loja=loja)
-   
+
         # Criando Categorias
         for categoria_data in data.get('categorias', []):
             loja = Loja.objects.get(nome=categoria_data.get('loja__nome'))
             Categoria.objects.get_or_create(nome=categoria_data.get('nome'), loja=loja)
-        # Criando Produtos
+
+        # Criando Produtos (Agora com 'preco' e 'descricao')
         for produto_data in data.get('produtos', []):
             loja = Loja.objects.get(nome=produto_data.get('loja__nome'))
             categoria = Categoria.objects.filter(nome=produto_data.get('categoria__nome')).first()
             Produto.objects.get_or_create(
                 nome=produto_data.get('nome'),
-              
                 defaults={
                     'quantidade': produto_data.get('quantidade'),
                     'tipo_quantidade': produto_data.get('tipo_quantidade'),
@@ -893,10 +903,13 @@ def importar_dados_json(request):
                     'categoria': categoria,
                     'estoque_minimo': produto_data.get('estoque_minimo'),
                     'loja': loja,
-                    'status': produto_data.get('status')
+                    'status': produto_data.get('status'),
+                    'preco': produto_data.get('preco'),
+                    'descricao': produto_data.get('descricao')
                 }
             )
-        # Criando Movimentos de Estoque
+
+        # Criando Movimentos de Estoque (Agora com 'data_movimento')
         for movimento_data in data.get('movimentos_estoque', []):
             produto = Produto.objects.get(nome=movimento_data.get('produto__nome'))
             loja = Loja.objects.get(nome=movimento_data.get('loja__nome'))
@@ -906,9 +919,12 @@ def importar_dados_json(request):
                 tipo_movimento=movimento_data.get('tipo_movimento'),
                 quantidade=movimento_data.get('quantidade'),
                 responsavel=responsavel,
-                loja=loja
+                loja=loja,
+                data_movimento=movimento_data.get('data_movimento')
             )
+
         return JsonResponse({'success': 'Dados importados com sucesso'}, status=201)
+
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
