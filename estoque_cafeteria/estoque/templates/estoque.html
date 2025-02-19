@@ -4,7 +4,11 @@
 
 
 
-
+<style>
+i{
+    color: rgb(48, 48, 48);
+}
+</style>
     <div class="mt-10 mb-3 px-4 sm:px-8 lg:px-16 w-full flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
  
    
@@ -30,7 +34,9 @@
 
 
 
-      </div>
+    </div>
+    {% include 'componentes/movimento_lote.html' %}
+
       <script>
 document.addEventListener("DOMContentLoaded", function () {
     const inputBusca = document.querySelector("input[type='text']");
@@ -62,6 +68,5 @@ document.addEventListener("DOMContentLoaded", function () {
    
       </script>
 {% include 'componentes/tabela_produto.html' %}
-{% include 'componentes/movimento_lote.html' %}
 
 {% endblock %}

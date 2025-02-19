@@ -7,8 +7,8 @@
         }
 </style>
 
-<div class="p-6 overflow-x-auto table-wrapper" style="border-bottom-width: 0px;">
-        <table class="w-full min-w-[400px] md:min-w-full text-left table-auto" style="    margin-bottom: 80px;">
+<div class="p-6 overflow-x-auto table-wrapper" style="overflow: hidden; border-bottom-width: 0px;">
+        <table class="w-full min-w-[400px] md:min-w-full text-left table-auto" style="overflow: hidden;    margin-bottom: 80px;">
             <thead class="shadow-lg text-color-3 sticky -top-6 bg-white  z-10"> <!-- Cabeçalho fixo -->
                 <tr class="hidden md:table-row shadow-lg border-color-2"
                     style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);">
@@ -453,22 +453,4 @@
 
 
     
-</script>
-<script>
-        const driver = window.driver.js.driver;
-
-const driverObj = driver({
-    showProgress: true,
-    steps: [
-
-        {element: "#input-busca-produto",popover: {title: "Filtro de busca",description: " Digite o nome do produto ou o codigo de barras para encontra-lo"}},
-        {element: "#drop-categoria-busca",popover: {title: "Filtro",description: "Filtre por categoria para encontrar o produto desejado"}},
-        {element: "#botao-movimento-estoque-lote",popover: {title: "Movimento de estoque em lote",description: "Movimenta o estoque de varios produtos de uma vez, ou uma unica vez"}},
-        {element: "#botao-edita-produto",popover: {title: "Editar produto",description: "Atenção isso apenas edita e para uma experiencia melhor caso queira dar entrada ou saida em produtos utilize o botão de movimento ", style:{backgroundColor: "red", color: "white"}}},
-        {element: "#botao-excluir-produto",popover: {title: "Excluir Produto ",description: "Voce exclui o produto selecionado"}},
-
-        
-    ]
-});
-driverObj.drive();
 </script>

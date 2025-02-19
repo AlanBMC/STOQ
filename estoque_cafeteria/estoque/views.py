@@ -407,7 +407,7 @@ def excluir_categoria(request):
 
         categoria = get_object_or_404(Categoria, id=categoria_id)
         print('pq ',categoria_id)
-        #categoria.delete()
+        categoria.delete()
         messages.success(request, 'Categoria excluída com sucesso.')
         return redirect('produtoview')
 
@@ -1069,4 +1069,4 @@ def atualizaLoja(request):
                 loja.save()
                 messages.success(request, 'Nome atualizado')
                 return redirect('configuracaoview')
-        
+    

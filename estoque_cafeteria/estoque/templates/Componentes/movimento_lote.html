@@ -1,7 +1,7 @@
 <style>
     #batchMovementModal .modal-content {
-        max-width: 700px; /* Reduz a largura máxima */
-        max-height: calc(70vh - 20px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
+        max-width: 90vw; /* Reduz a largura máxima */
+        max-height: calc(70vh - 10px); /* Ajusta a altura máxima para não ocupar toda a tela, considerando a margem */
         margin: 10px 0; /* Adiciona margem de 10px no topo e no fundo */
         display: flex;
         flex-direction: column;
@@ -10,17 +10,16 @@
         overflow: hidden; /* Evitar rolagem no modal principal */
         position: relative; /* Necessário para posicionar o botão de fechar */
     }
-    #batchMovementModal .modal-content {
-        z-index: 1001 !important; /* Certifica que o conteúdo do modal também fica acima */
-    }
-    #batchMovementModal {
-        z-index: 1000 !important; /* Mantém o modal acima de tudo */
-    }
+#batchMovementModal input,
+#batchMovementModal select {
+    width: 100%; /* Garante que os campos de entrada não forcem largura extra */
+}
+
 
     /* Estilos para tablet */
     @media (max-width: 768px) {
         #batchMovementModal .modal-content {
-            max-width: 90%;
+            max-width: 60%;
             max-height: calc(80vh - 20px);
         }
 
@@ -104,11 +103,9 @@
     }
 
     .table-wrapper table {
-        width: 100%;
-        min-width: 400px;
-        text-align: left;
-        margin-bottom: 80px;
-    }
+    width: 100%;
+    min-width: unset; /* Remove a largura mínima fixa */
+}
 
     .table-wrapper thead {
         position: sticky;
@@ -142,11 +139,11 @@
 ">
         <a id="closeBatchModalBtn" onclick="closeBatchMovementModal()" class="absolute top-3 right-3 text-gray-800 text-xl" style="cursor: pointer;">&times;</a>
         
-        <div class="modal-body" style="overflow: hidden;" >
+        <div class="modal-body" style="overflow: hidden; width: 450px;" >
             <h1 style="color: black;" class="m-2 ml-2 justify-center">Movimento de estoque </h1>
             <form method="post" action="{% url 'cria_movimento_de_estoque_em_lote' %}" class="mt-4" style="max-width: 768px; margin: 0 auto;">
                 {% csrf_token %}
-                <div class="table-wrapper overflow-x-hidden m-3" style="border-bottom-width: 0px;">
+                <div class="table-wrapper overflow-x-hidden m-3" style="border-bottom-width: 0px;height: 350px;">
                     <table class="w-full text-left table-auto">
                         <thead class="sticky top-0 bg-white shadow">
                             <tr class="text-gray-800">

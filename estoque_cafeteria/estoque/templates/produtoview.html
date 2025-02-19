@@ -62,7 +62,10 @@ tbody {
 }
 
 
-
+    
+i{
+    color: rgb(48, 48, 48);
+}
 </style>
 
 
@@ -75,7 +78,7 @@ tbody {
     </button>
    
     <button onclick="abrirModalCategoria()" class="bg-color-1 text-color-3 m-3 shadow-md hover:bg-opacity-90 transition-all">
-        <i class="fas fa-plus mr-2"></i> Criar Categoria
+        <i class="fas fa-plus mr-2 "></i> Categorias
     </button>
 {%if is_proprietario %}
 <button onclick="AbrirModalLoja()"
@@ -104,7 +107,7 @@ tbody {
         </thead>
         <tbody id="productTableBody" class="divide-y " style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
             {% for produto in produtos %}
-            <tr class="cursor-pointer   hover:bg-gray-200 transition-all border divide-black"  style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);"
+            <tr class="cursor-pointer    hover:bg-gray-200 transition-all border divide-black"  style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);"
                 onclick="openEditModal('{{ produto.id }}', '{{ produto.nome }}', 
                 '{{ produto.quantidade }}','{{ produto.tipo_quantidade }}',
                  '{{ produto.validade }}','{{ produto.categoria }}',
@@ -123,8 +126,9 @@ tbody {
     <div id="modalOverlay" class="fixed inset-0"></div>
     <div class="bg-white rounded-lg shadow-lg p-4
      max-w-md w-full relative" style="bottom: 50px; margin-left: 10px; margin-right: 10px;"> <!-- Reduzi o padding para p-4 -->
-        <button class="absolute top-2 right-2 text-gray-800 text-lg" 
-        style="background:transparent; " onclick="closeEditModal()">&times;</button>
+        
+     <button class="absolute top-2 right-2  text-lg" 
+          onclick="closeEditModal()">&times;</button>
         
         <h2 class="text-xl text-gray-800 font-semibold mb-3">Editar Produto</h2> <!-- Reduzi o tamanho da fonte para text-xl -->
 
@@ -214,7 +218,7 @@ tbody {
             <!-- Botão de atualizar -->
             <div class="flex justify-end">
                 <button type="submit"
-                    class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition text-sm"> <!-- Reduzi o padding para px-3 py-1 e o tamanho da fonte para text-sm -->
+                    class=" px-3 py-1  transition text-sm"> <!-- Reduzi o padding para px-3 py-1 e o tamanho da fonte para text-sm -->
                     Atualizar
                 </button>
             </div>
@@ -591,17 +595,5 @@ window.onclick = function(event) {
     }
 }
 </script>
-<script>
-       const driver = window.driver.js.driver;
 
-    const driverObj = driver({
-        showProgress: true,
-        steps: [
-        {element: "#notificationBtn",popover: {title: "Notificação",description: "Aqui você pode ver as notificações do sistema"}},
-        {element: "#botaosair",popover: {title: "Sair",description: "Aqui você pode sair do sistema"}},  
-        ]
-        
-    });
-driverObj.drive();
-</script>
 {% endblock %}
