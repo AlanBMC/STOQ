@@ -168,7 +168,7 @@ i{
                 </div>
                 <div class="mb-3 w-1/2"> <!-- Reduzi o margin-bottom para mb-3 -->
                     <label class="block text-sm text-gray-700">Estoque Mínimo:</label> <!-- Reduzi o tamanho da fonte para text-sm -->
-                    <input type="number" id="produtoEstoqueMin" required step="1" min="1" name="estoque_min"
+                    <input type="number" id="produtoEstoqueMin" required step="any" min="1" name="estoque_min"
                         class="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm"> <!-- Reduzi o padding para p-1 e o tamanho da fonte para text-sm -->
                 </div>
             </div>
@@ -221,7 +221,7 @@ i{
             <!-- Botão de atualizar -->
             <div class="flex justify-end gap-10 mt-6">
                 <div>
-                    <button  type="button" id="botao-excluir-produto" class=" border-none text-red-500 p-3"
+                    <button  type="button" id="botao-excluir-produto" class="botao-excluir border-none text-red-500 p-3"
                     onclick="event.stopPropagation();  confirmarExclusao()">
                     <i class="fas fa-trash"></i>
                     </button>
@@ -238,6 +238,12 @@ i{
         
     </div>
 </div>
+<style>
+.botao-excluir:hover{
+    background-color: #ffffff;
+
+}
+</style>
 <!-- Modal (inicialmente oculto) -->
 <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50"
 >
@@ -253,7 +259,7 @@ i{
                 <label for="nome" 
                 class="block text-color-4 text-sm p-1 font-semibold mb-2">Nome do Produto</label>
                 <input type="text" id="nome" name="nome" required
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                    class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
             </div>
 
 
@@ -262,14 +268,14 @@ i{
                 <div class="w-1/2">
                     <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade</label>
                     <input type="number" id="quantidade" name="quantidade" required step="1" min="1"
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                        class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
                 
                 <!-- Campo de Tipo de Quantidade -->
                 <div class="w-1/2">
                     <label for="tipo_quantidade" class="block text-color-4 text-sm font-semibold mb-2">Tipo de Quantidade</label>
                     <select id="tipo_quantidade" name="tipo_quantidade" required
-                            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                            class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
 
                         <option value="UN">Unidade</option>
                         <option value="L">Litro</option>
@@ -287,12 +293,12 @@ i{
                 <div class="w-1/2" id="validadepop">
                     <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
                     <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validade" name="validade" required
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                        class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
                 <div class="w-1/2" id="estoqueMin">
                     <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Quantidade min em estoque</label>
                     <input type="number" id="estoque_min" name="estoque_min" required  step="0.001" min="1"
-                        class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                        class="w-full p-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
     
             </div>
@@ -305,7 +311,7 @@ i{
                     <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
                     <div class="flex items-center space-x-2">
                         <select id="Categoria" name="Categoria" required
-                                class="w-full p-3  border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
+                                class="w-full p-1  border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                             {%for categoria in categorias %}
                             <option value="{{categoria.id}}">{{categoria.nome}}</option>
                             {% endfor %}
@@ -318,7 +324,7 @@ i{
                 <div class="w-1/2">
                     <label for="status" class="block text-color-4 text-sm font-semibold mb-2">Status</label>
                     <div class="flex items-center space-x-2">
-                        <select name="status" id="status">
+                        <select name="status" class="p-1" id="status">
                             <option value="em_estoque"> Em estoque</option>
                             <option value="em_uso">A venda </option>
                         </select>
@@ -326,7 +332,7 @@ i{
                 </div>
             </div>
             <button type="submit"
-                class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
+                class="w-full bg-color-1 text-color-3 p-1 rounded-lg hover:bg-opacity-90 transition-all">
                 <i class="fas fa-plus-circle mr-2"></i> Adicionar Produto
             </button>
         </form>
@@ -336,11 +342,7 @@ i{
     </div>
 </div>
 
-<style>
-    .botao-excluir:hover{
-        background-color: rgba(209, 11, 11, 0.459);
-    }
-</style>
+
 
 <div id="modalCategoria" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-6 rounded-lg w-auto" style="margin-bottom: 40px;">

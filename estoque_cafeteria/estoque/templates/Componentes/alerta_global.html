@@ -20,7 +20,7 @@
     setTimeout(() => {
       const alert = document.getElementById('alert');
       if (alert) {
-        alert.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        alert.classList.add( 'duration-500');
         setTimeout(() => alert.remove(), 500);  // Remove o elemento após a transição
       }
     }, 3000);
@@ -28,7 +28,7 @@
     // Função para fechar o alerta manualmente
     document.getElementById('close-btn').addEventListener('click', () => {
       const alert = document.getElementById('alert');
-      alert.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+      alert.classList.add( 'duration-500');
       setTimeout(() => alert.remove(), 500);
     });
   </script>

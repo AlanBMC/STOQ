@@ -137,6 +137,8 @@ def produtoview(request):
     categorias =  listar_categorias(request)
     loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
+    print(lojas)
+    
     lojasDoUser = [user.loja for user in lojas]
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
     loja_logo = request.user.loja.logo

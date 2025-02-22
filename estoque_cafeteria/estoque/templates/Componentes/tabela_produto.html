@@ -106,12 +106,13 @@
 </div>
 
 <style>
-    .botao-excluir:hover{
-        background-color: rgba(209, 11, 11, 0.459);
-    }
+   .botao-excluir:hover{
+    background-color: #ffffff;
+
+}
     .botao-excluir{
         border-radius: 10px;
-        background-color: rgba(255, 255, 255, 0.699);
+        background-color: rgba(255, 253, 253, 0.438);
         box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.158);
     }
 </style>
@@ -177,7 +178,7 @@
                
                 <!-- Categoria -->
                 <div class="w-full">
-                    <label for="Categoria" class="block text-color-4 text-sm  font-semibold mb-2">Categoria</label>
+                    <label for="Categoria" class="block text-color-4 text-xs  font-semibold mb-2">Categoria</label>
                     <div class="flex items-center space-x-2 mb-5">
                         <select id="Categoria" name="Categoria" required
                                 class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
@@ -199,100 +200,103 @@
 </div>
 
 
-<div id="ModalProdutoConsulta" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 hidden z-50">
-    <div class="max-w-lg mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" style="
-    margin-right: 10px;
-    margin-left: 10px;
-">
+<div id="ModalProdutoConsulta" class="fixed inset-0 overflow-y-auto flex justify-center items-center bg-black bg-opacity-50 hidden z-50">
+    <div class="max-w-lg w-full mx-auto bg-color-3 rounded-lg shadow-lg p-6 relative" style="
+        margin-right: 10px;
+        margin-left: 10px;
+        max-height: 90vh; /* Define a altura máxima do modal */
+        overflow-y: auto; /* Adiciona scroll vertical se o conteúdo for muito grande */
+        bottom: 30px;
+    ">
         <a id="closeModalBtnViewProdut" class="absolute top-3 right-3 text-color-4 text-xl" >&times;</a>
         
         <h2 class="text-2xl color-5 font-semibold mb-4 color-1">Visualizar Produto:</h2>
         <form method="post" action="">
             {% csrf_token %}
-            <div class="flex space-x-4 mt-6">
+            <div class="flex space-x-4 mt-4">
 
                 <div class="w-1/2">
-                    <span class="block text-color-4 text-sm font-semibold mb-2">Nome do Produto:</span>
-                    <span id="nomeProdutoview" ></span>
+                    <span class="block text-color-4 text-xs font-semibold mb-2">Nome do Produto:</span>
+                    <span id="nomeProdutoview" class="text-xs"></span>
                 </div>
                 <div class="w-1/2">
-                    <label  class="block text-color-4 text-sm font-semibold mb-2">Quantidade Atual:</label>
-                    <span id="quantidadeProdutoview"></span> - <span id="tipo_quantidadeview"></span>
+                    <label  class="block text-color-4 text-xs font-semibold mb-2">Quantidade Atual:</label>
+                    <span id="quantidadeProdutoview" class="text-xs"></span> - <span class="text-xs" id="tipo_quantidadeview"></span>
                 </div>
                 <div class="w-1/2">
-                    <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Ultimo Mov.:</label>
-                    <span id="ultimoMovimentoData"></span>
+                    <label for="nome" class="block text-color-4 text-xs font-semibold mb-2">Ultimo Mov.:</label>
+                    <span id="ultimoMovimentoData" class="text-xs"></span>
                 </div>
             </div>
 
-        <div class="flex space-x-4 mt-6">
+        <div class="flex space-x-4 mt-4">
 
 
                 <div class="w-1/2">
-                    <label for="movresponsavelview" class="block text-color-4 text-sm font-semibold mb-2">Resp. pelo movimento:</label>
-                    <span id="movresponsavelview"></span>
+                    <label for="movresponsavelview" class="block text-color-4 text-xs font-semibold mb-2">Resp. pelo movimento:</label>
+                    <span id="movresponsavelview" class="text-xs"></span>
                 </div>
                 <div class="w-1/2">
-                    <label for="quantidadeMovView" class="block text-color-4 text-sm font-semibold mb-2">Quantidade Movimentada:</label>
+                    <label for="quantidadeMovView" class="block text-color-4 text-xs font-semibold mb-2">Quantidade Movimentada:</label>
                     <div class="flex items-center space-x-2">
-                        <span id="quantidademovview"></span>
+                        <span id="quantidademovview" class="text-xs"></span>
                     </div>
                 </div>
                 <div class="w-1/2">
-                    <label for="tipomovview" class="block text-color-4 text-sm font-semibold mb-2">Tipo Movimento:</label>
+                    <label for="tipomovview" class="block text-color-4 text-xs font-semibold mb-2">Tipo Movimento:</label>
                     <div class="flex items-center space-x-2">
-                        <span id="tipomovview"></span>
+                        <span id="tipomovview" class="text-xs"></span>
                     </div>
                 </div>
         </div>
 
-        <div class="flex space-x-4 mt-6">
+        <div class="flex space-x-4 mt-4">
             <div class="w-1/2">
-                <label for="quantidadeview" class="block text-color-4 text-sm font-semibold mb-2">Quant. min. em estoque:</label>
-                <span id="estoqueMinview"></span>
+                <label for="quantidadeview" class="block text-color-4 text-xs font-semibold mb-2">Quant. min. em estoque:</label>
+                <span id="estoqueMinview" class="text-xs"></span>
             </div>
             
             <div class="w-1/2">
-                <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade:</label>
-                    <span id="validadeEditview" class="data-format"></span>
+                <label for="Validade" class="block text-color-4 text-xs font-semibold mb-2">Validade:</label>
+                    <span id="validadeEditview" class="text-xs data-format"></span>
             </div>
             <div class="w-1/2">
-                <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria:</label>
+                <label for="Categoria" class="block text-color-4 text-xs font-semibold mb-2">Categoria:</label>
                 <div class="flex items-center space-x-2">
-                    <span id="categoriaview"></span>
+                    <span id="categoriaview" class="text-sm"></span>
                 </div>
             </div>
         </div>
-        <div class="flex space-x-4 mt-6">
+        <div class="flex space-x-4 mt-4">
             <div class="w-1/2">
-                <span class="block text-color-4 text-sm font-semibold mb-2">Ultima edição:</span>
-                <span id="ultimaedit"></span>
+                <span class="block text-color-4 text-xs font-semibold mb-2">Ultima edição:</span>
+                <span id="ultimaedit" class="text-sm"></span>
             </div>
             <div class="w-1/2">
-                <span class="block text-color-4 text-sm font-semibold mb-2">Criado em:</span>
-                <span id="datacriacao"></span>
+                <span class="block text-color-4 text-xs font-semibold mb-2">Criado em:</span>
+                <span id="datacriacao" class="text-sm"></span>
             </div>
             <div class="w-1/2">
-                <span class="block text-color-4 text-sm font-semibold mb-2">Editado Por:</span>
-                <span id="editadopor"></span>
+                <span class="block text-color-4 text-xs font-semibold mb-2">Editado Por:</span>
+                <span id="editadopor" class="text-sm"></span>
             </div>
         </div>
-        <div  class="flex space-x-4 mt-6 items-center">
+        <div  class="flex space-x-4 mt-4 items-center">
 
             <div class="w-1/2">
-                <span class="block text-color-4 text-sm font-semibold mb-2">Total Transferências</span>
+                <span class="block text-color-4 text-xs font-semibold mb-2">Total Transferências</span>
                 <span id="totaltransferencias"
-                        class="bg-green-100 text-green-800 text-xl font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-green-900 dark:text-green-300"></span><br>
+                        class="bg-green-100 text-green-800 text-sm font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-green-900 dark:text-green-300"></span><br>
                     </div>
         <div class="w-1/2 justify-center ">
-            <label for="quantidade" class="block text-color-4 text-sm font-semibold mb-2">Total Entradas</label>
-            <span id="totalentradas" class="bg-yellow-100 text-yellow-800 text-xl font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300"></span>
+            <label for="quantidade" class="block text-color-4 text-xs font-semibold mb-2">Total Entradas</label>
+            <span id="totalentradas" class="bg-yellow-100 text-yellow-800 text-sm font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-yellow-900 dark:text-yellow-300"></span>
             
         </div>
         <div class="w-1/2">
-            <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Total Saidas</label>
+            <label for="nome" class="block text-color-4 text-xs font-semibold mb-2">Total Saidas</label>
             <span id="totalsaidas"
-            class="bg-indigo-100 text-indigo-800 text-xl font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300"></span>
+            class="bg-indigo-100 text-indigo-800 text-sm font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300"></span>
         </div>
         </div>
         
