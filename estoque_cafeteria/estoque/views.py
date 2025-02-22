@@ -10,6 +10,7 @@ from django.contrib.auth import login as login_django
 from datetime import date, timedelta
 from django.http import HttpResponseNotAllowed, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 
 
@@ -487,7 +488,8 @@ def criar_produto(request):
             categoria_id=categoria_id,
             estoque_minimo=estoque_min,
             loja=request.user.loja,
-            status= status
+            status= status,
+            data_criacao  = timezone.now()
         )
         messages.success(request, 'Produto criado com sucesso.')
         return redirect('produtoview')
@@ -519,17 +521,23 @@ def editar_produto(request):
         validade = request.POST.get('validade')
         categoria_id = request.POST.get('Categoria')
         tipo_quantidade = request.POST.get('tipo_quantidade')
-        if tipo_quantidade:
+
+        if not tipo_quantidade:
             tipo_quantidade = produto.tipo_quantidade
+        else:
+            produto.tipo_quantidade = tipo_quantidade
         estoquemin = request.POST.get('estoque_min')
-        if estoquemin:
+        if not estoquemin:
+            
             estoquemin = produto.estoque_minimo
+        else:
+            produto.estoque_minimo = estoquemin
         status  = request.POST.get('status')
-        
+
         # Evita duplicidade ao editar (exclui o próprio produto da verificação)
         if Produto.objects.filter(nome=nome, loja=request.user.loja).exclude(pk=produto_id).exists():
             messages.error(request, 'Já existe um produto com esse nome.')
-            return redirect('estoqueview')
+            return redirect(request.META.get('HTTP_REFERER', 'estoqueview'))
        
             
 
@@ -541,14 +549,18 @@ def editar_produto(request):
         produto.nome = nome
         produto.quantidade = quantidade
         produto.tipo_quantidade = tipo_quantidade
-        produto.status = status
+        if not status:
+            pass
+        else:
+            produto.status = status
         produto.alterado_por = request.user
         if validade:
             produto.validade = validade
-        if estoquemin:
+        
+        
             
-            produto.estoque_minimo = estoquemin
         produto.categoria_id = categoria_id
+        produto.data_atualizacao = timezone.now()
         produto.save()
 
         messages.success(request, 'Produto atualizado com sucesso.')
@@ -565,9 +577,9 @@ def excluir_produto(request,id_produto):
 
         produto.delete()
         messages.success(request, 'Produto excluído com sucesso.')
-        return redirect('estoqueview')
+        return redirect(request.META.get('HTTP_REFERER', 'estoqueview'))
 
-    return redirect('estoqueview')
+    return redirect(request.META.get('HTTP_REFERER', 'estoqueview'))
 
 
 def func_notifica_vencimento(request):
@@ -812,135 +824,6 @@ def error_401_view(request, exception=None):
     return render(request, 'errors/401.html', status=401)
 
 
-@login_required(login_url='/')
-def retornadados(request):
-    """
-    Retorna os dados do banco de dados em formato JSON.
-    """
-    # Consulta todas as lojas
-    lojas = Loja.objects.all().values('id', 'nome', 'logo')
-
-    # Consulta os usuários e suas lojas associadas
-    users_loja = UserLoja.objects.select_related('user', 'loja').values(
-        'user__username', 'user__id', 'loja__nome', 'loja__id'
-    )
-
-    # Consulta as categorias e suas lojas associadas
-    categorias = Categoria.objects.select_related('loja').values(
-        'id', 'nome', 'loja__nome', 'loja__id'
-    )
-
-    # Consulta os produtos com todos os campos relevantes
-    produtos = Produto.objects.select_related('categoria', 'loja').values(
-        'id', 'nome', 'quantidade', 'tipo_quantidade', 'codigo_de_barras',
-        'validade', 'categoria__nome', 'categoria__id', 'estoque_minimo',
-        'loja__nome', 'loja__id', 'alterado_por__username', 'alterado_por__id',
-        'data_criacao', 'data_atualizacao', 'status'
-    )
-
-    # Consulta os movimentos de estoque com todos os campos relevantes
-    movimentos = MovimentoEstoque.objects.select_related('produto', 'responsavel', 'loja').values(
-        'id', 'produto__nome', 'produto__id', 'tipo_movimento', 'quantidade',
-        'data_movimento', 'responsavel__username', 'responsavel__id',
-        'loja__nome', 'loja__id'
-    )
-
-    # Organiza os dados em um dicionário
-    data = {
-        'lojas': list(lojas),
-        'users_loja': list(users_loja),
-        'categorias': list(categorias),
-        'produtos': list(produtos),
-        'movimentos_estoque': list(movimentos),
-    }
-
-    # Retorna os dados em formato JSON
-    return JsonResponse(data, safe=False)
-
-@csrf_exempt  # Desabilita a verificação CSRF para facilitar testes com Postman
-def importar_dados_json(request):
-    """
-    Recebe um JSON e insere os dados no banco de dados.
-    """
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Método não permitido'}, status=405)
-    
-    try:
-        data = json.loads(request.body)
-
-        # Criando Lojas (Agora com 'endereco' e 'telefone')
-        for loja_data in data.get('lojas', []):
-            loja, _ = Loja.objects.get_or_create(
-                id=loja_data.get('id'), 
-                defaults={
-                    'nome': loja_data.get('nome'),
-                    'endereco': loja_data.get('endereco'),
-                    'telefone': loja_data.get('telefone')
-                }
-            )
-
-        # Criando Usuários e Associando às Lojas
-        for user_loja in data.get('users_loja', []):
-            user, _ = User.objects.get_or_create(username=user_loja.get('user__username'))
-            loja = Loja.objects.get(nome=user_loja.get('loja__nome'))
-            UserLoja.objects.get_or_create(user=user, loja=loja)
-
-        # Criando Categorias
-        for categoria_data in data.get('categorias', []):
-            loja = Loja.objects.get(nome=categoria_data.get('loja__nome'))
-            Categoria.objects.get_or_create(nome=categoria_data.get('nome'), loja=loja)
-
-        # Criando Produtos (Agora com 'preco' e 'descricao')
-        for produto_data in data.get('produtos', []):
-            loja = Loja.objects.get(nome=produto_data.get('loja__nome'))
-            categoria = Categoria.objects.filter(nome=produto_data.get('categoria__nome')).first()
-            Produto.objects.get_or_create(
-                nome=produto_data.get('nome'),
-                defaults={
-                    'quantidade': produto_data.get('quantidade'),
-                    'tipo_quantidade': produto_data.get('tipo_quantidade'),
-                    'validade': produto_data.get('validade'),
-                    'categoria': categoria,
-                    'estoque_minimo': produto_data.get('estoque_minimo'),
-                    'loja': loja,
-                    'status': produto_data.get('status'),
-                    'preco': produto_data.get('preco'),
-                    'descricao': produto_data.get('descricao')
-                }
-            )
-
-        # Criando Movimentos de Estoque (Agora com 'data_movimento')
-        for movimento_data in data.get('movimentos_estoque', []):
-            produto = Produto.objects.get(nome=movimento_data.get('produto__nome'))
-            loja = Loja.objects.get(nome=movimento_data.get('loja__nome'))
-            responsavel = User.objects.get(username=movimento_data.get('responsavel__username'))
-            MovimentoEstoque.objects.create(
-                produto=produto,
-                tipo_movimento=movimento_data.get('tipo_movimento'),
-                quantidade=movimento_data.get('quantidade'),
-                responsavel=responsavel,
-                loja=loja,
-                data_movimento=movimento_data.get('data_movimento')
-            )
-
-        return JsonResponse({'success': 'Dados importados com sucesso'}, status=201)
-
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
-
-@login_required(login_url='/')
-def download_json(request):
-    """
-    Gera  um arquivo JSON para download com os dados retornados por `retornadados`.
-    """
-    if request.user.groups.filter(name='Desenvolvedor').exists():
-        response_data = retornadados(request).content  # Obtém os dados da função retornadados
-        response = HttpResponse(response_data, content_type='application/json')
-        response['Content-Disposition'] = 'attachment; filename="dados.json"'
-        return response
-    else:
-        messages.error(request, 'Voce precisa ser desenvolvedor')
-        return redirect('produtoview')
 
 def cadastroUserLoja(request):
     """

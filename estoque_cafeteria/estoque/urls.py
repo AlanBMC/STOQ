@@ -45,12 +45,6 @@ urlpatterns = [
 
     path('offline/', views.offline, name='offline'),
 
-
-    #BACKUP
-    path('backup/', views.retornadados, name='backup'),
-    path('api/importar-dados/', views.importar_dados_json, name='importar_dados_json'),
-    path('api/backup/download/dados', views.download_json, name='downloadJson'),
-
     path('cadastra_user_loja/', views.cadastroUserLoja, name='cadastra-user-loja'),
     path('criaLoja/', views.criaLoja, name='criaLoja'),
     path('atualizaLoja/', views.atualizaLoja, name='atualizaLoja'),

@@ -42,18 +42,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const inputBusca = document.querySelector("input[type='text']");
     const selectCategoria = document.querySelector("select");
     const linhasProdutos = document.querySelectorAll("tbody tr");
-    
+
     function filtrarProdutos() {
         const textoBusca = inputBusca.value.toLowerCase();
         const categoriaSelecionada = selectCategoria.value.toLowerCase();
 
         linhasProdutos.forEach(linha => {
-            const nomeProduto = linha.querySelector("td:nth-child(1) span:nth-child(2)").textContent.toLowerCase();
-            const categoriaProduto = linha.querySelector("td:nth-child(4) span:nth-child(2)").textContent.toLowerCase();
-           
-            const correspondeNome = nomeProduto.includes(textoBusca);
-            const correspondeCategoria = categoriaSelecionada === "" || categoriaProduto.includes(categoriaSelecionada);
-            
+            // Seleciona o nome do produto (primeiro <td>)
+            const nomeProduto = linha.querySelector("td:nth-child(1) span:nth-child(2)");
+            // Seleciona a categoria do produto (quarto <td>)
+            const categoriaProduto = linha.querySelector("td:nth-child(4) span:nth-child(2)");
+
+            // Verifica se os elementos existem antes de acessar textContent
+            const nome = nomeProduto ? nomeProduto.textContent.toLowerCase() : "";
+            const categoria = categoriaProduto ? categoriaProduto.textContent.toLowerCase() : "";
+
+            const correspondeNome = nome.includes(textoBusca);
+            const correspondeCategoria = categoriaSelecionada === "" || categoria.includes(categoriaSelecionada);
+
             if (correspondeNome && correspondeCategoria) {
                 linha.style.display = "table-row";
             } else {
@@ -65,7 +71,6 @@ document.addEventListener("DOMContentLoaded", function () {
     inputBusca.addEventListener("input", filtrarProdutos);
     selectCategoria.addEventListener("change", filtrarProdutos);
 });
-   
       </script>
 {% include 'componentes/tabela_produto.html' %}
 

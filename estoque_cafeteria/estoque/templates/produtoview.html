@@ -20,7 +20,9 @@ button {
 }
 
 
-
+.main-tabela{
+    padding-top: 1px;
+}
 /* Ajuste de tamanho para diferentes telas */
 @media (max-width: 1024px) {  /* Tablets */
     button {
@@ -38,13 +40,13 @@ button {
         padding: 8px 16px;
     }
     .main-tabela{
-        height: 302px;
+        height: 600px;
     }
 }
 
 /* Ajustes para a tabela */
 table {
-    border-collapse: collapse;
+    
     width: 100%;
 }
 
@@ -95,17 +97,18 @@ i{
         onkeyup="buscarProduto()">
 </div>
 
-<div class="max-h-96 overflow-y-auto border-gray-300 rounded-lg border-black rounded-lg bg-white main-tabela"
+<div class="max-h-96 overflow-y-auto p-3  border-gray-300  bg-white main-tabela"
   style="background-color: transparent; border: none">
     <table class="w-full bg-white shadow-md rounded-lg" style="background-color: #ffffff; 
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
-        <thead class="bg-gray-100 sticky top-0 border rounded-t-lg" style="box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
+    ">
+        <thead class="bg-gray-100 sticky top-0 " style="box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
             <tr class="text-gray-700" style="background-color: #fffffff8;box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                 <th class="py-3 px-6 text-left w-4/12">Nome</th>
                 <th class="py-3 px-6 text-left w-2/12">Quantidade</th>
             </tr>
         </thead>
-        <tbody id="productTableBody" class="divide-y " style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);">
+        
+        <tbody id="productTableBody" class="divide-y ">
             {% for produto in produtos %}
             <tr class="cursor-pointer    hover:bg-gray-200 transition-all border divide-black"  style=" box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951);"
                 onclick="openEditModal('{{ produto.id }}', '{{ produto.nome }}', 
@@ -216,13 +219,23 @@ i{
             </div>
             
             <!-- Botão de atualizar -->
-            <div class="flex justify-end">
+            <div class="flex justify-end gap-10 mt-6">
+                <div>
+                    <button  type="button" id="botao-excluir-produto" class=" border-none text-red-500 p-3"
+                    onclick="event.stopPropagation();  confirmarExclusao()">
+                    <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <input type="hidden" id="produto-id">
+                </div>
                 <button type="submit"
                     class=" px-3 py-1  transition text-sm"> <!-- Reduzi o padding para px-3 py-1 e o tamanho da fonte para text-sm -->
                     Atualizar
                 </button>
+               
             </div>
         </form>
+        
     </div>
 </div>
 <!-- Modal (inicialmente oculto) -->
@@ -338,8 +351,8 @@ i{
                 </select>
                 <!-- Botão de excluir -->
                 <button id="excluirCategoria" type="button"
-                    class="p-3  bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
-                    Excluir
+                    class="p-3 border-none" style="background-color: none;">
+                    <i class="fas fa-trash"></i></a>
                 </button>
             </div>
         </div>
@@ -411,20 +424,38 @@ document.getElementById("excluirCategoria").addEventListener("click", function()
 
 
 
-
+<form id="delete-form-produto" method="post" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="produto_id" id="produto-id">
+</form>
 
 <script>
+     function confirmarExclusao() {
+        if (confirm(`Tem certeza que deseja excluir o produto?`)) {
+            const form = document.getElementById('delete-form-produto');
+            const produtoId = document.getElementById('produto-id').value
+            form.action = `/produtos_excluir/${produtoId}/`;
+            form.submit();
+        }
+    }
+
 function buscarProduto() {
     let input = document.getElementById("searchInput").value.toLowerCase();
     let rows = document.querySelectorAll("#productTableBody tr");
 
     rows.forEach(row => {
-        let productName = row.cells[1].innerText.toLowerCase(); // Obtém o nome do produto
+        let productName = row.cells[0].innerText.toLowerCase(); // Obtém o nome do produto
+        console.log('productName', productName)
         row.style.display = productName.includes(input) ? "" : "none"; // Mostra/Oculta a linha
     });
 }
-function openEditModal(id, nome, quantidade, tipo_quantidade, validade, categoria, estoquemin, status, datacriacao, dataatualizao, editadopor) {
+
+
+function openEditModal(id, nome, quantidade, 
+tipo_quantidade, validade, categoria, 
+estoquemin, status, datacriacao, dataatualizao, editadopor) {
     document.getElementById("editProductId").value = id;
+    document.getElementById("produto-id").value = id
     document.getElementById("editProductName").value = nome;
     document.getElementById("editProductQuantity").value = quantidade;
     document.getElementById("datacriacao").innerText =formatarData(datacriacao)

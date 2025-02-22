@@ -1,17 +1,24 @@
 <style>
-        .table-wrapper {
-            height: 500px; /* Altura da tabela com rolagem */
+    .table-wrapper {
+            height: 374px;
             overflow-y: auto; /* Rolagem vertical */
-            border-bottom-width: 60px;
-
+           
+            position: relative;
         }
+        @media (max-width: 768px) {  /* Celulares */
+            .table-wrapper {
+            height: 500px;
+            
+        }
+            }
 </style>
 
-<div class="p-6 overflow-x-auto table-wrapper" style="overflow: hidden; border-bottom-width: 0px;">
-        <table class="w-full min-w-[400px] md:min-w-full text-left table-auto" style="overflow: hidden;    margin-bottom: 80px;">
-            <thead class="shadow-lg text-color-3 sticky -top-6 bg-white  z-10"> <!-- Cabeçalho fixo -->
-                <tr class="hidden md:table-row shadow-lg border-color-2"
-                    style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);">
+<div class="p-6 overflow-x-auto table-wrapper" style="padding-top: 0px;border-bottom-width: 0px; 
+">
+    <table class="w-full min-w-[400px] md:min-w-full text-left table-auto">
+        <thead class="shadow-lg text-color-3 sticky top-0 bg-white z-10"> <!-- Cabeçalho fixo -->
+            <tr class="hidden md:table-row shadow-lg border-color-2"
+                style="margin-bottom: 5px; box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -1px -1px 1px rgba(0, 0, 0, 0.335);">
                     <th class="py-2 px-4">Produto</th>
                     <th class="py-2 px-4">Última Mov.</th>
                     <th class="py-2 px-4">Quantidade</th>
@@ -24,7 +31,8 @@
             <tbody>
                 {% for produto in produtos %}
 
-                <tr class="block md:table-row shadow-lg border-color-2 mb-4 md:mb-0 p-4 md:p-0 cursor-pointer hover:bg-blue-100 transition"
+                <tr class="block md:table-row shadow-lg m-2 border-color-2 
+                mb-4 md:mb-0 p-4 md:p-0 cursor-pointer hover:bg-blue-100 transition"
                 onclick="abrirModalProdutoConsulta(
                     '{{produto.nome}}',
                     '{{produto.quantidade}}','{{produto.tipo_quantidade}}',
@@ -32,7 +40,8 @@
                     '{{produto.estoque_minimo}}', '{{produto.ultimo_movimento_data}}',
                     '{{ produto.ultimo_movimento_tipo }}', '{{ produto.ultimo_movimento_responsavel }}',
                     '{{ produto.ultimo_movimento_quantidade }}', '{{ produto.total_transferencias }}',
-                    '{{ produto.total_entradas }}','{{ produto.total_saidas }}')"
+                    '{{ produto.total_entradas }}','{{ produto.total_saidas }}'
+                    ,'{{ produto.data_criacao }}','{{ produto.data_atualizacao }}', '{{ produto.alterado_por }}')"
                     style="margin-top: 5px; 
                     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.411), -1px -1px 1px rgba(0, 0, 0, 0.951); ">
                     <td class="py-3 px-4 flex md:table-cell">
@@ -53,12 +62,16 @@
 
                    
                     <td class="py-3 px-4 flex md:table-cell">
-                        <span class="md:hidden font-semibold w-1/3">Quantidade:</span>
+                        <span class="md:hidden mr-4 font-semibold w-1/3">Quantidade:</span>
                         <span style="padding-left: 0px;">{{produto.quantidade}} {{produto.tipo_quantidade}}</span>
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Categoria:</span>
-                        <span>{{produto.categoria.nome}}</span>
+                        {% if produto.categoria.nome == None%}
+                            <span>Vazio</span>
+                            {%else%}
+                            <span>{{produto.categoria.nome}}</span>
+                        {%endif %}
                     </td>
                     <td class="py-3 px-4 flex md:table-cell">
                         <span class="md:hidden font-semibold w-1/3">Validade:</span>
@@ -135,9 +148,9 @@
      
           
             
-            <div class="flex space-x-4" style="margin: 5px;">
-                <div class="mb-4">
-                    <label for="Validade" class="block text-color-4 text-sm font-semibold mb-2">Validade</label>
+            <div class="flex space-x-4" style="margin-top: 20px;">
+                <div class="w-1/2">
+                    <label for="Validade" class="block text-color-4 text-sm font-semibold mt-5 mb-2">Validade</label>
                     <input type="date" min="{{ today|date:'Y-m-d' }}"  id="validadeEdit" name="validade" 
                         class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                 </div>
@@ -149,13 +162,13 @@
     
             </div>
 
-            <div class="flex space-x-4" style="margin: 5px;">
-                <input type="hidden" name="produto_id" id="produtoId">
+            <div class="flex space-x-4" style="margin-top: 20px; ">
+                
                
                 <!-- Categoria -->
-                <div class="w-1/2">
-                    <label for="Categoria" class="block text-color-4 text-sm font-semibold mb-2">Categoria</label>
-                    <div class="flex items-center space-x-2">
+                <div class="w-full">
+                    <label for="Categoria" class="block text-color-4 text-sm  font-semibold mb-2">Categoria</label>
+                    <div class="flex items-center space-x-2 mb-5">
                         <select id="Categoria" name="Categoria" required
                                 class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-1">
                             {%for categoria in categorias %}
@@ -166,7 +179,7 @@
                     </div>
                 </div>
             </div>
-            
+            <input type="hidden" name="produto_id" id="produtoId">
             <button type="submit"
                 class="w-full bg-color-1 text-color-3 p-3 rounded-lg hover:bg-opacity-90 transition-all">
                 </i> Salvar
@@ -200,28 +213,28 @@
                     <label for="nome" class="block text-color-4 text-sm font-semibold mb-2">Ultimo Mov.:</label>
                     <span id="ultimoMovimentoData"></span>
                 </div>
-        </div>
-
-<div class="flex space-x-4 mt-6">
-
-
-        <div class="w-1/2">
-            <label for="movresponsavelview" class="block text-color-4 text-sm font-semibold mb-2">Resp. pelo movimento:</label>
-            <span id="movresponsavelview"></span>
-        </div>
-        <div class="w-1/2">
-            <label for="quantidadeMovView" class="block text-color-4 text-sm font-semibold mb-2">Quantidade Movimentada:</label>
-            <div class="flex items-center space-x-2">
-                <span id="quantidademovview"></span>
             </div>
+
+        <div class="flex space-x-4 mt-6">
+
+
+                <div class="w-1/2">
+                    <label for="movresponsavelview" class="block text-color-4 text-sm font-semibold mb-2">Resp. pelo movimento:</label>
+                    <span id="movresponsavelview"></span>
+                </div>
+                <div class="w-1/2">
+                    <label for="quantidadeMovView" class="block text-color-4 text-sm font-semibold mb-2">Quantidade Movimentada:</label>
+                    <div class="flex items-center space-x-2">
+                        <span id="quantidademovview"></span>
+                    </div>
+                </div>
+                <div class="w-1/2">
+                    <label for="tipomovview" class="block text-color-4 text-sm font-semibold mb-2">Tipo Movimento:</label>
+                    <div class="flex items-center space-x-2">
+                        <span id="tipomovview"></span>
+                    </div>
+                </div>
         </div>
-        <div class="w-1/2">
-            <label for="tipomovview" class="block text-color-4 text-sm font-semibold mb-2">Tipo Movimento:</label>
-            <div class="flex items-center space-x-2">
-                <span id="tipomovview"></span>
-            </div>
-        </div>
-</div>
 
         <div class="flex space-x-4 mt-6">
             <div class="w-1/2">
@@ -238,6 +251,20 @@
                 <div class="flex items-center space-x-2">
                     <span id="categoriaview"></span>
                 </div>
+            </div>
+        </div>
+        <div class="flex space-x-4 mt-6">
+            <div class="w-1/2">
+                <span class="block text-color-4 text-sm font-semibold mb-2">Ultima edição:</span>
+                <span id="ultimaedit"></span>
+            </div>
+            <div class="w-1/2">
+                <span class="block text-color-4 text-sm font-semibold mb-2">Criado em:</span>
+                <span id="datacriacao"></span>
+            </div>
+            <div class="w-1/2">
+                <span class="block text-color-4 text-sm font-semibold mb-2">Editado Por:</span>
+                <span id="editadopor"></span>
             </div>
         </div>
         <div  class="flex space-x-4 mt-6 items-center">
@@ -257,7 +284,8 @@
             <span id="totalsaidas"
             class="bg-indigo-100 text-indigo-800 text-xl font-xl me-2 px-3.5 py-1.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300"></span>
         </div>
-    </div>
+        </div>
+        
     </form>
     </div>
 </div>
@@ -280,9 +308,12 @@
         }
     }
 
-    function abrirModalProdutoConsulta(nome, quantidade, tipo_quantidade, validade, categoriaId,
-     estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo, ultimoMovimentoresponsavel, 
-     ultimoMovimentoquantidade,totaltransferencias, totalentradas,totalsaidas) {
+    function abrirModalProdutoConsulta(nome, quantidade, tipo_quantidade, 
+    validade, categoriaId,
+     estoqueminimo, ultimoMovimentodata, ultimoMovimentotipo, 
+     ultimoMovimentoresponsavel, 
+     ultimoMovimentoquantidade,totaltransferencias, totalentradas,totalsaidas,  
+     datacriacao, dataatualizao, editadopor) {
         const modal = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProdutoview');
         const quantidadeField = document.getElementById('quantidadeProdutoview');
@@ -292,7 +323,9 @@
         const estoquemin = document.getElementById('estoqueMinview');
         const ultimomov = document.getElementById('ultimoMovimentoData');
         const tipomov = document.getElementById('tipomovview');
-        
+        document.getElementById("datacriacao").innerText =formatarData(datacriacao)
+        document.getElementById("ultimaedit").innerText = formatarData(dataatualizao)
+        document.getElementById("editadopor").innerText = editadopor 
         document.getElementById('movresponsavelview').innerHTML = ultimoMovimentoresponsavel
         document.getElementById('quantidademovview').innerHTML = ultimoMovimentoquantidade
         

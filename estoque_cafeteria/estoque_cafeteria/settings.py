@@ -30,7 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '*',  '*.onrender.com'# Permite qualquer subdomínio do ngrok
 ]
-
+TIME_ZONE = 'America/Sao_Paulo'
+USE_TZ = True
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',  # Permite domínios ngrok para requisições POST
         'https://*.ngrok-free.app',  # Permite testes locais com ngrok

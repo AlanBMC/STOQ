@@ -22,7 +22,7 @@
             max-width: 60%;
             max-height: calc(80vh - 20px);
         }
-
+      
         #batchMovementModal h2 {
             font-size: 1.2rem; /* Reduz o tamanho da fonte */
         }
@@ -139,7 +139,7 @@
 ">
         <a id="closeBatchModalBtn" onclick="closeBatchMovementModal()" class="absolute top-3 right-3 text-gray-800 text-xl" style="cursor: pointer;">&times;</a>
         
-        <div class="modal-body" style="overflow: hidden; width: 450px;" >
+        <div class="modal-body" style="overflow: hidden;" >
             <h1 style="color: black;" class="m-2 ml-2 justify-center">Movimento de estoque </h1>
             <form method="post" action="{% url 'cria_movimento_de_estoque_em_lote' %}" class="mt-4" style="max-width: 768px; margin: 0 auto;">
                 {% csrf_token %}
