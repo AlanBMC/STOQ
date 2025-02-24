@@ -10,13 +10,11 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 - **Cadastro de produtos** – Permite o registro e gerenciamento de produtos no estoque.  
 - **Controle de validade** – Monitora a data de vencimento dos produtos.  
-- **Relatórios personalizados** – Geração de relatórios sob demanda para análise e acompanhamento.  
 - **Transferência de produtos** – Permite a movimentação de itens entre lojas e depósitos.  
 - **Código de barras** – Suporte para leitura e geração de códigos de barras.  
 - **Controle de acesso** – Gerenciamento de usuários com autenticação via **Login e Groups** do Django.  
 - **Alertas inteligentes** – Notificações automáticas para validade e quantidade de produtos no estoque.  
 - **Gestão de categorias** – Criação, edição e exclusão de categorias de produtos.  
-- **Gestão de fornecedores** – Registro e gerenciamento de fornecedores.  
 - **Movimentação de estoque** – Registro de entrada, saída e transferência de produtos.  
 - **Transição entre lojas** – Usuários podem criar filiais e alternar entre elas, cada uma com seus próprios funcionários e produtos.  
 - **Backup do sistema** – Endpoint específico para realizar backup dos dados: `<localhost>/api/backup/download/dados`.  
@@ -66,6 +64,7 @@ O sistema foi desenvolvido utilizando:
 
 - **Endpoint**: `/dashboard`
 - **Descrição**: Exibe as principais métricas do estoque e movimentações.
+- **UPDATE**: A rota existe, porem não está em uso. Queria usar um novo tipo de grafico mas sofri com dependencias, então futuramente irei refazer essa rota.
 
 <div style="display: flex;"> 
    <img src="mobile-dashboard.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
@@ -93,10 +92,7 @@ O sistema foi desenvolvido utilizando:
 - **Endpoints**: `/listar_categorias`, `/criar_categoria`, `/editar_categoria`, `/excluir_categoria`
 - **Descrição**: Manipula o CRUD de categorias.
 
-#### Gestão de Fornecedores
 
-- **Endpoints**: `/listar_fornecedores`, `/criar_fornecedor`, `/editar_fornecedor`, `/excluir_fornecedor`
-- **Descrição**: Manipula o CRUD de fornecedores.
   
 <div style="display: flex;"> 
    <img src="mobile-produto.png" alt="Imagem 1" width="150px" style="margin-right: 10px;"> 
