@@ -10,8 +10,7 @@ Este projeto implementa um sistema de controle de estoque utilizando Django, com
 
 - **Cadastro de produtos** – Permite o registro e gerenciamento de produtos no estoque.  
 - **Controle de validade** – Monitora a data de vencimento dos produtos.  
-- **Transferência de produtos** – Permite a movimentação de itens entre lojas e depósitos.  
-- **Código de barras** – Suporte para leitura e geração de códigos de barras.  
+- **Transferência de produtos** – Permite a movimentação de itens entre lojas e depósitos.    
 - **Controle de acesso** – Gerenciamento de usuários com autenticação via **Login e Groups** do Django.  
 - **Alertas inteligentes** – Notificações automáticas para validade e quantidade de produtos no estoque.  
 - **Gestão de categorias** – Criação, edição e exclusão de categorias de produtos.  
