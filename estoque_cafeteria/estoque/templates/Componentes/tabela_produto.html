@@ -367,50 +367,58 @@
         modal.classList.add('flex');
     }
     function formatarData(dataTexto) {
-            if (!dataTexto || dataTexto === "None") return "Sem validade"; // Se for None, retorna "Sem validade"
+    if (!dataTexto || dataTexto === "None") return "Sem validade"; // Se for None, retorna "Sem validade"
+    
+    // Tenta converter a data diretamente
+    let dataObj = new Date(dataTexto);
+    console.log(dataObj)
+    // Se for inválido, tenta converter manualmente
+    if (isNaN(dataObj.getTime())) {
+        try {
+            // Divide a string (ex: "14 de Fevereiro de 2025 às 13:40")
+            let partes = dataTexto.split(" de ");
+            let dia = partes[0].trim(); // Pega o dia (ex: "14")
+            let mesTexto = partes[1].trim(); // Pega o mês (ex: "Fevereiro")
+            let resto = partes[2].split(" às "); // Pega o ano e a hora (ex: "2025 às 13:40")
+            let ano = resto[0].trim(); // Pega o ano (ex: "2025")
+            let hora = resto.length > 1 ? resto[1].trim() : ""; // Pega a hora, se existir
 
-            // Tenta converter a data diretamente
-            let dataObj = new Date(dataTexto);
+            // Conversão do nome do mês para número
+            const meses = {
+                "Janeiro": "01", "Fevereiro": "02", "Março": "03", "Abril": "04",
+                "Maio": "05", "Junho": "06", "Julho": "07", "Agosto": "08",
+                "Setembro": "09", "Outubro": "10", "Novembro": "11", "Dezembro": "12"
+            };
 
-            // Se for inválido, tenta converter manualmente
-            if (isNaN(dataObj.getTime())) {
-                try {
-                    let partes = dataTexto.split(", "); // Divide a string (ex: "Feb. 11, 2025, 1:32 p.m.")
-                    console.log(partes[2])
-                    let dataParte = partes[0].trim(); // Pega a parte "Feb. 11, 2025"
-                    let ano = partes[1]; // Pega o ano (ex: "2025")-
-                    let dia = dataParte.split(" ")[1].replace(".", ""); // Remove o ponto do dia (ex: "11")
-                    let hora = partes[2]
-                    let mesTexto = dataParte.split(" ")[0]; // Obtém o nome do mês (ex: "Feb.")
+            let mes = meses[mesTexto]; // Obtém o número do mês correspondente
 
-                    // Conversão do nome do mês para número
-                    const meses = {
-                        "Jan.": "01", "Feb.": "02", "Mar.": "03", "Apr.": "04",
-                        "May.": "05", "Jun.": "06", "Jul.": "07", "Aug.": "08",
-                        "Sep.": "09", "Oct.": "10", "Nov.": "11", "Dec.": "12"
-                    };
+            if (!mes) return "Data inválida"; // Se não encontrar o mês, retorna erro
 
-                    let mes = meses[mesTexto]; // Obtém o número do mês correspondente
-
-                    if (!mes) return "Data inválida"; // Se não encontrar o mês, retorna erro
-
-                    return `${dia}/${mes}/${ano} - ${hora}`;
-                } catch (error) {
-                    return "Data inválida"; // Retorna erro se não conseguir converter
-                }
+            // Retorna a data formatada
+            if (hora) {
+                return `${dia}/${mes}/${ano} - ${hora}`;
+            } else {
+                return `${dia}/${mes}/${ano}`;
             }
-
-            // Caso a conversão do Date() funcione corretamente
-            let dia = String(dataObj.getDate()).padStart(2, '0');
-            let mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
-            let ano = dataObj.getFullYear();
-
-            return `${dia}/${mes}/${ano}`;
+        } catch (error) {
+            return "Data inválida"; // Retorna erro se não conseguir converter
         }
+    }
 
-    // Função que abre o modal e preenche com os dados do produto
+    // Caso a conversão do Date() funcione corretamente
+    let dia = String(dataObj.getDate()).padStart(2, '0');
+    let mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+    let ano = dataObj.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+}
+    
+// Função que abre o modal e preenche com os dados do produto
     function abrirModalEditarProduto( produto_id, nome, quantidade, tipo_quantidade, validade, categoria_id, estoqueminimo) {
         const modal = document.getElementById('productModalEdit');
+        console.log(quantidade, estoqueminimo)
+        quantidade = quantidade.replace(",", ".");
+        estoqueminimo = estoqueminimo.replace(",", ".");
         const modalViewProduto = document.getElementById('ModalProdutoConsulta');
         const nomeField = document.getElementById('nomeProduto');
         const produto_idField = document.getElementById('produtoId');

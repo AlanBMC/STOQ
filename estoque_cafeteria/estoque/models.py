@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import  SET_NULL
-from django.utils.timezone import now
 from django.utils import timezone
+
 
 
 class Loja(models.Model):
@@ -53,7 +53,7 @@ class Produto(models.Model):
     estoque_minimo = models.FloatField(default=0)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
     alterado_por = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)  # Usuário que fez a última alteração
-    data_criacao = models.DateTimeField(default=timezone.now)  # Data de criação
+    data_criacao = models.DateTimeField(default=timezone.localtime())  # Data de criação
     data_atualizacao = models.DateTimeField(auto_now=True)
 
     def data_criacao_pt_br(self):
@@ -78,7 +78,7 @@ class MovimentoEstoque(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     tipo_movimento = models.CharField(max_length=20, choices=TIPOS_MOVIMENTO)
     quantidade = models.FloatField()
-    data_movimento = models.DateTimeField(auto_now_add=True)
+    data_movimento = models.DateTimeField(auto_now_add=timezone.localtime(timezone.now()))
     responsavel = models.ForeignKey(User, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, default=1)
 

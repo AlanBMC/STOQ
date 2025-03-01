@@ -137,7 +137,7 @@ def produtoview(request):
     categorias =  listar_categorias(request)
     loja_name = request.user.loja.nome
     lojas = UserLoja.objects.filter(user=request.user)
-    print(lojas)
+    
     
     lojasDoUser = [user.loja for user in lojas]
     is_proprietario = request.user.groups.filter(name="Proprietario").exists()
@@ -409,7 +409,6 @@ def excluir_categoria(request):
         categoria_id = request.POST.get("categoriaId")       
 
         categoria = get_object_or_404(Categoria, id=categoria_id)
-        print('pq ',categoria_id)
         categoria.delete()
         messages.success(request, 'Categoria excluída com sucesso.')
         return redirect('produtoview')
@@ -498,7 +497,6 @@ def criar_produto(request):
 
     return redirect('produtoview')
 
-
 @login_required(login_url='/')
 def editar_produto(request):
     """
@@ -560,9 +558,9 @@ def editar_produto(request):
             produto.validade = validade
         
         
-            
+        
+        
         produto.categoria_id = categoria_id
-        produto.data_atualizacao = timezone.now()
         produto.save()
 
         messages.success(request, 'Produto atualizado com sucesso.')
@@ -693,7 +691,6 @@ def cria_movimento_de_estoque_em_lote(request):
             if movimentos[indice] == 'Estoque_atual':
                 quantidade_atual =  float(quantidades[indice]) - produto.quantidade 
                 if quantidade_atual > 0:
-                    print('entrada - ',quantidade_atual)
                     produto.quantidade = float(quantidades[indice])
                     produto.save()
                     MovimentoEstoque.objects.create(
@@ -706,7 +703,6 @@ def cria_movimento_de_estoque_em_lote(request):
                     produtos_alterados.append(f'\n{produto.nome}')
 
                 elif quantidade_atual < 0:
-                    print('saida - ', quantidade_atual)
                     if produto.quantidade < float(quantidades[indice]):
                         mensagem.append(f'Quantidade insuficiente: {produto.nome}.\n')
                         continue

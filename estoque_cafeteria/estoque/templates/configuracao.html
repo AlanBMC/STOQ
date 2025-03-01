@@ -122,43 +122,47 @@ i{
     </div>
     
     <!-- Modal - Listar Usuários -->
-    <div id="listUsersModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+    <div id="listUsersModal" class="hidden fixed inset-0 bg-black 
+    bg-opacity-50 flex justify-center items-center z-50" style="bottom: 50px;">
+        <div class="bg-white p-6 rounded-lg shadow-lg overflow-y-auto max-w-lg w-full max-h-[90vh]">
             <h2 class="text-2xl font-semibold mb-4">Usuários</h2>
-        
-           
-
-            {% for usuario in usuarios %}
-            <div class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
-                <div class="flex justify-between items-center p-4">
-                    <div>
-                        <p class="text-lg font-medium">{{usuario.username}}</p>
-                        <span class="text-sm text-gray-500"> {% for grupo in usuario.groups.all %}
-                            {{ grupo.name }}
-                        {% empty %}
-                            Sem grupo
-                        {% endfor %}</span>
-                    </div>
-                    
-                    {% if is_proprietario and usuario.id != request.user.id %}
-                    
-                            <a class="text-red-500 hover:text-red-600" 
-                            onclick="confirmarExclusao('{{ usuario.id }}', '{{ usuario.username }}')">
+    
+            <!-- Contêiner da lista de usuários com scroll -->
+            <div class="divide-y divide-gray-200 max-h-[60vh] overflow-y-auto" style="
+            height: 300px;
+        ">
+                {% for usuario in usuarios %}
+                    <div class="flex justify-between items-center p-1">
+                        <div>
+                            <p class="text-lg font-medium">{{ usuario.username }}</p>
+                            <span class="text-sm text-gray-500">
+                                {% for grupo in usuario.groups.all %}
+                                    {{ grupo.name }}
+                                {% empty %}
+                                    Sem grupo
+                                {% endfor %}
+                            </span>
+                        </div>
+    
+                        {% if is_proprietario and usuario.id != request.user.id %}
+                            <a class="text-red-500 hover:text-red-600 mr-2" 
+                               onclick="confirmarExclusao('{{ usuario.id }}', '{{ usuario.username }}')">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
-                    {% endif %}
-                </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-            <button type="submit" class="w-full   py-2 rounded-lg hover:bg-blue-600 transition-all">
+    
+            <!-- Botão Salvar e Fechar -->
+            <button type="submit" class="w-full py-2 rounded-lg hover:bg-blue-600 transition-all mt-4">
                 Salvar
             </button>
-            <a id="closeListUsersModal" class="mt-6 text-sm text-gray-500 hover:underline">
+            <a id="closeListUsersModal" class="mt-4 text-sm text-gray-500 hover:underline block text-center">
                 Fechar
             </a>
         </div>
     </div>
-    
     <!-- Modal - Editar Nome -->
     <div id="editNameModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">

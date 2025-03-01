@@ -30,8 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '*',  '*.onrender.com'# Permite qualquer subdomínio do ngrok
 ]
-TIME_ZONE = 'America/Sao_Paulo'
-USE_TZ = True
+
+
+
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',  # Permite domínios ngrok para requisições POST
         'https://*.ngrok-free.app',  # Permite testes locais com ngrok
@@ -121,9 +122,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'  # Fuso horário de São Paulo (UTC-3)
+#TIME_ZONE = 'UTC-3'
 
 USE_I18N = True
 
